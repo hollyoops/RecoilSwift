@@ -1,0 +1,29 @@
+PODS:
+  - Nimble (9.0.0)
+  - Quick (3.1.2)
+  - RecoilSwift (0.1.0)
+  - RecoilSwift/Tests (0.1.0):
+    - Nimble
+    - Quick
+
+DEPENDENCIES:
+  - RecoilSwift (from `../`)
+  - RecoilSwift/Tests (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - Nimble
+    - Quick
+
+EXTERNAL SOURCES:
+  RecoilSwift:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Nimble: 3b4ec3fd40f1dc178058e0981107721c615643d8
+  Quick: 60f0ea3b8e0cfc0df3259a5c06a238ad8b3c46e0
+  RecoilSwift: 328a9e05cb62ffe5cc6bd610c8c445da8c842b77
+
+PODFILE CHECKSUM: f2f340a9dfe77954ac6bcb0ce95c41f4446f8f97
+
+COCOAPODS: 1.10.1
