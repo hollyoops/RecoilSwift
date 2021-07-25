@@ -10,7 +10,7 @@ all those components share their state.
 ## Basic Usage
 
 ```swift
-let fontSizeState = atom(14);
+let fontSizeState = atom(14)
 ```
 
 ### Retrieving Values
