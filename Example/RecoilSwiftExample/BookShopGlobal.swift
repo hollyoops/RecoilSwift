@@ -7,7 +7,7 @@ struct BookShop {}
 // Atoms
 extension BookShop {
     static let selectedQuarterStore = Atom<Int?>(nil)
-    static let allBookStore = Atom<[Book]>([])
+    static let allBookStore = atom { [Book]() }
     static let selectedCategoryState = Atom<BookCategory?>(nil)
 }
 

@@ -2,6 +2,10 @@ public func atom<T>(_ value: T) -> Atom<T> {
     Atom(value)
 }
 
+public func atom<T>(_ fn: () -> T) -> Atom<T> {
+    Atom(fn())
+}
+
 public func selector<T>(_ getBody: @escaping GetBody<T>) -> ReadOnlySelector<T> {
     ReadOnlySelector(body: getBody)
 }

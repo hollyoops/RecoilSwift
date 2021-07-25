@@ -13,7 +13,7 @@ Recoil is a next generation state management library power by facebook. RecoilSw
   s.source           = { :git => 'https://github.com/hollyoops/RecoilSwift.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '10.0'
-  s.platform = :ios
+  s.platform = :ios, '10.0
 
   s.source_files = 'Sources/**/*.swift'
   s.exclude_files = 'Sources/**/*Spec.swift'
