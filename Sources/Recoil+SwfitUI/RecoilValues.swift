@@ -39,7 +39,7 @@ import SwiftUI
 }
 
 @available(iOS 13, *)
-private class RefreshableState<State: IRecoilValue>: ObservableObject {
+internal class RefreshableState<State: IRecoilValue>: ObservableObject {
     private let recoilValue: State
     
     var wrappedValue: State.WrappedValue {

@@ -4,7 +4,7 @@ Pod::Spec.new do |s|
   s.summary          = 'RecoilSwift is a next generation state management library'
 
   s.description      = <<-DESC
-Recoil is a next generation state management library power by facebook. RecoilSwift is a implementation of recoil for swift and swiftUI. We are making it UIKit compatible
+  Recoil is a next generation state management library power by facebook. RecoilSwift is a implementation of recoil for swift and swiftUI. We are making it UIKit compatible
                        DESC
 
   s.homepage         = 'https://github.com/hollyoops/RecoilSwift'
@@ -12,8 +12,7 @@ Recoil is a next generation state management library power by facebook. RecoilSw
   s.author           = { 'hcli@thoughtworks.com' => 'hcli@thoughtworks.com' }
   s.source           = { :git => 'https://github.com/hollyoops/RecoilSwift.git', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '10.0'
-  s.platform = :ios, '10.0
+  s.platform = :ios, '13.0'
 
   s.source_files = 'Sources/**/*.swift'
   s.exclude_files = 'Sources/**/*Spec.swift'

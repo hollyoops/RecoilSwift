@@ -1,6 +1,6 @@
 # RecoilSwift
 
-RecoilSwift is a lightweight & reactive swift state management library. RecoilSwift is a SwiftUI/UIKit implementation of [recoil.js](https://recoiljs.org/) which power by facebook.
+RecoilSwift is a lightweight & reactive swift state management library. RecoilSwift is a SwiftUI/UIKit implementation of [recoil.js](https://recoiljs.org/) which powered by Facebook.
 
 [![Version](https://img.shields.io/cocoapods/v/RecoilSwift.svg?style=flat)](https://cocoapods.org/pods/RecoilSwift)
 [![License](https://img.shields.io/cocoapods/l/RecoilSwift.svg?style=flat)](https://cocoapods.org/pods/RecoilSwift)
@@ -12,18 +12,16 @@ RecoilSwift is a lightweight & reactive swift state management library. RecoilSw
 
 ## Requirements
 
-- iOS 10+
+- iOS 13+
 - Xcode 12.4+
 
 > Note: Very important!!!
->* This repo haven't completely ready yet. The fist release should come out in end of Oct 
->* Currently this lib is not support for UIKit, But it's planned and will come soon
+>* This repo haven't completely ready yet. The first release should come out in end of Oct 
+>* Currently this lib dose not support for UIKit, But it's planned and will come soon
 
 ## Installation
 
 - [**Swift Package Manager**](https://swift.org/package-manager/)
-
-> Xcode 11 integrates with libSwiftPM to provide support for iOS, watchOS, macOS and tvOS platforms.
 
 1. In Xcode, open your project and navigate to **File** → **Swift Packages** → **Add Package Dependency...**
 2. Paste the repository URL (`https://github.com/hollyoops/RecoilSwift.git`) and click **Next**.
@@ -45,7 +43,7 @@ pod 'RecoilSwift'
 ```swift
 import  SwiftRecoil
 
-let allBooksStore = atom { [Book]() }
+let allBooksState = atom { [Book]() }
 ```
 
 **Create Readonly Selector:**
@@ -54,7 +52,7 @@ let allBooksStore = atom { [Book]() }
 import  SwiftRecoil
 
 let currentBooksSelector = selector { get -> [Book] in
-    let books = get(allBookStore)
+    let books = get(allBooksState)
     if let category = get(selectedCategoryState) {
         return books.filter { $0.category == category }
     }
@@ -69,7 +67,7 @@ import  SwiftRecoil
 
 struct YourView: View {
     @RecoilValue(currentBooksSelector) var currentBooks: [Book]
-    @RecoilState(allBooksStore) var allBooks: [Book]
+    @RecoilState(allBooksState) var allBooks: [Book]
     
     var body: some View {
         VStack {
@@ -90,15 +88,15 @@ struct YourView: View {
 **Writeable selector** 
 
 ```swift
-let tempFahrenheitStore = atom(32)
+let tempFahrenheitState = atom(32)
 let tempCelsiusSelector = selector(
     get: { get -> String
-        let fahrenheit = get(tempFahrenheitStore)
+        let fahrenheit = get(tempFahrenheitState)
         return (fahrenheit - 32) * 5 / 9
     },
     set: { set, newValue in
         let newFahrenheit = (newValue * 9) / 5 + 32
-        set(tempFahrenheitStore, newFahrenheit)
+        set(tempFahrenheitState, newFahrenheit)
     }
 )
 
@@ -112,7 +110,7 @@ struct YourView: View {
         Button("Change temp") {
             tempCelsius = 40
             // or tempCelsius(40) 
-            // now the value of tempFahrenheitStore is 104
+            // now the value of tempFahrenheitState is 104
         }
     }
 }
@@ -170,8 +168,7 @@ struct YourView: View {
 
 * Facebook Recoil (Recoil.js) 
   * [Recoil website](https://recoiljs.org/)
-  * Official facebook experimental repo
-  * [Recoil: State Management - Dave McCabe](https://youtu.be/_ISAA_Jt9kI) (ReactEurope 2020 talk)
+  * [Official facebook recoil repo](https://github.com/facebookexperimental/Recoil)
   
 * Recoil for Android
   * [Rekoil](https://github.com/musotec/rekoil)
