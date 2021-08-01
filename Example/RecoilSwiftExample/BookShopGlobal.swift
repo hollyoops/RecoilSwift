@@ -11,6 +11,8 @@ extension BookShop {
     static let selectedCategoryState = Atom<BookCategory?>(nil)
 }
 
+enum BookError: Error { }
+
 // Selectors
 extension BookShop {
     static let currentBooksSel = selector { get -> [Book] in
@@ -21,8 +23,8 @@ extension BookShop {
         return books
     }
 
-    static let fetchRemoteBookNames = selector { get -> AnyPublisher<[String], Error> in
-        func buildPromise(_ values: [String]) -> AnyPublisher<[String], Error> {
+    static let fetchRemoteBookNames = selector { get -> AnyPublisher<[String], BookError> in
+        func buildPromise(_ values: [String]) -> AnyPublisher<[String], BookError> {
             Deferred {
                 Future { promise in
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
