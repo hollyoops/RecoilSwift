@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,10 +17,13 @@
 		EE023C9126AD98CD002EBF0C /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE023C8D26AD98CD002EBF0C /* Book.swift */; };
 		EE023C9226AD98CD002EBF0C /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE023C8E26AD98CD002EBF0C /* Mocks.swift */; };
 		EE023C9326AD98CD002EBF0C /* BookShopGlobal.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE023C8F26AD98CD002EBF0C /* BookShopGlobal.swift */; };
-		EEE8912D26AD9B100017FED7 /* RecoilSwift in Frameworks */ = {isa = PBXBuildFile; productRef = EEE8912C26AD9B100017FED7 /* RecoilSwift */; };
+		F8A23484346E049FB65F8685 /* Pods_RecoilSwiftExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50409628D206510C6539F8DE /* Pods_RecoilSwiftExample.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0685FD532F6BAF3D4032452B /* Pods-RecoilSwiftExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecoilSwiftExample.release.xcconfig"; path = "Target Support Files/Pods-RecoilSwiftExample/Pods-RecoilSwiftExample.release.xcconfig"; sourceTree = "<group>"; };
+		50409628D206510C6539F8DE /* Pods_RecoilSwiftExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RecoilSwiftExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		93A4B12EDA1146C8E2B4EDEA /* Pods-RecoilSwiftExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecoilSwiftExample.debug.xcconfig"; path = "Target Support Files/Pods-RecoilSwiftExample/Pods-RecoilSwiftExample.debug.xcconfig"; sourceTree = "<group>"; };
 		EE023C7426AD98A3002EBF0C /* RecoilSwiftExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecoilSwiftExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE023C7726AD98A3002EBF0C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EE023C7926AD98A3002EBF0C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -33,7 +36,6 @@
 		EE023C8D26AD98CD002EBF0C /* Book.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
 		EE023C8E26AD98CD002EBF0C /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
 		EE023C8F26AD98CD002EBF0C /* BookShopGlobal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BookShopGlobal.swift; sourceTree = "<group>"; };
-		EEE8912B26AD9AFC0017FED7 /* RecoilSwift */ = {isa = PBXFileReference; lastKnownFileType = folder; name = RecoilSwift; path = ..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,13 +43,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EEE8912D26AD9B100017FED7 /* RecoilSwift in Frameworks */,
+				F8A23484346E049FB65F8685 /* Pods_RecoilSwiftExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4FF803F006E8B838FCE31932 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				93A4B12EDA1146C8E2B4EDEA /* Pods-RecoilSwiftExample.debug.xcconfig */,
+				0685FD532F6BAF3D4032452B /* Pods-RecoilSwiftExample.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		EE023C6B26AD98A3002EBF0C = {
 			isa = PBXGroup;
 			children = (
@@ -55,6 +67,7 @@
 				EED6FD5826AD996E0076F145 /* Packages */,
 				EE023C7526AD98A3002EBF0C /* Products */,
 				EED6FD5A26AD99C80076F145 /* Frameworks */,
+				4FF803F006E8B838FCE31932 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -103,7 +116,6 @@
 		EED6FD5826AD996E0076F145 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				EEE8912B26AD9AFC0017FED7 /* RecoilSwift */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -111,6 +123,7 @@
 		EED6FD5A26AD99C80076F145 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				50409628D206510C6539F8DE /* Pods_RecoilSwiftExample.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -122,18 +135,17 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EE023C8826AD98A6002EBF0C /* Build configuration list for PBXNativeTarget "RecoilSwiftExample" */;
 			buildPhases = (
+				5BDFC39EFDDFCB1B72E82C7C /* [CP] Check Pods Manifest.lock */,
 				EE023C7026AD98A3002EBF0C /* Sources */,
 				EE023C7126AD98A3002EBF0C /* Frameworks */,
 				EE023C7226AD98A3002EBF0C /* Resources */,
+				683B27EC3DD7382049CBF61B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = RecoilSwiftExample;
-			packageProductDependencies = (
-				EEE8912C26AD9B100017FED7 /* RecoilSwift */,
-			);
 			productName = RecoilSwiftExample;
 			productReference = EE023C7426AD98A3002EBF0C /* RecoilSwiftExample.app */;
 			productType = "com.apple.product-type.application";
@@ -182,6 +194,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5BDFC39EFDDFCB1B72E82C7C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RecoilSwiftExample-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		683B27EC3DD7382049CBF61B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RecoilSwiftExample/Pods-RecoilSwiftExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RecoilSwiftExample/Pods-RecoilSwiftExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RecoilSwiftExample/Pods-RecoilSwiftExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		EE023C7026AD98A3002EBF0C /* Sources */ = {
@@ -330,6 +384,7 @@
 		};
 		EE023C8926AD98A6002EBF0C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 93A4B12EDA1146C8E2B4EDEA /* Pods-RecoilSwiftExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -350,6 +405,7 @@
 		};
 		EE023C8A26AD98A6002EBF0C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0685FD532F6BAF3D4032452B /* Pods-RecoilSwiftExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -390,13 +446,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		EEE8912C26AD9B100017FED7 /* RecoilSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = RecoilSwift;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EE023C6C26AD98A3002EBF0C /* Project object */;
 }
