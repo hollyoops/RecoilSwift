@@ -45,7 +45,7 @@ extension Atom: IRecoilState {
         self.value = value
     }
 
-    public func initNode() {
+    public func mount() {
         
     }
     

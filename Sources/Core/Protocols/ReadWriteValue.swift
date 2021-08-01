@@ -7,7 +7,7 @@ public protocol IRecoilValue: IObservableValue, IIdentifiableValue {
 
     associatedtype WrappedValue: Equatable
     
-    func initNode()
+    func mount()
     
     var loadable: LoadableContainer<T> { get }
     

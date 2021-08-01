@@ -51,7 +51,7 @@ internal class RefreshableState<State: IRecoilValue>: ObservableObject {
         _ = state.observe {
             self.notifyUpdate()
         }
-        recoilValue.initNode()
+        recoilValue.mount()
     }
     
     func update(_ newValue: State.WrappedValue) where State: IRecoilState {

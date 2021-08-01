@@ -5,7 +5,7 @@ public protocol ISelector: IRecoilValue {
 }
 
 extension ISelector {
-    public func initNode() {
+    public func mount() {
         executor.initNode()
     }
     
