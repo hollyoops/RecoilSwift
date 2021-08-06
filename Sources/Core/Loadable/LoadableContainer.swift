@@ -14,6 +14,15 @@ public class LoadableContainer<T: Equatable> {
     private let loader: LoaderProtocol
     private var valueDidChanged: (() -> Void)?
     
+    var isAsynchronous: Bool {
+        let isSync = loader is ValueLoader<T>
+        return !isSync
+    }
+    
+    var isLoading: Bool {
+        status == .loading
+    }
+    
     init(value: T) {
         self.loader = ValueLoader { _ in value }
         fullFill(value)
@@ -26,11 +35,6 @@ public class LoadableContainer<T: Equatable> {
     @available(iOS 13, *)
     init(_ asyncBody: @escaping AsyncGetBody<T, Failure>) {
         self.loader = CombineLoader(asyncBody)
-    }
-    
-    var isAsynchronous: Bool {
-        let isSync = loader is ValueLoader<T>
-        return !isSync
     }
     
     func compute(context: GetterFunction)  {

@@ -2,6 +2,7 @@
 import SwiftUI
 #endif
 
+
 @available(iOS 14, *)
 @propertyWrapper public struct RecoilValue<T: IRecoilValue>: DynamicProperty {
     @StateObject private var state: RefreshableState<T>
@@ -12,6 +13,10 @@ import SwiftUI
     
     public var wrappedValue: T.WrappedValue {
         state.wrappedValue
+    }
+    
+    public var loadableState: LoadableState {
+        state
     }
 }
 
@@ -35,6 +40,10 @@ import SwiftUI
             get: { state.wrappedValue },
             set: { newValue in state.update(newValue) }
         )
+    }
+    
+    public var loadState: LoadableState {
+        state
     }
 }
 
@@ -60,5 +69,28 @@ internal class RefreshableState<State: IRecoilValue>: ObservableObject {
     
     private func notifyUpdate() {
         objectWillChange.send()
+    }
+}
+
+public protocol LoadableState {
+    var isLoading: Bool { get  }
+    
+    var loadingStatus: LoadingStatus { get }
+    
+    var error: Error? { get }
+}
+
+@available(iOS 13, *)
+extension RefreshableState: LoadableState {
+    var isLoading: Bool {
+        recoilValue.loadable.isLoading
+    }
+    
+    var loadingStatus: LoadingStatus {
+        recoilValue.loadable.status
+    }
+    
+    var error: Error? {
+        recoilValue.loadable.error
     }
 }

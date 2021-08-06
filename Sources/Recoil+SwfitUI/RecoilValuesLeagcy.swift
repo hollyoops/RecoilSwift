@@ -13,6 +13,10 @@ import SwiftUI
     public var wrappedValue: T.WrappedValue {
         state.wrappedValue
     }
+    
+    public var loadableState: LoadableState {
+        state
+    }
 }
 
 @available(iOS, introduced: 13, deprecated: 14, message: "Please use `RecoilState` instead")
@@ -35,5 +39,9 @@ import SwiftUI
             get: { state.wrappedValue },
             set: { newValue in state.update(newValue) }
         )
+    }
+    
+    public var loadableState: LoadableState {
+        state
     }
 }
