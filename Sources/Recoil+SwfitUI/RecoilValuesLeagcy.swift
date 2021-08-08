@@ -4,10 +4,10 @@ import SwiftUI
 
 @available(iOS, introduced: 13, deprecated: 14, message: "Please use `RecoilValue` instead")
 @propertyWrapper public struct RecoilValueLeagcy<T: IRecoilValue>: DynamicProperty {
-    @ObservedObject private var state: RefreshableState<T>
+    @ObservedObject private var state: RefreshableWrapper<T>
     
     public init(_ value: T) {
-        _state =  ObservedObject(wrappedValue: RefreshableState(value))
+        _state = ObservedObject(wrappedValue: RefreshableWrapper(from: value))
     }
     
     public var wrappedValue: T.WrappedValue {
@@ -21,10 +21,10 @@ import SwiftUI
 
 @available(iOS, introduced: 13, deprecated: 14, message: "Please use `RecoilState` instead")
 @propertyWrapper public struct RecoilStateLeagcy<T: IRecoilState>: DynamicProperty {
-    @ObservedObject private var state: RefreshableState<T>
+    @ObservedObject private var state: RefreshableWrapper<T>
 
     public init(_ value: T) {
-        _state =  ObservedObject(wrappedValue:RefreshableState(value))
+        _state = ObservedObject(wrappedValue: RefreshableWrapper(from: value))
     }
 
     public var wrappedValue: T.WrappedValue {
