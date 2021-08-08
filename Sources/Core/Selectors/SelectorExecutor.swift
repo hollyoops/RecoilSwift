@@ -12,7 +12,7 @@ public class SelectorExecutor<T: Equatable> {
     init(key: String, loadable: LoadableContainer<T>) {
         self.key = key
         self.loadable = loadable
-        self.loadable.onValueDidChange { [weak self] in
+        _ = self.loadable.observe { [weak self] in
             self?.notifyValueDidChanged()
         }
     }
@@ -33,13 +33,12 @@ extension SelectorExecutor {
     }
 
     public func observe(_ change: @escaping () -> Void) -> ICancelable {
-        var sub = Subscriber(change)
-        sub.withCancel { [weak self] in
+        let subscriber = Subscriber(change) { [weak self] sub in
             self?.subscribsers.removeAll { sub == $0 }
         }
-        subscribsers.append(sub)
+        subscribsers.append(subscriber)
 
-        return sub
+        return subscriber
     }
     
     // TODO:

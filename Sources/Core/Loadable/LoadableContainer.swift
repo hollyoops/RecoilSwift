@@ -50,9 +50,17 @@ public class LoadableContainer<T: Equatable> {
             
         self.loader.run(context: context)
     }
-    
-    func onValueDidChange(_ change: @escaping () -> Void) {
+}
+
+extension LoadableContainer: IObservableValue {
+    public func observe(_ change: @escaping () -> Void) -> ICancelable {
         self.valueDidChanged = change
+        
+        let subscriber = Subscriber(change) { [weak self] _ in
+            self?.valueDidChanged = nil
+        }
+       
+        return subscriber
     }
 }
 

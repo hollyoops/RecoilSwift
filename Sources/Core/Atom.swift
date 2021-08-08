@@ -50,13 +50,12 @@ extension Atom: IRecoilState {
     }
     
     public func observe(_ change: @escaping () -> Void) -> ICancelable {
-        var sub = Subscriber(change)
-        sub.withCancel { [weak self] in
+        let subscriber = Subscriber(change) { [weak self] sub in
             self?.subscribers.removeAll { sub == $0 }
         }
-        subscribers.append(sub)
+        subscribers.append(subscriber)
 
-        return sub
+        return subscriber
     }
     
     public var wrappedValue: WrappedValue {

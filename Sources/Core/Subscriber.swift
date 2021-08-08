@@ -1,27 +1,27 @@
 import Foundation
 
-struct Subscriber {
+internal struct Subscriber {
     let id = UUID()
+   
+    typealias CancelCallback = (Subscriber) -> Void
+    typealias ChangeCallback = () -> Void
     
-    private var callback: () -> Void
-    private var cancelCallback: (() -> Void)?
+    private var changeCallback: ChangeCallback
+    private var cancelCallback: CancelCallback?
     
-    init(_ body: @escaping () -> Void) {
-        callback = body
+    init(_ onChange: @escaping ChangeCallback, _ onCancel: CancelCallback? = nil) {
+        changeCallback = onChange
+        cancelCallback = onCancel
     }
     
     func callAsFunction() {
-        callback()
-    }
-    
-    mutating func withCancel(_ cancel: @escaping () -> Void) {
-        cancelCallback = cancel
+        changeCallback()
     }
 }
 
 extension Subscriber: ICancelable {
     func cancel() {
-        self.cancelCallback?()
+        self.cancelCallback?(self)
     }
 }
 
