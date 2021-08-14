@@ -7,7 +7,7 @@ import SwiftUI
     @ObservedObject private var state: RefreshableWrapper<T>
     
     public init(_ value: T) {
-        _state = ObservedObject(wrappedValue: RefreshableWrapper(from: value))
+        _state = ObservedObject(wrappedValue: RefreshableWrapper(recoil: value))
     }
     
     public var wrappedValue: T.WrappedValue {
@@ -24,7 +24,7 @@ import SwiftUI
     @ObservedObject private var state: RefreshableWrapper<T>
 
     public init(_ value: T) {
-        _state = ObservedObject(wrappedValue: RefreshableWrapper(from: value))
+        _state = ObservedObject(wrappedValue: RefreshableWrapper(recoil: value))
     }
 
     public var wrappedValue: T.WrappedValue {

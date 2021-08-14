@@ -6,8 +6,8 @@ import SwiftUI
 internal class RefreshableWrapper<Value: IObservableValue>: ObservableObject {
     let value: Value
 
-    init(_ observableValue: Value) {
-        value = observableValue
+    init(observable value: Value) {
+        self.value = value
         subscribeValue()
     }
     
@@ -24,8 +24,8 @@ internal class RefreshableWrapper<Value: IObservableValue>: ObservableObject {
 
 @available(iOS 13, *)
 extension RefreshableWrapper where Value: IRecoilValue {
-    convenience init(from recoilValue: Value) {
-        self.init(recoilValue)
+    convenience init(recoil value: Value) {
+        self.init(observable: value)
         value.mount()
     }
     

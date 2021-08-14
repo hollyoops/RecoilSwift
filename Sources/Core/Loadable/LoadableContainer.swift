@@ -8,7 +8,7 @@ public class LoadableContainer<T: Equatable> {
     public typealias Failure = Error
 
     private(set) var data: T?
-    private(set) var error: Error?
+    private(set) var error: Failure?
     private(set) var status: LoadingStatus = .solved
     
     private let loader: LoaderProtocol
