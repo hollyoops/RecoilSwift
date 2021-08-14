@@ -1,13 +1,15 @@
+typealias ValueGetBody<T> = () throws -> T
+
 class ValueLoader<T: Equatable>: AbstractLoader<T> {
-    private var body: GetBody<T>
+    private var body: ValueGetBody<T>
     
-    init(_ syncBody: @escaping GetBody<T>) {
+    init(_ syncBody: @escaping ValueGetBody<T>) {
         body = syncBody
     }
     
-    override func run(context: GetterFunction) {
+    override func run() {
         do {
-            let value = try body(context)
+            let value = try body()
             fireSuccess(value)
             fireFinish()
         } catch {

@@ -2,16 +2,34 @@ public class SelectorExecutor<T: Equatable> {
     typealias State = T
 
     public let key: String
-    public let loadable: LoadableContainer<T>
     
+    private(set) var loadable: LoadableContainer<T>!
     private var hasInit = false
     private var hasBinding = false
     private var subscribsers: [Subscriber] = []
     private var dependencies: [String: ICancelable] = [:]
-    
-    init(key: String, loadable: LoadableContainer<T>) {
+
+    init(key: String, getBody: @escaping GetBody<T>) {
         self.key = key
-        self.loadable = loadable
+        let body: ValueGetBody<T> = { [unowned self] in
+           return try getBody(self.makeContext())
+        }
+        
+        initLoadable(with: LoadableContainer(valueGet: body))
+    }
+    
+    @available(iOS 13, *)
+    init(key: String, getBody: @escaping AsyncGetBody<T, Error>) {
+         self.key = key
+         let body: CombineGetBody<T, Error> = { [unowned self] in
+             return try getBody(self.makeContext())
+         }
+         
+        initLoadable(with: LoadableContainer(combineGet: body))
+    }
+    
+    private func initLoadable(with value: LoadableContainer<T>) {
+        self.loadable = value
         _ = self.loadable.observe { [weak self] in
             self?.notifyValueDidChanged()
         }
@@ -41,14 +59,12 @@ extension SelectorExecutor {
         return subscriber
     }
     
-    // TODO:
     private func makeContext() -> ReadOnlyContext {
         ReadOnlyContext { [weak self] in
             self?.bind($0)
         }
     }
 
-    // TODO:
     private func bind(_ value: ReadOnlyContext.SideEffectType) -> Void {
         guard dependencies[value.key] == nil else { return }
 
@@ -60,6 +76,6 @@ extension SelectorExecutor {
     }
 
     private func compute() {
-        loadable.compute(context: makeContext())
+        loadable.compute()
     }
 }

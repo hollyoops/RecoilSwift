@@ -20,7 +20,7 @@ public struct ReadOnlySelector<State: Equatable>: ISyncSelector {
     public let executor: SelectorExecutor<State>
     
     init(key: String = "R-Sel-\(UUID())", body: @escaping GetBody<State>) {
-        self.executor = SelectorExecutor(key: key, loadable: LoadableContainer(body))
+        self.executor = SelectorExecutor(key: key, getBody: body)
     }
 }
 
@@ -30,7 +30,7 @@ public struct Selector<State: Equatable>: ISyncSelector, IRecoilState {
     
     public init(key: String = "WR-Sel-\(UUID())", get: @escaping GetBody<State>, set: @escaping SetBody<State>) {
         self.setBody = set
-        self.executor = SelectorExecutor(key: key, loadable: LoadableContainer(get))
+        self.executor = SelectorExecutor(key: key, getBody: get)
     }
 }
 

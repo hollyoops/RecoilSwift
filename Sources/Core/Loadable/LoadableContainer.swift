@@ -24,20 +24,20 @@ public class LoadableContainer<T: Equatable> {
     }
     
     init(value: T) {
-        self.loader = ValueLoader { _ in value }
+        self.loader = ValueLoader { value }
         fullFill(value)
     }
     
-    init(_ body: @escaping GetBody<T>) {
+    init(valueGet body: @escaping ValueGetBody<T>) {
         self.loader = ValueLoader(body)
     }
     
     @available(iOS 13, *)
-    init(_ asyncBody: @escaping AsyncGetBody<T, Failure>) {
-        self.loader = CombineLoader(asyncBody)
+    init(combineGet body: @escaping CombineGetBody<T, Failure>) {
+        self.loader = CombineLoader(body)
     }
     
-    func compute(context: GetterFunction)  {
+    func compute()  {
         if status == .loading {
             self.loader.cancel()
         }
@@ -48,7 +48,12 @@ public class LoadableContainer<T: Equatable> {
             .then { [weak self] in self?.fullFill($0) }
             .catch { [weak self] in self?.reject($0) }
             
-        self.loader.run(context: context)
+        self.loader.run()
+    }
+    
+    func cancel() {
+        self.loader.cancel()
+        valueDidChanged?()
     }
 }
 

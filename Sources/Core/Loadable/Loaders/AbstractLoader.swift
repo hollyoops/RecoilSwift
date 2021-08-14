@@ -16,7 +16,7 @@ internal protocol PromiseLikeProtocol {
 internal protocol LoaderProtocol {
     func cancel()
     
-    func run(context: GetterFunction) -> Void
+    func run() -> Void
     
     func toPromise() -> PromiseLikeProtocol
 }
@@ -53,7 +53,7 @@ internal class AbstractLoader<Value: Equatable>: LoaderProtocol, PromiseLikeProt
         return self
     }
     
-    func run(context: GetterFunction) {
+    func run() {
         fatalError("should implement this")
     }
     

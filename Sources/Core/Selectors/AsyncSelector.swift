@@ -19,8 +19,7 @@ public struct ReadOnlyAsyncSelector<State: Equatable>: IAysncSelector {
     
     @available(iOS 13.0, *)
     public init(key: String = "R-AsyncSel-\(UUID())", body: @escaping AsyncGetBody<State, Error>) {
-        self.executor = SelectorExecutor(key: key,
-                                         loadable: LoadableContainer(body))
+        self.executor = SelectorExecutor(key: key, getBody: body)
     }
 }
 
@@ -33,8 +32,7 @@ public struct AsyncSelector<State: Equatable>: IAysncSelector, IRecoilState {
          get: @escaping AsyncGetBody<State, Error>,
          set: @escaping SetBody<WrappedValue>) {
         self.setBody = set
-        self.executor = SelectorExecutor(key: key,
-                                         loadable: LoadableContainer(get))
+        self.executor = SelectorExecutor(key: key, getBody: get)
     }
 }
 

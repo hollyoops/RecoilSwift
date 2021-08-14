@@ -2,12 +2,15 @@
 import Combine
 #endif
 
+@available(iOS 13.0, *)
+public typealias CombineGetBody<T: Equatable, E: Error> = () throws -> AnyPublisher<T, E>
+
 @available(iOS 13, *)
 class CombineLoader<T: Equatable, Failure: Error>: AbstractLoader<T> {
-    private var body: AsyncGetBody<T, Failure>
+    private var body: CombineGetBody<T, Failure>
     private var cancellable: AnyCancellable?
     
-    init(_ asyncBody: @escaping AsyncGetBody<T, Failure>) {
+    init(_ asyncBody: @escaping CombineGetBody<T, Failure>) {
         body = asyncBody
     }
 
@@ -16,9 +19,9 @@ class CombineLoader<T: Equatable, Failure: Error>: AbstractLoader<T> {
         cancellable?.cancel()
     }
     
-    override func run(context: GetterFunction) {
+    override func run() {
         do {
-            watch(try body(context))
+            watch(try body())
         } catch {
             fireError(error)
         }
