@@ -11,21 +11,21 @@ public class SelectorExecutor<T: Equatable> {
 
     init(key: String, getBody: @escaping GetBody<T>) {
         self.key = key
-        let body: ValueGetBody<T> = { [unowned self] in
+        let body: SynchronousLoaderBody<T> = { [unowned self] in
            return try getBody(self.makeContext())
         }
         
-        initLoadable(with: LoadableContainer(valueGet: body))
+        initLoadable(with: LoadableContainer(synchronous: body))
     }
     
     @available(iOS 13, *)
-    init(key: String, getBody: @escaping AsyncGetBody<T, Error>) {
+    init(key: String, getBody: @escaping CombineGetBody<T, Error>) {
          self.key = key
-         let body: CombineGetBody<T, Error> = { [unowned self] in
+         let body: CombineLoaderBody<T, Error> = { [unowned self] in
              return try getBody(self.makeContext())
          }
          
-        initLoadable(with: LoadableContainer(combineGet: body))
+        initLoadable(with: LoadableContainer(combine: body))
     }
     
     private func initLoadable(with value: LoadableContainer<T>) {

@@ -11,8 +11,8 @@ public func selector<T>(_ getBody: @escaping GetBody<T>) -> ReadOnlySelector<T> 
 }
 
 @available(iOS 13.0, *)
-public func selector<T, E: Error>(_ getBody: @escaping AsyncGetBody<T, E>) -> ReadOnlyAsyncSelector<T> {
-    let body: AsyncGetBody<T, Error> = {
+public func selector<T, E: Error>(_ getBody: @escaping CombineGetBody<T, E>) -> ReadOnlyAsyncSelector<T> {
+    let body: CombineGetBody<T, Error> = {
         try getBody($0)
             .mapError { $0 as Error }
             .eraseToAnyPublisher()

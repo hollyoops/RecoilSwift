@@ -10,47 +10,47 @@ public class LoadableContainer<T: Equatable> {
     private(set) var data: T?
     private(set) var error: Failure?
     private(set) var status: LoadingStatus = .solved
-    
+
     private let loader: LoaderProtocol
     private var valueDidChanged: (() -> Void)?
-    
+
     var isAsynchronous: Bool {
-        let isSync = loader is ValueLoader<T>
+        let isSync = loader is SynchronousLoader<T>
         return !isSync
     }
-    
+
     var isLoading: Bool {
         status == .loading
     }
-    
+
     init(value: T) {
-        self.loader = ValueLoader { value }
+        self.loader = SynchronousLoader { value }
         fullFill(value)
     }
-    
-    init(valueGet body: @escaping ValueGetBody<T>) {
-        self.loader = ValueLoader(body)
+
+    init(synchronous body: @escaping SynchronousLoaderBody<T>) {
+        self.loader = SynchronousLoader(body)
     }
-    
+
     @available(iOS 13, *)
-    init(combineGet body: @escaping CombineGetBody<T, Failure>) {
+    init(combine body: @escaping CombineLoaderBody<T, Failure>) {
         self.loader = CombineLoader(body)
     }
-    
-    func compute()  {
+
+    func compute() {
         if status == .loading {
             self.loader.cancel()
         }
-    
+
         self.status = .loading
         self.loader
-            .toPromise()
-            .then { [weak self] in self?.fullFill($0) }
-            .catch { [weak self] in self?.reject($0) }
-            
+        .toPromise()
+        .then { [weak self] in self?.fullFill($0) }
+        .catch { [weak self] in self?.reject($0) }
+
         self.loader.run()
     }
-    
+
     func cancel() {
         self.loader.cancel()
         valueDidChanged?()
@@ -60,11 +60,11 @@ public class LoadableContainer<T: Equatable> {
 extension LoadableContainer: IObservableValue {
     public func observe(_ change: @escaping () -> Void) -> ICancelable {
         self.valueDidChanged = change
-        
+
         let subscriber = Subscriber(change) { [weak self] _ in
             self?.valueDidChanged = nil
         }
-       
+
         return subscriber
     }
 }
@@ -72,20 +72,20 @@ extension LoadableContainer: IObservableValue {
 extension LoadableContainer {
     private func fullFill(_ value: T) {
         let isValueChanged = value != data
-        
+
         self.error = nil
         self.data = value
         self.status = .solved
-        
+
         if (isValueChanged) {
             valueDidChanged?()
         }
     }
-    
+
     private func reject(_ error: Failure) {
         self.error = error
         self.status = .error
-        
+
         if isAsynchronous {
             self.data = nil
         }
