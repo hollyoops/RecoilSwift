@@ -9,9 +9,11 @@ struct ContentView: HookView {
 
     var hookBody: some View {
         let currentBooks = useRecoilValue(BookShop.currentBooksSel)
-        let bookNames = useRecoilValue(BookShop.fetchRemoteBookNames)
         let allBooks = useRecoilState(BookShop.allBookStore)
         let selectedCategoryState = useRecoilState(BookShop.selectedCategoryState)
+        
+        let selectedCateName = selectedCategoryState.wrappedValue?.rawValue ?? "ALL"
+        let bookNames = useRecoilValue(BookShop.fetchRemoteBookNamesByCategory(selectedCateName))
         
         VStack {
             HStack {
@@ -24,6 +26,12 @@ struct ContentView: HookView {
             }
 
             ForEach(currentBooks, id: \.self) { itemView($0) }
+           
+            if let names = bookNames {
+                ForEach(names, id: \.self) {
+                    Text($0)
+                }
+            }
         }.padding()
          .onAppear {
              allBooks.wrappedValue = Mocks.ALL_BOOKS

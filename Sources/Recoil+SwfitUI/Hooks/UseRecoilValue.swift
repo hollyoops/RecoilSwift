@@ -2,8 +2,22 @@
 import SwiftUI
 #endif
 
+public func useRecoilValue<P: Equatable, Return: IRecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> Return.WrappedValue {
+    let hook = RecoilValueHook(initialValue: value.recoilValue,
+                                updateStrategy: .preserved(by: value.param))
+    
+    return useHook(hook)
+}
+
 public func useRecoilValue<Value: IRecoilValue>(_ initialState: Value) -> Value.WrappedValue {
     useHook(RecoilValueHook(initialValue: initialState))
+}
+
+public func useRecoilState<P: Equatable, Return: IRecoilState>(_ value: ParametricRecoilValue<P, Return>) -> Binding<Return.WrappedValue> {
+    let hook = RecoilStateHook(initialValue: value.recoilValue,
+                               updateStrategy: .preserved(by: value.param))
+    
+    return useHook(hook)
 }
 
 public func useRecoilState<Value: IRecoilState> (_ initialState: Value) -> Binding<Value.WrappedValue> {
@@ -23,11 +37,12 @@ private struct RecoilValueHook<Value: IRecoilValue>: Hook {
     }
     
     func updateState(coordinator: Coordinator) {
-        coordinator.state.value.mount()
+        let updateView = coordinator.updateView
+        coordinator.state.update(newValue: initialValue, viewUpdator: updateView)
     }
 
     func dispose(state: Ref<Value>) {
-        state.isDisposed = true
+        state.dispose()
     }
 }
 
@@ -58,20 +73,37 @@ private struct RecoilStateHook<Value: IRecoilState>: Hook {
     }
     
     func updateState(coordinator: Coordinator) {
-        coordinator.state.value.mount()
+        let updateView = coordinator.updateView
+        coordinator.state.update(newValue: initialValue, viewUpdator: updateView)
     }
 
     func dispose(state: Ref<Value>) {
-        state.isDisposed = true
+        state.dispose()
     }
 }
 
-private final class Ref<Value> {
+private final class Ref<Value: IRecoilValue> {
     var value: Value
     var isDisposed = false
+    var cancellable: ICancelable?
     
     init(initialState: Value) {
         value = initialState
+    }
+    
+    func update(newValue: Value, viewUpdator: @escaping () -> Void) {
+        cancellable?.cancel()
+        value = newValue
+        value.mount()
+        cancellable = value.observe {
+            viewUpdator()
+        }
+    }
+    
+    func dispose() {
+        isDisposed = true
+        cancellable?.cancel()
+        cancellable = nil
     }
 }
 

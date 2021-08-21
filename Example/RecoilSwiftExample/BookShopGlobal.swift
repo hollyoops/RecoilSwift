@@ -23,7 +23,7 @@ extension BookShop {
         return books
     }
 
-    static let fetchRemoteBookNames = selector { get -> AnyPublisher<[String], BookError> in
+    static let fetchRemoteBookNamesByCategory = selectorFamily { (category: String, get: ReadOnlyContext) -> AnyPublisher<[String], BookError> in
         func buildPromise(_ values: [String]) -> AnyPublisher<[String], BookError> {
             Deferred {
                 Future { promise in
@@ -34,10 +34,10 @@ extension BookShop {
             }.eraseToAnyPublisher()
         }
 
-        guard let category = get(selectedCategoryState) else {
-            return buildPromise([])
-        }
-
-        return buildPromise(["1", "2"])
+        return buildPromise(["\(category):Book1", "\(category):Book2"])
+    }
+    
+    static let getLocalBookNames = selectorFamily { (category: String, get: ReadOnlyContext) -> [String] in
+        ["local:\(category):Book1", "local:\(category):Book2"]
     }
 }
