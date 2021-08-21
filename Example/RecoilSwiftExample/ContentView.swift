@@ -1,19 +1,24 @@
 import SwiftUI
 import RecoilSwift
 
-struct ContentView: View {
-    @RecoilValue(BookShop.currentBooksSel) var currentBooks: [Book]
-    @RecoilValue(BookShop.fetchRemoteBookNames) var bookNames: [String]?
-    @RecoilState(BookShop.allBookStore) var allBooks: [Book]
-    @RecoilState(BookShop.selectedCategoryState) var selectedCategoryState: BookCategory?
+struct ContentView: HookView {
+//    @RecoilValue(BookShop.currentBooksSel) var currentBooks: [Book]
+//    @RecoilValue(BookShop.fetchRemoteBookNames) var bookNames: [String]?
+//    @RecoilState(BookShop.allBookStore) var allBooks: [Book]
+//    @RecoilState(BookShop.selectedCategoryState) var selectedCategoryState: BookCategory?
 
-    var body: some View {
+    var hookBody: some View {
+        let currentBooks = useRecoilValue(BookShop.currentBooksSel)
+        let bookNames = useRecoilValue(BookShop.fetchRemoteBookNames)
+        let allBooks = useRecoilState(BookShop.allBookStore)
+        let selectedCategoryState = useRecoilState(BookShop.selectedCategoryState)
+        
         VStack {
             HStack {
                 ForEach(BookCategory.allCases, id: \.self) { category in
                     Button(category.rawValue) {
                         print(category.rawValue)
-                        selectedCategoryState = category
+                        selectedCategoryState.wrappedValue = category
                     }.padding()
                 }
             }
@@ -21,7 +26,7 @@ struct ContentView: View {
             ForEach(currentBooks, id: \.self) { itemView($0) }
         }.padding()
          .onAppear {
-             allBooks = Mocks.ALL_BOOKS
+             allBooks.wrappedValue = Mocks.ALL_BOOKS
          }
     }
 
