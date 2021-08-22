@@ -24,37 +24,42 @@ public func useRecoilState<Value: IRecoilState> (_ initialState: Value) -> Bindi
     useHook(RecoilStateHook(initialValue: initialState))
 }
 
-private struct RecoilValueHook<Value: IRecoilValue>: Hook {
-    let initialValue: Value
-    var updateStrategy: HookUpdateStrategy? = .once
+private protocol RecoilHook: Hook where State == Ref<T> {
+    associatedtype T: IRecoilValue
+    var initialValue: T { get }
+}
 
-    func makeState() -> Ref<Value> {
+private extension RecoilHook {
+    func makeState() -> Ref<T> {
         Ref(initialState: initialValue)
-    }
-
-    func value(coordinator: Coordinator) -> Value.WrappedValue {
-        coordinator.state.value.wrappedValue
     }
     
     func updateState(coordinator: Coordinator) {
         let updateView = coordinator.updateView
-        coordinator.state.update(newValue: initialValue, viewUpdator: updateView)
+        let refState = coordinator.state
+        refState.update(newValue: initialValue, viewUpdator: updateView)
     }
 
-    func dispose(state: Ref<Value>) {
+    func dispose(state: Ref<T>) {
         state.dispose()
     }
 }
 
-private struct RecoilStateHook<Value: IRecoilState>: Hook {
-    let initialValue: Value
-    var updateStrategy: HookUpdateStrategy? = .once
+private struct RecoilValueHook<T: IRecoilValue>: RecoilHook {
+    var initialValue: T
+    var updateStrategy: HookUpdateStrategy?
 
-    func makeState() -> Ref<Value> {
-        Ref(initialState: initialValue)
+
+    func value(coordinator: Coordinator) -> T.WrappedValue {
+        coordinator.state.value.wrappedValue
     }
+}
+
+private struct RecoilStateHook<T: IRecoilState>: RecoilHook {
+    var initialValue: T
+    var updateStrategy: HookUpdateStrategy?
     
-    func value(coordinator: Coordinator) -> Binding<Value.WrappedValue> {
+    func value(coordinator: Coordinator) -> Binding<T.WrappedValue> {
         Binding(
             get: {
                 coordinator.state.value.wrappedValue
@@ -70,15 +75,6 @@ private struct RecoilStateHook<Value: IRecoilState>: Hook {
                 coordinator.updateView()
             }
         )
-    }
-    
-    func updateState(coordinator: Coordinator) {
-        let updateView = coordinator.updateView
-        coordinator.state.update(newValue: initialValue, viewUpdator: updateView)
-    }
-
-    func dispose(state: Ref<Value>) {
-        state.dispose()
     }
 }
 
