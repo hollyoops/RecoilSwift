@@ -49,7 +49,6 @@ private struct RecoilValueHook<T: IRecoilValue>: RecoilHook {
     var initialValue: T
     var updateStrategy: HookUpdateStrategy?
 
-
     func value(coordinator: Coordinator) -> T.WrappedValue {
         coordinator.state.value.wrappedValue
     }

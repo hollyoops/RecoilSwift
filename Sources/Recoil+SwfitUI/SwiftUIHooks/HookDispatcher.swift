@@ -67,6 +67,7 @@ public final class HookDispatcher: ObservableObject {
 
             return hook.value(coordinator: coordinator)
         }
+        
 
         defer {
             scopedState.currentRecord = scopedState.currentRecord?.next
@@ -76,20 +77,25 @@ public final class HookDispatcher: ObservableObject {
             return appendNew()
         }
 
-        if let state = record.element.state(of: H.self) {
+        if let state = record.element.state(of: H.self),
+           let oldHook = record.element.hook(of: H.self) {
+            
             let coordinator = makeCoordinator(state: state)
-            let newRecord = HookRecord(hook: hook, coordinator: coordinator)
-            let oldRecord = record.swap(element: newRecord)
-
-            if oldRecord.shouldUpdate(newHook: hook) {
-                if hook.shouldDeferredUpdate {
-                    scopedState.deferredUpdateRecords.append(newRecord)
-                }
-                else {
-                    hook.updateState(coordinator: coordinator)
-                }
+            
+            if !record.element.shouldUpdate(newHook: hook) {
+                return oldHook.value(coordinator: coordinator)
             }
 
+            let newRecord = HookRecord(hook: hook, coordinator: coordinator)
+             _ = record.swap(element: newRecord)
+            
+            if hook.shouldDeferredUpdate {
+                scopedState.deferredUpdateRecords.append(newRecord)
+            }
+            else {
+                hook.updateState(coordinator: coordinator)
+            }
+            
             return hook.value(coordinator: coordinator)
         }
         else {
@@ -222,6 +228,10 @@ private struct HookRecord<H: Hook>: HookRecordProtocol {
     func state<H: Hook>(of hookType: H.Type) -> H.State? {
         coordinator.state as? H.State
     }
+    
+    func hook<H: Hook>(of hookType: H.Type) -> H? {
+        hook as? H
+    }
 
     func shouldUpdate<New: Hook>(newHook: New) -> Bool {
         guard let newStrategy = newHook.updateStrategy else {
@@ -247,4 +257,5 @@ private protocol HookRecordProtocol {
     func shouldUpdate<New: Hook>(newHook: New) -> Bool
     func updateState()
     func dispose()
+    func hook<H: Hook>(of hookType: H.Type) -> H?
 }
