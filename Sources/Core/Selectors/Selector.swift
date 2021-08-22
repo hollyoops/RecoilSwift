@@ -9,9 +9,9 @@ public typealias MutableContext = (
 public typealias GetBody<T> = (GetterFunction) throws -> T
 public typealias SetBody<T> = (MutableContext, T) -> Void
 
-public protocol ISyncSelector: ISelector where WrappedValue == State { }
+public protocol ISyncSelector: ISelector {}
 extension ISyncSelector {
-    public var wrappedValue: WrappedValue {
+    public var wrappedData: State {
         executor.loadable.data!
     }
 }

@@ -35,7 +35,7 @@ public class Atom<T: Equatable> {
 }
 
 extension Atom: IRecoilState {
-    public typealias WrappedValue = T
+    public typealias DataType = T
     
     public var loadable: LoadableContainer<T> {
         LoadableContainer.init(value: self.value)
@@ -58,7 +58,7 @@ extension Atom: IRecoilState {
         return subscriber
     }
     
-    public var wrappedValue: WrappedValue {
+    public var wrappedData: DataType {
         value
     }
 }

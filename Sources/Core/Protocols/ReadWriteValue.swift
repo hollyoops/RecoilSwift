@@ -5,15 +5,15 @@ public protocol IIdentifiableValue {
 public protocol IRecoilValue: IObservableValue, IIdentifiableValue {
     associatedtype T: Equatable
 
-    associatedtype WrappedValue: Equatable
+    associatedtype DataType: Equatable
     
     func mount()
     
     var loadable: LoadableContainer<T> { get }
     
-    var wrappedValue: WrappedValue  { get }
+    var wrappedData: DataType { get }
 }
 
 public protocol IRecoilState: IRecoilValue {
-    func update(_ newValue: WrappedValue)
+    func update(_ newValue: DataType)
 }

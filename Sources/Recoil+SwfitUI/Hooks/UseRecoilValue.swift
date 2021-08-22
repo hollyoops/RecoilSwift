@@ -2,25 +2,25 @@
 import SwiftUI
 #endif
 
-public func useRecoilValue<P: Equatable, Return: IRecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> Return.WrappedValue {
+public func useRecoilValue<P: Equatable, Return: IRecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> Return.DataType {
     let hook = RecoilValueHook(initialValue: value.recoilValue,
                                 updateStrategy: .preserved(by: value.param))
     
     return useHook(hook)
 }
 
-public func useRecoilValue<Value: IRecoilValue>(_ initialState: Value) -> Value.WrappedValue {
+public func useRecoilValue<Value: IRecoilValue>(_ initialState: Value) -> Value.DataType {
     useHook(RecoilValueHook(initialValue: initialState))
 }
 
-public func useRecoilState<P: Equatable, Return: IRecoilState>(_ value: ParametricRecoilValue<P, Return>) -> Binding<Return.WrappedValue> {
+public func useRecoilState<P: Equatable, Return: IRecoilState>(_ value: ParametricRecoilValue<P, Return>) -> Binding<Return.DataType> {
     let hook = RecoilStateHook(initialValue: value.recoilValue,
                                updateStrategy: .preserved(by: value.param))
     
     return useHook(hook)
 }
 
-public func useRecoilState<Value: IRecoilState> (_ initialState: Value) -> Binding<Value.WrappedValue> {
+public func useRecoilState<Value: IRecoilState> (_ initialState: Value) -> Binding<Value.DataType> {
     useHook(RecoilStateHook(initialValue: initialState))
 }
 
@@ -49,8 +49,8 @@ private struct RecoilValueHook<T: IRecoilValue>: RecoilHook {
     var initialValue: T
     var updateStrategy: HookUpdateStrategy?
 
-    func value(coordinator: Coordinator) -> T.WrappedValue {
-        coordinator.state.value.wrappedValue
+    func value(coordinator: Coordinator) -> T.DataType {
+        coordinator.state.value.wrappedData
     }
 }
 
@@ -58,10 +58,10 @@ private struct RecoilStateHook<T: IRecoilState>: RecoilHook {
     var initialValue: T
     var updateStrategy: HookUpdateStrategy?
     
-    func value(coordinator: Coordinator) -> Binding<T.WrappedValue> {
+    func value(coordinator: Coordinator) -> Binding<T.DataType> {
         Binding(
             get: {
-                coordinator.state.value.wrappedValue
+                coordinator.state.value.wrappedData
             },
             set: { newState in
                 assertMainThread()

@@ -6,10 +6,10 @@ import Combine
 @available(iOS 13.0, *)
 public typealias CombineGetBody<T: Equatable, E: Error> = (GetterFunction) throws -> AnyPublisher<T, E>
 
-public protocol IAsyncSelector: ISelector where WrappedValue == State? {}
+public protocol IAsyncSelector: ISelector {}
 
 extension IAsyncSelector {
-    public var wrappedValue: WrappedValue {
+    public var wrappedData: State? {
         executor.loadable.data
     }
 }
@@ -25,13 +25,13 @@ public struct ReadOnlyAsyncSelector<State: Equatable>: IAsyncSelector {
 }
 
 public struct AsyncSelector<State: Equatable>: IAsyncSelector, IRecoilState {
-    public let setBody: SetBody<WrappedValue>
+    public let setBody: SetBody<DataType>
     public let executor: SelectorExecutor<State>
 
     @available(iOS 13.0, *)
     public init(key: String = "WR-AsyncSel-\(UUID())",
                 get: @escaping CombineGetBody<State, Error>,
-                set: @escaping SetBody<WrappedValue>) {
+                set: @escaping SetBody<DataType>) {
         self.setBody = set
         self.executor = SelectorExecutor(key: key, getBody: get)
     }

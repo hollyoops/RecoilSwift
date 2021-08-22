@@ -29,7 +29,7 @@ extension RefreshableWrapper where Value: IRecoilValue {
         value.mount()
     }
     
-    func update(_ newValue: Value.WrappedValue) where Value: IRecoilState {
+    func update(_ newValue: Value.DataType) where Value: IRecoilState {
         value.update(newValue)
     }
 }

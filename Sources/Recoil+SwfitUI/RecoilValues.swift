@@ -10,7 +10,7 @@ import SwiftUI
         _state = StateObject(wrappedValue: RefreshableWrapper(recoil: value))
     }
     
-    public var wrappedValue: T.WrappedValue {
+    public var wrappedValue: T.DataType {
         state.wrappedValue
     }
     
@@ -24,17 +24,17 @@ import SwiftUI
     @StateObject private var state: RefreshableWrapper<T>
 
     public init(_ value: T) {
-        _state = StateObject(wrappedValue:RefreshableWrapper(recoil: value))
+        _state = StateObject(wrappedValue: RefreshableWrapper(recoil: value))
     }
 
-    public var wrappedValue: T.WrappedValue {
+    public var wrappedValue: T.DataType {
         get { state.wrappedValue }
         nonmutating set {
             state.update(newValue)
         }
     }
 
-    public var projectedValue: Binding<T.WrappedValue> {
+    public var projectedValue: Binding<T.DataType> {
         Binding(
             get: { state.wrappedValue },
             set: { newValue in state.update(newValue) }
@@ -48,7 +48,7 @@ import SwiftUI
 
 @available(iOS 13, *)
 internal extension RefreshableWrapper where Value: IRecoilValue {
-    var wrappedValue: Value.WrappedValue {
-        value.wrappedValue
+    var wrappedValue: Value.DataType {
+        value.wrappedData
     }
 }
