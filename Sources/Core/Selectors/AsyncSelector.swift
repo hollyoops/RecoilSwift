@@ -10,7 +10,7 @@ public protocol IAsyncSelector: ISelector {}
 
 extension IAsyncSelector {
     public var wrappedData: State? {
-        executor.loadable.data
+        loadable.data
     }
 }
 

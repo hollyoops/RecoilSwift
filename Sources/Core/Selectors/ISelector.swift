@@ -1,5 +1,7 @@
 public protocol ISelector: IRecoilValue {
     associatedtype State: Equatable
+    
+//    associatedtype Failure: Error
 
     var executor: SelectorExecutor<State> { get }
 }

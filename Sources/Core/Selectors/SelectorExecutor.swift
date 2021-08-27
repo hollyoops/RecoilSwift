@@ -30,7 +30,7 @@ public class SelectorExecutor<T: Equatable> {
     
     private func initLoadable(with value: LoadableContainer<T>) {
         self.loadable = value
-        _ = self.loadable.observe { [weak self] in
+        _ = value.observe { [weak self] in
             self?.notifyValueDidChanged()
         }
     }

@@ -12,7 +12,7 @@ public typealias SetBody<T> = (MutableContext, T) -> Void
 public protocol ISyncSelector: ISelector {}
 extension ISyncSelector {
     public var wrappedData: State {
-        executor.loadable.data!
+        loadable.data!
     }
 }
 

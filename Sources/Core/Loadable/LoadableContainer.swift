@@ -1,15 +1,9 @@
-public enum LoadingStatus {
-    case loading
-    case solved
-    case error
-}
-
-public class LoadableContainer<T: Equatable> {
+public class LoadableContainer<T: Equatable>: Loadable {
     public typealias Failure = Error
 
-    private(set) var data: T?
-    private(set) var error: Failure?
-    private(set) var status: LoadingStatus = .solved
+    public var data: T?
+    public var error: Failure?
+    public var status: LoadingStatus = .solved
 
     private let loader: LoaderProtocol
     private var valueDidChanged: (() -> Void)?
@@ -17,10 +11,6 @@ public class LoadableContainer<T: Equatable> {
     var isAsynchronous: Bool {
         let isSync = loader is SynchronousLoader<T>
         return !isSync
-    }
-
-    var isLoading: Bool {
-        status == .loading
     }
 
     init(value: T) {
