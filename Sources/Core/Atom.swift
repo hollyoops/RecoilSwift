@@ -37,7 +37,7 @@ public class Atom<T: Equatable> {
 extension Atom: IRecoilState {
     public typealias DataType = T
     
-    public var loadable: LoadableContainer<T> {
+    public var loadable: LoadableContainer<T, Never> {
         LoadableContainer.init(value: self.value)
     }
     

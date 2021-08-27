@@ -1,9 +1,9 @@
-public class SelectorExecutor<T: Equatable> {
+public class SelectorExecutor<T: Equatable, E: Error> {
     typealias State = T
 
     public let key: String
     
-    private(set) var loadable: LoadableContainer<T>!
+    private(set) var loadable: LoadableContainer<T, E>!
     private var hasInit = false
     private var hasBinding = false
     private var subscribsers: [Subscriber] = []
@@ -19,16 +19,16 @@ public class SelectorExecutor<T: Equatable> {
     }
     
     @available(iOS 13, *)
-    init(key: String, getBody: @escaping CombineGetBody<T, Error>) {
+    init(key: String, getBody: @escaping CombineGetBody<T, E>) {
          self.key = key
-         let body: CombineLoaderBody<T, Error> = { [unowned self] in
+         let body: CombineLoaderBody<T, E> = { [unowned self] in
              return try getBody(self.makeContext())
          }
          
         initLoadable(with: LoadableContainer(combine: body))
     }
     
-    private func initLoadable(with value: LoadableContainer<T>) {
+    private func initLoadable(with value: LoadableContainer<T, E>) {
         self.loadable = value
         _ = value.observe { [weak self] in
             self?.notifyValueDidChanged()

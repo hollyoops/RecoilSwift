@@ -1,8 +1,6 @@
-public class LoadableContainer<T: Equatable>: Loadable {
-    public typealias Failure = Error
-
+public class LoadableContainer<T: Equatable, E: Error>: Loadable {
     public var data: T?
-    public var error: Failure?
+    public var error: E?
     public var status: LoadingStatus = .solved
 
     private let loader: LoaderProtocol
@@ -23,7 +21,7 @@ public class LoadableContainer<T: Equatable>: Loadable {
     }
 
     @available(iOS 13, *)
-    init(combine body: @escaping CombineLoaderBody<T, Failure>) {
+    init(combine body: @escaping CombineLoaderBody<T, E>) {
         self.loader = CombineLoader(body)
     }
 
@@ -72,7 +70,7 @@ extension LoadableContainer {
         }
     }
 
-    private func reject(_ error: Failure) {
+    private func reject(_ error: E) {
         self.error = error
         self.status = .error
 
@@ -85,7 +83,7 @@ extension LoadableContainer {
 }
 
 extension LoadableContainer: Equatable {
-    public static func ==(lhs: LoadableContainer<T>, rhs: LoadableContainer<T>) -> Bool {
+    public static func ==(lhs: LoadableContainer<T, E>, rhs: LoadableContainer<T, E>) -> Bool {
         lhs.status == rhs.status &&
         lhs.data == rhs.data
     }

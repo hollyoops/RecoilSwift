@@ -14,23 +14,23 @@ extension IAsyncSelector {
     }
 }
 
-public struct ReadOnlyAsyncSelector<State: Equatable>: IAsyncSelector {
-    public let executor: SelectorExecutor<State>
+public struct ReadOnlyAsyncSelector<State: Equatable, Failure: Error>: IAsyncSelector {
+    public let executor: SelectorExecutor<State, Failure>
     public typealias DefaultValue = State?
 
     @available(iOS 13.0, *)
-    public init(key: String = "R-AsyncSel-\(UUID())", body: @escaping CombineGetBody<State, Error>) {
+    public init(key: String = "R-AsyncSel-\(UUID())", body: @escaping CombineGetBody<State, Failure>) {
         self.executor = SelectorExecutor(key: key, getBody: body)
     }
 }
 
-public struct AsyncSelector<State: Equatable>: IAsyncSelector, IRecoilState {
+public struct AsyncSelector<State: Equatable, Failure: Error>: IAsyncSelector, IRecoilState {
     public let setBody: SetBody<DataType>
-    public let executor: SelectorExecutor<State>
+    public let executor: SelectorExecutor<State, Failure>
 
     @available(iOS 13.0, *)
     public init(key: String = "WR-AsyncSel-\(UUID())",
-                get: @escaping CombineGetBody<State, Error>,
+                get: @escaping CombineGetBody<State, Failure>,
                 set: @escaping SetBody<DataType>) {
         self.setBody = set
         self.executor = SelectorExecutor(key: key, getBody: get)

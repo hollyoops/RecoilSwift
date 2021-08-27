@@ -1,9 +1,9 @@
 public protocol ISelector: IRecoilValue {
     associatedtype State: Equatable
     
-//    associatedtype Failure: Error
+    associatedtype Failure: Error
 
-    var executor: SelectorExecutor<State> { get }
+    var executor: SelectorExecutor<State, Failure> { get }
 }
 
 extension ISelector {
@@ -11,7 +11,7 @@ extension ISelector {
         executor.initNode()
     }
     
-    public var loadable: LoadableContainer<State> {
+    public var loadable: LoadableContainer<State, Failure> {
         executor.loadable
     }
     
