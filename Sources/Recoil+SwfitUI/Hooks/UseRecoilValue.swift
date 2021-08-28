@@ -24,6 +24,26 @@ public func useRecoilState<Value: IRecoilState> (_ initialState: Value) -> Bindi
     useHook(RecoilStateHook(initialValue: initialState))
 }
 
+public func useRecoilValueLoadable<P: Equatable, Return: IRecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> Return.LoadableType {
+    let hook = RecoilLoableValueHook(initialValue: value.recoilValue,
+                                updateStrategy: .preserved(by: value.param))
+    
+    return useHook(hook)
+}
+
+public func useRecoilValueLoadble<Value: IRecoilValue>(_ value: Value) -> Value.LoadableType {
+    useHook(RecoilLoableValueHook(initialValue: value))
+}
+
+private struct RecoilLoableValueHook<T: IRecoilValue>: RecoilHook {
+    var initialValue: T
+    var updateStrategy: HookUpdateStrategy?
+
+    func value(coordinator: Coordinator) -> T.LoadableType {
+        coordinator.state.value.loadable
+    }
+}
+
 private protocol RecoilHook: Hook where State == Ref<T> {
     associatedtype T: IRecoilValue
     var initialValue: T { get }
@@ -101,4 +121,3 @@ private final class Ref<Value: IRecoilValue> {
         cancellable = nil
     }
 }
-
