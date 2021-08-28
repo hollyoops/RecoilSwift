@@ -21,7 +21,7 @@ public protocol Loadable {
     var error: Failure? { get }
 }
 
-extension Loadable {
+public extension Loadable {
     var isLoading: Bool {
         status == .loading
     }

@@ -8,44 +8,63 @@ struct ContentView: HookView {
 //    @RecoilState(BookShop.selectedCategoryState) var selectedCategoryState: BookCategory?
 
     var hookBody: some View {
-        let currentBooks = useRecoilValue(BookShop.currentBooksSel)
         let allBooks = useRecoilState(BookShop.allBookStore)
-        let selectedCategoryState = useRecoilState(BookShop.selectedCategoryState)
-        
-        let selectedCateName = selectedCategoryState.wrappedValue?.rawValue ?? "ALL"
-        let bookNames = useRecoilValue(BookShop.fetchRemoteBookNamesByCategory(selectedCateName))
-        
-        VStack {
-            HStack {
-                ForEach(BookCategory.allCases, id: \.self) { category in
-                    Button(category.rawValue) {
-                        print(category.rawValue)
-                        selectedCategoryState.wrappedValue = category
-                    }.padding()
-                }
-            }
-
-            ForEach(currentBooks, id: \.self) { itemView($0) }
-           
-            if let names = bookNames {
-                ForEach(names, id: \.self) {
-                    Text($0)
-                }
-            }
+        return VStack {
+            renderCategoryTabs()
+            renderBooks()
+            renderRemoteBookNames()
         }.padding()
          .onAppear {
              allBooks.wrappedValue = Mocks.ALL_BOOKS
          }
     }
-
-    func itemView(_ book: Book) -> some View {
-        HStack {
-            Text(book.name)
-            Spacer()
-            Text(book.category.rawValue)
+    
+    private func renderCategoryTabs() -> some View {
+        let selectedCategoryState = useRecoilState(BookShop.selectedCategoryState)
+        
+        return HStack {
+            ForEach(BookCategory.allCases, id: \.self) { category in
+                Button(category.rawValue) {
+                    print(category.rawValue)
+                    selectedCategoryState.wrappedValue = category
+                }.padding()
+            }
         }
-        .padding()
-        .background(Color.yellow)
+    }
+    
+    private func renderRemoteBookNames() -> some View {
+        let selectedCategory = useRecoilValue(BookShop.selectedCategoryState)
+        let categoryName = selectedCategory?.rawValue ?? "ALL"
+        let loadable = useRecoilValueLoadable(BookShop.fetchRemoteBookNamesByCategory(categoryName))
+        
+        return VStack {
+            if loadable.isLoading {
+                ProgressView()
+                    .padding(.vertical, 10)
+            }
+           
+            if let names = loadable.data {
+                ForEach(names, id: \.self) {
+                    Text($0)
+                }
+            }
+        }
+    }
+
+    private func renderBooks() -> some View {
+        let currentBooks = useRecoilValue(BookShop.currentBooksSel)
+        
+       return VStack {
+            ForEach(currentBooks, id: \.self) { book in
+                HStack {
+                    Text(book.name)
+                    Spacer()
+                    Text(book.category.rawValue)
+                }
+                .padding()
+                .background(Color.yellow)
+            }
+        }
     }
 }
 
