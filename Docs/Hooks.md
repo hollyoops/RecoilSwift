@@ -64,3 +64,27 @@ func someView() -> some View {
 }
 ```
 
+## useRecoilCallback
+
+This hook can be used to construct a callback that has access to a Recoil state and the ability to asynchronously update current Recoil state.
+
+You can use `useRecoilCallback()` to lazily read state without subscribing a component to re-render when the state changes.
+
+```swift
+ var hookBody: some View {
+        let callback = useRecoilCallback { context in
+            let someValue = context.get(someAtom)
+            
+            BookShop.getALLBooks()
+                .sink(receiveCompletion: { _ in }, receiveValue: { context.set(BookShop.allBookStore, $0) })
+                .store(in: context)
+        }
+        
+        return VStack {
+            Button("Get All Books") {
+                callback()
+            }
+            ...
+        }
+ }
+```

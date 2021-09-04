@@ -1,5 +1,6 @@
 import SwiftUI
 import RecoilSwift
+import Combine
 
 struct ContentView: HookView {
 //    @RecoilValue(BookShop.currentBooksSel) var currentBooks: [Book]
@@ -8,15 +9,23 @@ struct ContentView: HookView {
 //    @RecoilState(BookShop.selectedCategoryState) var selectedCategoryState: BookCategory?
 
     var hookBody: some View {
-        let allBooks = useRecoilState(BookShop.allBookStore)
+        let callback = useRecoilCallback { context in
+            // let someValue = context.get(someAtom)
+            
+            BookShop.getALLBooks()
+                .sink(receiveCompletion: { _ in }, receiveValue: { context.set(BookShop.allBookStore, $0) })
+                .store(in: context)
+        }
+        
         return VStack {
+            Button("Get All Books") {
+                callback()
+            }
             renderCategoryTabs()
             renderBooks()
             renderRemoteBookNames()
-        }.padding()
-         .onAppear {
-             allBooks.wrappedValue = Mocks.ALL_BOOKS
-         }
+        }
+        .padding()
     }
     
     private func renderCategoryTabs() -> some View {

@@ -154,7 +154,7 @@ func someView() -> some View {
   * [useRecoilState()][2] 
   * [Writeable selectors](Docs/Selectors.md)
   * [Async selectors](Docs/Selectors.md)
-* [Use in SwiftUI](Docs/RecoilValues.md)
+  * [useRecoilCallback()](Docs/Hooks.md#useRecoilCallback)
   * [useRecoilValueLoadable()](Docs/Hooks.md#useRecoilValueLoadable)
   * [selectorFamily()](Docs/Utils.md#Selector-Family)
 
