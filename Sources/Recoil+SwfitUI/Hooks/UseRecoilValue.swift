@@ -2,50 +2,50 @@
 import SwiftUI
 #endif
 
-public func useRecoilValue<P: Equatable, Return: IRecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> Return.DataType {
+public func useRecoilValue<P: Equatable, Return: RecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> Return.DataType {
     let hook = RecoilValueHook(initialValue: value.recoilValue,
                                 updateStrategy: .preserved(by: value.param))
     
     return useHook(hook)
 }
 
-public func useRecoilValue<Value: IRecoilValue>(_ initialState: Value) -> Value.DataType {
+public func useRecoilValue<Value: RecoilValue>(_ initialState: Value) -> Value.DataType {
     useHook(RecoilValueHook(initialValue: initialState))
 }
 
-public func useRecoilState<P: Equatable, Return: IRecoilState>(_ value: ParametricRecoilValue<P, Return>) -> Binding<Return.DataType> {
+public func useRecoilState<P: Equatable, Return: RecoilState>(_ value: ParametricRecoilValue<P, Return>) -> Binding<Return.DataType> {
     let hook = RecoilStateHook(initialValue: value.recoilValue,
                                updateStrategy: .preserved(by: value.param))
     
     return useHook(hook)
 }
 
-public func useRecoilState<Value: IRecoilState> (_ initialState: Value) -> Binding<Value.DataType> {
+public func useRecoilState<Value: RecoilState> (_ initialState: Value) -> Binding<Value.DataType> {
     useHook(RecoilStateHook(initialValue: initialState))
 }
 
-public func useRecoilValueLoadable<P: Equatable, Return: IRecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> Return.LoadableType {
-    let hook = RecoilLoableValueHook(initialValue: value.recoilValue,
+public func useRecoilValueLoadable<P: Equatable, Return: RecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> Return.LoadableType {
+    let hook = RecoilLoadableValueHook(initialValue: value.recoilValue,
                                 updateStrategy: .preserved(by: value.param))
     
     return useHook(hook)
 }
 
-public func useRecoilValueLoadble<Value: IRecoilValue>(_ value: Value) -> Value.LoadableType {
-    useHook(RecoilLoableValueHook(initialValue: value))
+public func useRecoilValueLoadble<Value: RecoilValue>(_ value: Value) -> Value.LoadableType {
+    useHook(RecoilLoadableValueHook(initialValue: value))
 }
 
-private struct RecoilLoableValueHook<T: IRecoilValue>: RecoilHook {
+private struct RecoilLoadableValueHook<T: RecoilValue>: RecoilHook {
     var initialValue: T
     var updateStrategy: HookUpdateStrategy?
 
     func value(coordinator: Coordinator) -> T.LoadableType {
-        coordinator.state.value.loadable
+        Store.shared.getLoadable(for: coordinator.state.value) as! T.LoadableType
     }
 }
 
 private protocol RecoilHook: Hook where State == Ref<T> {
-    associatedtype T: IRecoilValue
+    associatedtype T: RecoilValue
     var initialValue: T { get }
 }
 
@@ -65,23 +65,23 @@ private extension RecoilHook {
     }
 }
 
-private struct RecoilValueHook<T: IRecoilValue>: RecoilHook {
+private struct RecoilValueHook<T: RecoilValue>: RecoilHook {
     var initialValue: T
     var updateStrategy: HookUpdateStrategy?
 
     func value(coordinator: Coordinator) -> T.DataType {
-        coordinator.state.value.wrappedData
+        Getter()(coordinator.state.value)
     }
 }
 
-private struct RecoilStateHook<T: IRecoilState>: RecoilHook {
+private struct RecoilStateHook<T: RecoilState>: RecoilHook {
     var initialValue: T
     var updateStrategy: HookUpdateStrategy?
     
     func value(coordinator: Coordinator) -> Binding<T.DataType> {
         Binding(
             get: {
-                coordinator.state.value.wrappedData
+                Getter()(coordinator.state.value)
             },
             set: { newState in
                 assertMainThread()
@@ -90,34 +90,48 @@ private struct RecoilStateHook<T: IRecoilState>: RecoilHook {
                     return
                 }
 
-                coordinator.state.value.update(newState)
+                coordinator.state.value.update(with: newState)
                 coordinator.updateView()
             }
         )
     }
 }
 
-private final class Ref<Value: IRecoilValue> {
-    var value: Value
+private final class Ref<Value: RecoilValue> {
+    var value: Value {
+        willSet { cancelTasks() }
+    }
+    
     var isDisposed = false
-    var cancellable: ICancelable?
+    var cancellable: RecoilCancelable?
+    var storeSubscriber: Subscriber?
     
     init(initialState: Value) {
         value = initialState
     }
     
     func update(newValue: Value, viewUpdator: @escaping () -> Void) {
-        cancellable?.cancel()
         value = newValue
-        value.mount()
-        cancellable = value.observe {
+   
+        let storeRef = Store.shared
+        self.storeSubscriber = storeRef.addObserver(forKey: newValue.key) {
             viewUpdator()
         }
+        
+        let loadable = storeRef.getLoadable(for: newValue)
+        loadable.load()
     }
     
     func dispose() {
         isDisposed = true
+        cancelTasks()
+    }
+    
+    private func cancelTasks() {
         cancellable?.cancel()
+        storeSubscriber?.cancel()
+        
         cancellable = nil
+        storeSubscriber = nil
     }
 }

@@ -3,8 +3,8 @@ import Combine
 #endif
 
 public struct RecoilCallbackContext {
-    public let get: Getter = GetterFunction()
-    public let set: Setter = SetterFunction()
+    public let get = Getter()
+    public let set = Setter()
     public var store: (AnyCancellable) -> Void
 }
 

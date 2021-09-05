@@ -1,64 +1,36 @@
 import Foundation
 
-public class Atom<T: Equatable> {
-    private var subscribers: [Subscriber] = []
+public final class Atom<T: Equatable> {
     public let key: String
-
-    private var shouldNotify = false
-    public var value: T {
-        willSet {
-            if value != newValue {
-                shouldNotify = true
-            }
-        }
-        didSet {
-            if shouldNotify {
-                notify()
-                shouldNotify = false
-            }
-        }
-    }
-
-    public init(_ value: T) {
-        self.value = value
-        self.key = "Atom-\(UUID())"
-    }
-
-    public init(key: String, value: T) {
-        self.value = value
+    private var get: () throws -> T
+    
+    public init(key: String = "Atom-\(UUID())", _ value: T) {
         self.key = key
-    }
-
-    private func notify() {
-        subscribers.forEach { $0() }
+        get = { value }
     }
 }
 
-extension Atom: IRecoilState {
-    public typealias DataType = T
-    
-    public var loadable: LoadableContainer<T, Never> {
-        LoadableContainer.init(value: self.value)
-    }
-    
-    public func update(_ value: T) {
-        self.value = value
-    }
-
-    public func mount() {
+extension Atom: RecoilValue {
+    public func data(from loadable: Loadable) -> T {
+        let loadBox = loadable as! LoadBox<T, Never>
         
-    }
-    
-    public func observe(_ change: @escaping () -> Void) -> ICancelable {
-        let subscriber = Subscriber(change) { [weak self] sub in
-            self?.subscribers.removeAll { sub == $0 }
+        if let data = loadBox.data {
+            return data
         }
-        subscribers.append(subscriber)
-
-        return subscriber
+        
+        loadBox.load()
+        return loadBox.data!
     }
     
-    public var wrappedData: DataType {
-        value
+    public func makeLoadable() -> LoadBox<T, Never> {
+        let loader = SynchronousLoader(get)
+        return LoadBox(loader: loader)
+    }
+}
+
+extension Atom: RecoilWriteable {
+    public func update(with value: T) {
+        self.get = { value }
+        Store.shared.update(value: self)
     }
 }

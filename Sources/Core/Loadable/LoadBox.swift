@@ -1,7 +1,20 @@
-public class LoadableContainer<T: Equatable, E: Error>: Loadable {
-    public var data: T?
+public class LoadBox<T: Equatable, E: Error>: RecoilLoadable {
+    private var shouldNotify = false
+    public var data: T? {
+        willSet {
+            if data != newValue {
+                shouldNotify = true
+            }
+        }
+        didSet {
+            if shouldNotify {
+                valueDidChanged?()
+                shouldNotify = false
+            }
+        }
+    }
     public var error: E?
-    public var status: LoadingStatus = .solved
+    public var status = LoadingStatus.solved
 
     private let loader: LoaderProtocol
     private var valueDidChanged: (() -> Void)?
@@ -11,21 +24,11 @@ public class LoadableContainer<T: Equatable, E: Error>: Loadable {
         return !isSync
     }
 
-    init(value: T) {
-        self.loader = SynchronousLoader { value }
-        fullFill(value)
+    init(loader: LoaderProtocol) {
+        self.loader = loader
     }
 
-    init(synchronous body: @escaping SynchronousLoaderBody<T>) {
-        self.loader = SynchronousLoader(body)
-    }
-
-    @available(iOS 13, *)
-    init(combine body: @escaping CombineLoaderBody<T, E>) {
-        self.loader = CombineLoader(body)
-    }
-
-    func compute() {
+    public func load() {
         if status == .loading {
             self.loader.cancel()
         }
@@ -45,8 +48,8 @@ public class LoadableContainer<T: Equatable, E: Error>: Loadable {
     }
 }
 
-extension LoadableContainer: IObservableValue {
-    public func observe(_ change: @escaping () -> Void) -> ICancelable {
+extension LoadBox: RecoilObservable {
+    public func observe(_ change: @escaping () -> Void) -> RecoilCancelable {
         self.valueDidChanged = change
 
         let subscriber = Subscriber(change) { [weak self] _ in
@@ -57,17 +60,11 @@ extension LoadableContainer: IObservableValue {
     }
 }
 
-extension LoadableContainer {
+extension LoadBox {
     private func fullFill(_ value: T) {
-        let isValueChanged = value != data
-
         self.error = nil
         self.data = value
         self.status = .solved
-
-        if (isValueChanged) {
-            valueDidChanged?()
-        }
     }
 
     private func reject(_ error: E) {
@@ -82,8 +79,8 @@ extension LoadableContainer {
     }
 }
 
-extension LoadableContainer: Equatable {
-    public static func ==(lhs: LoadableContainer<T, E>, rhs: LoadableContainer<T, E>) -> Bool {
+extension LoadBox: Equatable {
+    public static func ==(lhs: LoadBox<T, E>, rhs: LoadBox<T, E>) -> Bool {
         lhs.status == rhs.status &&
         lhs.data == rhs.data
     }

@@ -1,7 +1,7 @@
-public protocol ICancelable {
+public protocol RecoilCancelable {
   func cancel()
 }
 
-public protocol IObservableValue {
-    func observe(_ change: @escaping () -> Void) -> ICancelable
+public protocol RecoilObservable {
+    func observe(_ change: @escaping () -> Void) -> RecoilCancelable
 }

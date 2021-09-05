@@ -50,12 +50,12 @@ extension BookShop {
         return books
     }
 
-    static let fetchRemoteBookNamesByCategory = selectorFamily { (category: String, get: ReadOnlyContext) -> AnyPublisher<[String], BookError> in
+    static let fetchRemoteBookNamesByCategory = selectorFamily { (category: String, get: ReadonlyContext) -> AnyPublisher<[String], BookError> in
         // let value = get(someAtom)
         getRemoteBookNames(by: category)
     }
     
-    static let getLocalBookNames = selectorFamily { (category: String, get: ReadOnlyContext) -> [String] in
+    static let getLocalBookNames = selectorFamily { (category: String, get: ReadonlyContext) -> [String] in
         ["local:\(category):Book1", "local:\(category):Book2"]
     }
 }

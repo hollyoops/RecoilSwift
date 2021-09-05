@@ -1,6 +1,6 @@
 import Foundation
 
-internal struct Subscriber {
+internal final class Subscriber {
     let id = UUID()
    
     typealias CancelCallback = (Subscriber) -> Void
@@ -19,7 +19,7 @@ internal struct Subscriber {
     }
 }
 
-extension Subscriber: ICancelable {
+extension Subscriber: RecoilCancelable {
     func cancel() {
         self.cancelCallback?(self)
     }
