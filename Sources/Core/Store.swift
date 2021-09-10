@@ -50,31 +50,31 @@ internal final class Store {
     func getLoadable<T: RecoilValue>(for value: T) -> Loadable {
         registerIfNotExist(for: value).loadable
     }
-
+    
     func makeConnect(key: String, upstream upKey: String) {
         guard
             let node = getNode(with: key),
             let upstreamNode =  getNode(with: upKey)
         else {
             dePrint("Cannot make connect! \(key)")
-            #if DEBUG
+#if DEBUG
             if states[key].isNone {
                 dePrint("Node not exist: \(key)")
             }
-
+            
             if states[upKey].isNone {
                 dePrint("Node not exist: \(upKey)")
             }
-            #endif
+#endif
             return
         }
-
+        
         if node.upstream.contains(upKey) {
             return
         }
-
+        
         // TODO: Check Circle Reference
-
+        
         // Add
         node.add(upstream: upKey)
         upstreamNode.add(downstream: key)
@@ -137,11 +137,11 @@ internal final class Store {
             self?.nodeValueChanged(key: value.key)
         }
         
-       return loadBox
+        return loadBox
     }
     
     private func getSubscribers(forKey key: String) -> [Subscriber]? {
-         subscriberMap[key]
+        subscriberMap[key]
     }
     
     private func notifyChanged(forKey key: String) {
@@ -150,7 +150,7 @@ internal final class Store {
         }
         subscribers.forEach { $0() }
     }
-
+    
     private func nodeValueChanged(key: String) {
         guard let node = getNode(with: key) else {
             return

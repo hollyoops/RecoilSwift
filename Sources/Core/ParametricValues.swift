@@ -7,9 +7,9 @@ public struct ParametricRecoilValue<P, T: RecoilValue> {
     let param: P
 }
 
-public typealias ParametricGetBody<P, T> = (P, ReadonlyContext) -> T
+public typealias ParametricGetBody<P, T> = (P, Getter) -> T
 
 @available(iOS 13, *)
-public typealias ParametricCombineGetBody<P, T,  E: Error> = (P, ReadonlyContext) throws -> AnyPublisher<T, E>
+public typealias ParametricCombineGetBody<P, T,  E: Error> = (P, Getter) throws -> AnyPublisher<T, E>
 
 public typealias FamilyFunc<P, T: RecoilValue> = (P) -> ParametricRecoilValue<P, T>

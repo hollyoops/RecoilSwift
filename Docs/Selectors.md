@@ -56,7 +56,7 @@ struct YourView: View {
 ## Async Selector
 
 ```swift
-let remoteCategoriesSelector = selector { (get: ReadonlyContext) -> AnyPublisher<[String], Error> in
+let remoteCategoriesSelector = selector { (get: Getter) -> AnyPublisher<[String], Error> in
     Deferred {
         Future { promise in
            ...

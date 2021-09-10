@@ -3,22 +3,17 @@ import RecoilSwift
 import Combine
 
 struct ContentView: HookView {
-//    @RecoilValue(BookShop.currentBooksSel) var currentBooks: [Book]
-//    @RecoilValue(BookShop.fetchRemoteBookNames) var bookNames: [String]?
-//    @RecoilState(BookShop.allBookStore) var allBooks: [Book]
-//    @RecoilState(BookShop.selectedCategoryState) var selectedCategoryState: BookCategory?
-
     var hookBody: some View {
         let callback = useRecoilCallback { context in
             // let someValue = context.get(someAtom)
             
             BookShop.getALLBooks()
-                .sink(receiveCompletion: { _ in }, receiveValue: { context.set(BookShop.allBookStore, $0) })
+                .sink(receiveCompletion: { _ in }, receiveValue: { context.set(BookShop.allBookState, $0) })
                 .store(in: context)
         }
         
         return VStack {
-            Button("Get All Books") {
+            Button("fetch books") {
                 callback()
             }
             renderCategoryTabs()
@@ -48,6 +43,7 @@ struct ContentView: HookView {
         
         return VStack {
             if loadable.isLoading {
+                Text("Automatic fetching names...")
                 ProgressView()
                     .padding(.vertical, 10)
             }
@@ -61,7 +57,7 @@ struct ContentView: HookView {
     }
 
     private func renderBooks() -> some View {
-        let currentBooks = useRecoilValue(BookShop.currentBooksSel)
+        let currentBooks = useRecoilValue(BookShop.currentBooks)
         
        return VStack {
             ForEach(currentBooks, id: \.self) { book in

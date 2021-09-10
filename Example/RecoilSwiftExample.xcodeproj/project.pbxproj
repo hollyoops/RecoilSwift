@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,7 +16,7 @@
 		EE023C9026AD98CD002EBF0C /* Quarter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE023C8C26AD98CD002EBF0C /* Quarter.swift */; };
 		EE023C9126AD98CD002EBF0C /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE023C8D26AD98CD002EBF0C /* Book.swift */; };
 		EE023C9226AD98CD002EBF0C /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE023C8E26AD98CD002EBF0C /* Mocks.swift */; };
-		EE023C9326AD98CD002EBF0C /* BookShopGlobal.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE023C8F26AD98CD002EBF0C /* BookShopGlobal.swift */; };
+		EE023C9326AD98CD002EBF0C /* BookShop.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE023C8F26AD98CD002EBF0C /* BookShop.swift */; };
 		F8A23484346E049FB65F8685 /* Pods_RecoilSwiftExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50409628D206510C6539F8DE /* Pods_RecoilSwiftExample.framework */; };
 /* End PBXBuildFile section */
 
@@ -35,7 +35,7 @@
 		EE023C8C26AD98CD002EBF0C /* Quarter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Quarter.swift; sourceTree = "<group>"; };
 		EE023C8D26AD98CD002EBF0C /* Book.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
 		EE023C8E26AD98CD002EBF0C /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
-		EE023C8F26AD98CD002EBF0C /* BookShopGlobal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BookShopGlobal.swift; sourceTree = "<group>"; };
+		EE023C8F26AD98CD002EBF0C /* BookShop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BookShop.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,7 +56,6 @@
 				93A4B12EDA1146C8E2B4EDEA /* Pods-RecoilSwiftExample.debug.xcconfig */,
 				0685FD532F6BAF3D4032452B /* Pods-RecoilSwiftExample.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -83,7 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				EE023C7726AD98A3002EBF0C /* AppDelegate.swift */,
-				EE023C8F26AD98CD002EBF0C /* BookShopGlobal.swift */,
+				EE023C8F26AD98CD002EBF0C /* BookShop.swift */,
 				EE023C7B26AD98A3002EBF0C /* ContentView.swift */,
 				EE023C7926AD98A3002EBF0C /* SceneDelegate.swift */,
 				EE023C8B26AD98CD002EBF0C /* Models */,
@@ -247,7 +246,7 @@
 				EE023C7A26AD98A3002EBF0C /* SceneDelegate.swift in Sources */,
 				EE023C9126AD98CD002EBF0C /* Book.swift in Sources */,
 				EE023C7C26AD98A3002EBF0C /* ContentView.swift in Sources */,
-				EE023C9326AD98CD002EBF0C /* BookShopGlobal.swift in Sources */,
+				EE023C9326AD98CD002EBF0C /* BookShop.swift in Sources */,
 				EE023C9226AD98CD002EBF0C /* Mocks.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

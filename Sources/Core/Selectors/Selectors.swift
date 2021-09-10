@@ -4,12 +4,6 @@ import Foundation
 import Combine
 #endif
 
-public typealias ReadonlyContext = Getter
-public struct MutableContext {
-    let get: Getter
-    let set: Setter
-}
-
 public typealias GetBody<T> = (Getter) throws -> T
 public typealias SetBody<T> = (MutableContext, T) -> Void
 

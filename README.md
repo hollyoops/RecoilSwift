@@ -41,13 +41,13 @@ pod 'RecoilSwift'
 ## State Management Data Flow
 
 ```
-    ← ← ← ← ← ← ← ← ← atoms ← ← ← ← ← ← ← ←
-    ↓                                     ↑ 
-    ↓                                     ↑
-selectors                       set / writeable selectors 
-    ↓                                     ↑ 
-    ↓                                     ↑                                               
-    → → → → → → → view(hooks) → → → → → → →
+       ← ← ← ← ← ← ← ← ← ← ← atoms ← ← ← ← ← ← ← ← ← ← ← ← ← ←
+       ↓                                                     ↑ 
+       ↓                                                     ↑
+selectors/callback                              mutable selectors/callback    
+       ↓                                                     ↑ 
+       ↓                                                     ↑
+       → → → → → → → → → → → view(hooks) → → → → → → → → → → →
 ```
 
 ![<img src="image.png" width="700" height="378"/>](./Docs/Images/Flow.png)
@@ -70,7 +70,7 @@ let currentBooksSelector = selector { get -> [Book] in
 }
 
 // Create parameterized selector 
-let someSelector = selectorFamily { (id: String, get: ReadonlyContext) -> AnyPublisher<[String], Error> in
+let someSelector = selectorFamily { (id: String, get: Getter) -> AnyPublisher<[String], Error> in
     // Do some logic in here with id
 }
 ```
@@ -124,7 +124,7 @@ func someView() -> some View {
 
             // when data fulfill
             if let names = loadable.data {
-                dataView(allBook: names, onRetry: loadable.retry)
+                dataView(allBook: names, onRetry: loadable.load)
             }
         }
     }
@@ -144,7 +144,7 @@ func someView() -> some View {
 * State
   * [atom()](Docs/Atoms.md)
   * [selector()](Docs/Selectors.md)
-    * [ReadOnly selector](Docs/Selectors.md#Readonly-Selector)
+    * [Readonly selector](Docs/Selectors.md#Readonly-Selector)
     * [Writeable selectors](Docs/Selectors.md#Writeable-Selector)
     * [Async selectors](Docs/Selectors.md#Async-Selector)
   
@@ -152,8 +152,6 @@ func someView() -> some View {
 * Utils & Hooks
   * [useRecoilValue()][1]
   * [useRecoilState()][2] 
-  * [Writeable selectors](Docs/Selectors.md)
-  * [Async selectors](Docs/Selectors.md)
   * [useRecoilCallback()](Docs/Hooks.md#useRecoilCallback)
   * [useRecoilValueLoadable()](Docs/Hooks.md#useRecoilValueLoadable)
   * [selectorFamily()](Docs/Utils.md#Selector-Family)
@@ -163,7 +161,6 @@ func someView() -> some View {
 
 ## TODOs
 
-- [ ] [feature]Add `refresh` for loadable
 - [ ] [performance]Fix circular reference for selector
 - [ ] [performance]Caches value for selector
 - [ ] [feature]Make UIKit compatible

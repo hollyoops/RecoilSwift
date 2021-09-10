@@ -6,8 +6,8 @@ struct BookShop {}
 
 // Atoms
 extension BookShop {
-    static let selectedQuarterStore = Atom<Int?>(nil)
-    static let allBookStore = atom { [Book]() }
+    static let selectedQuarterState = Atom<Int?>(nil)
+    static let allBookState = atom { [Book]() }
     static let selectedCategoryState = Atom<BookCategory?>(nil)
 }
 
@@ -42,20 +42,20 @@ extension BookShop {
 
 // Selectors
 extension BookShop {
-    static let currentBooksSel = selector { get -> [Book] in
-        let books = get(allBookStore)
+    static let currentBooks = selector { get -> [Book] in
+        let books = get(allBookState)
         if let category = get(selectedCategoryState) {
             return books.filter { $0.category == category }
         }
         return books
     }
 
-    static let fetchRemoteBookNamesByCategory = selectorFamily { (category: String, get: ReadonlyContext) -> AnyPublisher<[String], BookError> in
+    static let fetchRemoteBookNamesByCategory = selectorFamily { (category: String, get: Getter) -> AnyPublisher<[String], BookError> in
         // let value = get(someAtom)
         getRemoteBookNames(by: category)
     }
     
-    static let getLocalBookNames = selectorFamily { (category: String, get: ReadonlyContext) -> [String] in
+    static let getLocalBookNames = selectorFamily { (category: String, get: Getter) -> [String] in
         ["local:\(category):Book1", "local:\(category):Book2"]
     }
 }
