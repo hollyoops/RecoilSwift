@@ -6,7 +6,7 @@ let package = Package(
     name: "RecoilSwift",
     
     platforms: [
-        .iOS(.v10),
+        .iOS(.v13),
         .macOS("99")
     ],
     
