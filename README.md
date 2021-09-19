@@ -10,7 +10,21 @@ Recoil is an alternate option to replace of the `Redux(reswift)` or `MVVM`.
 
 ## What is recoil
 
-[![Recoil](https://yt-embed.herokuapp.com/embed?v=_ISAA_Jt9kI)](https://www.youtube.com/watch?v=_ISAA_Jt9kI "Recoil")
+[![Watch the video](./Docs/Images/Recoil.png)](https://www.youtube.com/watch?v=_ISAA_Jt9kI)
+
+## State Management Data Flow
+
+```
+       ← ← ← ← ← ← ← ← ← ← ← atoms ← ← ← ← ← ← ← ← ← ← ← ← ← ←
+       ↓                                                     ↑ 
+       ↓                                                     ↑
+selectors/callback                              mutable selectors/callback    
+       ↓                                                     ↑ 
+       ↓                                                     ↑
+       → → → → → → → → → → → view(hooks) → → → → → → → → → → →
+```
+
+![<img src="image.png" width="700" height="378"/>](./Docs/Images/Flow.png)
 
 ## Requirements
 
@@ -37,20 +51,6 @@ RecoilSwift is available through CocoaPods. To install it, simply add the follow
 ```ruby
 pod 'RecoilSwift'
 ```
-
-## State Management Data Flow
-
-```
-       ← ← ← ← ← ← ← ← ← ← ← atoms ← ← ← ← ← ← ← ← ← ← ← ← ← ←
-       ↓                                                     ↑ 
-       ↓                                                     ↑
-selectors/callback                              mutable selectors/callback    
-       ↓                                                     ↑ 
-       ↓                                                     ↑
-       → → → → → → → → → → → view(hooks) → → → → → → → → → → →
-```
-
-![<img src="image.png" width="700" height="378"/>](./Docs/Images/Flow.png)
 
 ## Basic Usage
 
