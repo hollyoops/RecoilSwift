@@ -5,7 +5,7 @@ internal final class Store {
     private var subscriberMap: [String: [Subscriber]] = [:]
     static let shared = Store()
     
-    final class Node {
+    struct Node {
         let key: String
         private(set) var loadable: Loadable
         private(set) var upstream: Set<String> = []
@@ -16,15 +16,15 @@ internal final class Store {
             self.loadable = loadable
         }
         
-        func update(loadable: Loadable) {
+        mutating func update(loadable: Loadable) {
             self.loadable = loadable
         }
         
-        func add(upstream key: String) {
+        mutating func add(upstream key: String) {
             upstream.insert(key)
         }
         
-        func add(downstream key: String) {
+        mutating func add(downstream key: String) {
             downstream.insert(key)
         }
     }
@@ -53,8 +53,8 @@ internal final class Store {
     
     func makeConnect(key: String, upstream upKey: String) {
         guard
-            let node = getNode(with: key),
-            let upstreamNode =  getNode(with: upKey)
+            var node = getNode(with: key),
+            var upstreamNode = getNode(with: upKey)
         else {
             dePrint("Cannot make connect! \(key)")
 #if DEBUG
@@ -73,18 +73,38 @@ internal final class Store {
             return
         }
         
-        // TODO: Check Circle Reference
-        
-        // Add
-        node.add(upstream: upKey)
-        upstreamNode.add(downstream: key)
+        checkCircleRef(forKey: key, upstream: upKey) { [weak self] hasCircle in
+            if hasCircle {
+                debugPrint("Error! Detected circle ref in DAG! \(key)")
+                return
+            }
+
+            // Add
+            node.add(upstream: upKey)
+            upstreamNode.add(downstream: key)
+            self?.states[key] = node
+            self?.states[upKey] = upstreamNode
+        }
+    }
+
+    private func checkCircleRef(forKey key: String,
+                                upstream upKey: String,
+                                completion: @escaping (Bool) -> Void) {
+        DispatchQueue.global().async {
+            let checker = TopologySorting()
+            let ret = checker.checkCircleRef(in: self.states, forKey: key, upstream: upKey)
+    
+            DispatchQueue.main.sync {
+                completion(ret)
+            }
+        }
     }
     
     func update<T: RecoilValue>(value: T)  {
-        if let node = states[value.key] {
-            let loadable = makeLoadBox(from: value)
-            node.update(loadable: loadable)
-            loadable.load()
+        if var node = states[value.key] {
+            node.update(loadable: makeLoadBox(from: value))
+            states[value.key] = node
+            node.loadable.load()
         }  else {
             let node = register(value: value)
             node.loadable.load()

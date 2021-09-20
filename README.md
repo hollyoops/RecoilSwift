@@ -161,8 +161,8 @@ func someView() -> some View {
 
 ## TODOs
 
-- [ ] [performance]Fix circular reference for selector
-- [ ] [performance]Caches value for selector
+- [ ] [performance]avoid duplicated compute when rerender hook
+- [ ] [Bug]Use callback not work when you click refetch button while updating view
 - [ ] [feature]Make UIKit compatible
 
 ## Reference:
