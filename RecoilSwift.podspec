@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'RecoilSwift'
-  s.version          = '0.1.0'
+  s.version          = '0.2.0'
   s.summary          = 'RecoilSwift is a next generation state management library'
 
   s.description      = <<-DESC
