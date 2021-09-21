@@ -36,18 +36,15 @@ let tempCelsiusSelector = selector(
     }
 )
 
-struct YourView: View {
+func celsiusView() -> some View {
     // Writable Selector have to wrapped as Recoil state
-    @RecoilState(tempCelsiusSelector) var tempCelsius : Int
+    let tempCelsius = useRecoilState(tempCelsiusSelector)
     
-    var body: some View {
-        Text("Current \(tempCelsius)")
+    Text("Current \(tempCelsius)")
 
-        Button("Change temp") {
-            tempCelsius = 40
-            // or tempCelsius(40) 
-            // now the value of tempFahrenheitState is 104
-        }
+    Button("Change temp") {
+        tempCelsius.wrapperValue = 40
+        // now the value of tempFahrenheitState is 104
     }
 }
 ```
