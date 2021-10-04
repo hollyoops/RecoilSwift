@@ -84,7 +84,7 @@ struct YourView: RecoilView { // You have to implement the RecoilView protocol
     var hookBody: some View { 
      let currentBooks = useRecoilValue(currentBooksSelector)
 
-     let allBooks = useRecoilState(allBooksStore)
+     let allBooks = useRecoilState(allBooksStates)
 
      let loadable = useRecoilValueLoadable(fetchRemoteDataByID(someID))
       // Your UI Code
