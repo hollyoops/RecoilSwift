@@ -6,5 +6,7 @@ struct Mocks {
         .init(name: "How to avoid PUA", category: .emotion, publishDate: .q1),
         .init(name: "Master english in one day", category: .language, publishDate: .q2),
         .init(name: "Follow me to learn japaneses", category: .language, publishDate: .q2),
+        .init(name: "My GrandFather", category: .other, publishDate: .q2),
+        .init(name: "AWS in action", category: .other, publishDate: .q3),
     ]
 }

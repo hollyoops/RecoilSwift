@@ -5,6 +5,7 @@ public struct Book {
         case emotion
         case education
         case language
+        case other
     }
 
     var name: String
