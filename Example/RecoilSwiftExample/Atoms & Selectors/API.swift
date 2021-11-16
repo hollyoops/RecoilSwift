@@ -2,9 +2,11 @@ import RecoilSwift
 import Combine
 
 extension BookShop {
-    static let fetchRemoteBookNamesByCategory = selectorFamily { (category: String, get: Getter) -> AnyPublisher<[String], BookError> in
+    @available(iOS 15.0, *)
+    static let fetchRemoteBookNamesByCategory = selectorFamily { (category: String, get: Getter) async -> [String] in
         // let value = get(someAtom)
-        getRemoteBookNames(by: category)
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
+        return ["\(category):Book1", "\(category):Book2"]
     }
 }
 

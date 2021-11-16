@@ -17,6 +17,11 @@ public func selector<T: Equatable, E: Error>(_ getBody: @escaping CombineGetBody
     AsyncSelector(get: getBody)
 }
 
+@available(iOS 15.0, *)
+public func selector<T: Equatable>(_ getBody: @escaping AsyncGetBody<T>) -> AsyncSelector<T, Error> {
+    AsyncSelector(get: getBody)
+}
+
 public func selector<T: Equatable>(get getBody: @escaping GetBody<T>, set setBody: @escaping SetBody<T>) -> MutableSelector<T> {
     MutableSelector(get: getBody, set: setBody)
 }
@@ -38,6 +43,17 @@ public func selectorFamily<P, T: Equatable, E: Error>(
 ) -> FamilyFunc<P, AsyncSelector<T, E>> {
     
     return { (param: P) -> ParametricRecoilValue<P, AsyncSelector<T, E>> in
+        let body = curry(getBody)(param)
+        return ParametricRecoilValue(recoilValue: selector(body), param: param)
+    }
+}
+
+@available(iOS 15.0, *)
+public func selectorFamily<P, T: Equatable>(
+    _ getBody: @escaping ParametricAsyncGetBody<P, T>
+) -> FamilyFunc<P, AsyncSelector<T, Error>> {
+    
+    return { (param: P) -> ParametricRecoilValue<P, AsyncSelector<T, Error>> in
         let body = curry(getBody)(param)
         return ParametricRecoilValue(recoilValue: selector(body), param: param)
     }

@@ -6,7 +6,8 @@ struct AllBooksView: HookView {
         let callback = useRecoilCallback { context in
             // let someValue = context.get(someAtom)
             BookShop.getALLBooks()
-                .sink(receiveCompletion: { _ in }, receiveValue: { context.set(BookShop.allBookState, $0) })
+                .sink(receiveCompletion: { _ in },
+                      receiveValue: { context.set(BookShop.allBookState, $0) })
                 .store(in: context)
         }
         

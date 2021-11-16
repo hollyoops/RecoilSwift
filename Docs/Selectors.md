@@ -52,6 +52,19 @@ func celsiusView() -> some View {
 [More about writeable selector](https://recoiljs.org/docs/api-reference/core/selector/#writeable-selectors)
 ## Async Selector
 
+You can use use `async/await` or `Combine` to execute async task in iOS. For instance: 
+
+above iOS 15
+
+```swift
+let remoteCategoriesSelector = selector { (get: Getter) async -> [String] in
+    await someAPI()
+    ...
+}
+```
+
+below iOS 15
+
 ```swift
 let remoteCategoriesSelector = selector { (get: Getter) -> AnyPublisher<[String], Error> in
     Deferred {
@@ -60,7 +73,10 @@ let remoteCategoriesSelector = selector { (get: Getter) -> AnyPublisher<[String]
         }
     }.eraseToAnyPublisher()
 }
+```
 
+run the async tasks
+```swift
 func someView() -> some View {
   HookScope {
     var hookBody: some View {

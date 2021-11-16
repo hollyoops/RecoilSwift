@@ -34,8 +34,8 @@ public protocol RecoilAsyncReadable {
     associatedtype T: Equatable
     
     associatedtype E: Error = Error
-    
-    var get: CombineGetBody<T, E> { get }
+   
+    var get: AsyncGet { get }
 }
 
 extension RecoilAsyncReadable where Self: RecoilValue {
@@ -52,10 +52,7 @@ extension RecoilAsyncReadable where Self: RecoilValue {
     }
     
     public func makeLoadable() -> LoadBox<T, E> {
-        let getFn = self.get
-        let key = self.key
-        let loader = CombineLoader { try getFn(Getter(key)) }
-        return LoadBox(loader: loader)
+        return LoadBox(loader: get.toLoader(for: self.key))
     }
 }
 

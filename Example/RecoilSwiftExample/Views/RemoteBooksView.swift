@@ -3,11 +3,20 @@ import RecoilSwift
 
 struct RemoteBooksView: HookView {
     var hookBody: some View {
+        if #available(iOS 15, *)  {
+            bookNameViews
+        } else {
+            EmptyView()
+        }
+    }
+    
+    @available(iOS 15.0, *)
+    @ViewBuilder var bookNameViews: some View {
         let selectedCategory = useRecoilValue(BookShop.selectedCategoryState)
         let categoryName = selectedCategory?.rawValue ?? "ALL"
         let loadable = useRecoilValueLoadable(BookShop.fetchRemoteBookNamesByCategory(categoryName))
         
-        return VStack {
+        VStack {
             if loadable.isLoading {
                 Text("Automatic fetching names...")
                 ProgressView()

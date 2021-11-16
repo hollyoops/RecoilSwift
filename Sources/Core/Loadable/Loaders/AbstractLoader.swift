@@ -2,7 +2,7 @@
 import Combine
 #endif
 
-internal protocol PromiseLikeProtocol {
+public protocol PromiseLikeProtocol {
     @discardableResult
     func then<T>(_ cb: @escaping (T) -> Void) -> Self
     
@@ -13,7 +13,7 @@ internal protocol PromiseLikeProtocol {
     func `catch`<E: Error>(_ cb: @escaping (E) -> Void) -> Self
 }
 
-internal protocol LoaderProtocol {
+public protocol LoaderProtocol {
     func cancel()
     
     func run() -> Void

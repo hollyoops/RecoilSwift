@@ -94,14 +94,11 @@ struct YourView: RecoilView { // You have to implement the RecoilView protocol
 
 ## Advance Usage
 
-**Async task**
+**Async task above iOS 15**
 ```Swift
-let fetchRemoteDataById = selectorFamily { (id: String, get: ReadonlyContext) -> AnyPublisher<[String], Error> in
-      Deferred {
-        Future { promise in
-              // Do some logic in here with id
-        }
-    }.eraseToAnyPublisher()
+let fetchRemoteDataById = selectorFamily { (id: String, get: ReadonlyContext) async -> [String] in
+   let posts = await fetchAllData()
+   return posts[id]
 }
 
 // In some function
@@ -128,6 +125,18 @@ func someView() -> some View {
             }
         }
     }
+}
+```
+
+**Below iOS 15 you can use Combine to run async tasks...**
+
+```Swift
+let fetchRemoteDataById = selectorFamily { (id: String, get: ReadonlyContext) -> AnyPublisher<[String], Error> in
+      Deferred {
+        Future { promise in
+              // Do some logic in here with id
+        }
+    }.eraseToAnyPublisher()
 }
 ```
 
