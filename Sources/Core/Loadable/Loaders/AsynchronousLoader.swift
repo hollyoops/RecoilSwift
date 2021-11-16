@@ -13,10 +13,14 @@ class AsynchronousLoader<T: Equatable>: AbstractLoader<T> {
         Task {
             do {
                 let value = try await body()
-                fireSuccess(value)
-                fireFinish()
+                await MainActor.run {
+                    fireSuccess(value)
+                    fireFinish()
+                }
             } catch {
-                fireError(error)
+                await MainActor.run {
+                    fireError(error)
+                }
             }
         }
     }
