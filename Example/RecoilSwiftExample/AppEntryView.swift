@@ -2,15 +2,15 @@ import SwiftUI
 import RecoilSwift
 import Combine
 
-struct ContentView: View {
+struct AppEntryView: View {
     var body: some View {
         MainTabBar()
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct AppEntryView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        AppEntryView()
             .previewLayout(PreviewLayout.sizeThatFits)
             .padding()
             .previewDisplayName("Default preview")
