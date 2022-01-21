@@ -13,7 +13,7 @@ public struct MainTabBar: View {
                     Label("Cart", systemImage: "cart")
                 }
             
-            RemoteBooksView()
+            RemoteControllView()
                 .tabItem {
                     Label("Remote", systemImage: "externaldrive.badge.icloud")
                 }

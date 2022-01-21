@@ -15,8 +15,9 @@
 		EE92C6992743C38200A003BF /* FilterInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE92C6982743C38200A003BF /* FilterInfoView.swift */; };
 		EE92C69B2743C3C000A003BF /* BooksContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE92C69A2743C3C000A003BF /* BooksContent.swift */; };
 		EE92C69E2743C59400A003BF /* CartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE92C69D2743C59400A003BF /* CartView.swift */; };
+		EE99DF79279B1D46007BD272 /* AllBooks.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE99DF78279B1D46007BD272 /* AllBooks.swift */; };
 		EEBB99392744D557007D2581 /* MainTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99272744D557007D2581 /* MainTabBar.swift */; };
-		EEBB993B2744D557007D2581 /* RemoteBooksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB992B2744D557007D2581 /* RemoteBooksView.swift */; };
+		EEBB993B2744D557007D2581 /* AddBookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB992B2744D557007D2581 /* AddBookView.swift */; };
 		EEBB993C2744D557007D2581 /* AppEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB992C2744D557007D2581 /* AppEntryView.swift */; };
 		EEBB993D2744D557007D2581 /* AllBooksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB992E2744D557007D2581 /* AllBooksView.swift */; };
 		EEBB993E2744D557007D2581 /* DB.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99312744D557007D2581 /* DB.swift */; };
@@ -26,6 +27,9 @@
 		EEBB99422744D557007D2581 /* Quarter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99362744D557007D2581 /* Quarter.swift */; };
 		EEBB99432744D557007D2581 /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99372744D557007D2581 /* Book.swift */; };
 		EEBB99442744D557007D2581 /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99382744D557007D2581 /* Mocks.swift */; };
+		EEBC589627DB4B7400987CD2 /* MoreUsage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589527DB4B7400987CD2 /* MoreUsage.swift */; };
+		EEBC589827DB4B7400987CD2 /* LoadableExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589727DB4B7400987CD2 /* LoadableExampleView.swift */; };
+		EEBC589A27DD0AEE00987CD2 /* RemoteControllView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589927DD0AEE00987CD2 /* RemoteControllView.swift */; };
 		F8A23484346E049FB65F8685 /* Pods_RecoilSwiftExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50409628D206510C6539F8DE /* Pods_RecoilSwiftExample.framework */; };
 /* End PBXBuildFile section */
 
@@ -43,8 +47,9 @@
 		EE92C6982743C38200A003BF /* FilterInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterInfoView.swift; sourceTree = "<group>"; };
 		EE92C69A2743C3C000A003BF /* BooksContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooksContent.swift; sourceTree = "<group>"; };
 		EE92C69D2743C59400A003BF /* CartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CartView.swift; sourceTree = "<group>"; };
+		EE99DF78279B1D46007BD272 /* AllBooks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllBooks.swift; sourceTree = "<group>"; };
 		EEBB99272744D557007D2581 /* MainTabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBar.swift; sourceTree = "<group>"; };
-		EEBB992B2744D557007D2581 /* RemoteBooksView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteBooksView.swift; sourceTree = "<group>"; };
+		EEBB992B2744D557007D2581 /* AddBookView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddBookView.swift; sourceTree = "<group>"; };
 		EEBB992C2744D557007D2581 /* AppEntryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppEntryView.swift; sourceTree = "<group>"; };
 		EEBB992E2744D557007D2581 /* AllBooksView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AllBooksView.swift; sourceTree = "<group>"; };
 		EEBB99312744D557007D2581 /* DB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DB.swift; sourceTree = "<group>"; };
@@ -54,6 +59,9 @@
 		EEBB99362744D557007D2581 /* Quarter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Quarter.swift; sourceTree = "<group>"; };
 		EEBB99372744D557007D2581 /* Book.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
 		EEBB99382744D557007D2581 /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
+		EEBC589527DB4B7400987CD2 /* MoreUsage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreUsage.swift; sourceTree = "<group>"; };
+		EEBC589727DB4B7400987CD2 /* LoadableExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadableExampleView.swift; sourceTree = "<group>"; };
+		EEBC589927DD0AEE00987CD2 /* RemoteControllView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControllView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,7 +141,7 @@
 			children = (
 				EE92C69C2743C59400A003BF /* Cart */,
 				EEBB99262744D557007D2581 /* Home */,
-				EEBB992A2744D557007D2581 /* RemoteBookNames */,
+				EEBB992A2744D557007D2581 /* RemoteControll */,
 				EEBB992D2744D557007D2581 /* BookList */,
 			);
 			path = Features;
@@ -147,12 +155,14 @@
 			path = Home;
 			sourceTree = "<group>";
 		};
-		EEBB992A2744D557007D2581 /* RemoteBookNames */ = {
+		EEBB992A2744D557007D2581 /* RemoteControll */ = {
 			isa = PBXGroup;
 			children = (
-				EEBB992B2744D557007D2581 /* RemoteBooksView.swift */,
+				EEBB992B2744D557007D2581 /* AddBookView.swift */,
+				EEBC589927DD0AEE00987CD2 /* RemoteControllView.swift */,
+				EEBC589427DB4B7400987CD2 /* MoreUsage */,
 			);
-			path = RemoteBookNames;
+			path = RemoteControll;
 			sourceTree = "<group>";
 		};
 		EEBB992D2744D557007D2581 /* BookList */ = {
@@ -170,6 +180,7 @@
 			children = (
 				EEBB99302744D557007D2581 /* Atoms & Selectors */,
 				EEBB99352744D557007D2581 /* Models */,
+				EE99DF78279B1D46007BD272 /* AllBooks.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -193,6 +204,15 @@
 				EEBB99382744D557007D2581 /* Mocks.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		EEBC589427DB4B7400987CD2 /* MoreUsage */ = {
+			isa = PBXGroup;
+			children = (
+				EEBC589527DB4B7400987CD2 /* MoreUsage.swift */,
+				EEBC589727DB4B7400987CD2 /* LoadableExampleView.swift */,
+			);
+			path = MoreUsage;
 			sourceTree = "<group>";
 		};
 		EED6FD5826AD996E0076F145 /* Packages */ = {
@@ -324,16 +344,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEBC589627DB4B7400987CD2 /* MoreUsage.swift in Sources */,
 				EEBB99422744D557007D2581 /* Quarter.swift in Sources */,
 				EEBB993C2744D557007D2581 /* AppEntryView.swift in Sources */,
+				EEBC589827DB4B7400987CD2 /* LoadableExampleView.swift in Sources */,
+				EE99DF79279B1D46007BD272 /* AllBooks.swift in Sources */,
 				EEBB993E2744D557007D2581 /* DB.swift in Sources */,
 				EEBB993D2744D557007D2581 /* AllBooksView.swift in Sources */,
 				EEBB99392744D557007D2581 /* MainTabBar.swift in Sources */,
 				EEBB99402744D557007D2581 /* API.swift in Sources */,
 				EE92C69B2743C3C000A003BF /* BooksContent.swift in Sources */,
 				EE023C7826AD98A3002EBF0C /* AppDelegate.swift in Sources */,
-				EEBB993B2744D557007D2581 /* RemoteBooksView.swift in Sources */,
+				EEBB993B2744D557007D2581 /* AddBookView.swift in Sources */,
 				EEBB993F2744D557007D2581 /* Atoms.swift in Sources */,
+				EEBC589A27DD0AEE00987CD2 /* RemoteControllView.swift in Sources */,
 				EEBB99412744D557007D2581 /* Business.swift in Sources */,
 				EEBB99442744D557007D2581 /* Mocks.swift in Sources */,
 				EEBB99432744D557007D2581 /* Book.swift in Sources */,

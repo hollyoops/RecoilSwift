@@ -7,7 +7,7 @@ struct BooksContent: HookView {
             // let someValue = context.get(someAtom)
             BookShop.getALLBooks()
                 .sink(receiveCompletion: { _ in },
-                      receiveValue: { context.set(BookShop.allBookState, $0) })
+                      receiveValue: { context.set(AllBook.allBookState, $0) })
                 .store(in: context)
         }
         

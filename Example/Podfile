@@ -4,4 +4,5 @@ platform :ios, '14.0'
 
 target 'RecoilSwiftExample' do
   pod 'RecoilSwift', :path => '../', :testspecs => ['Tests']
+  pod 'ReactiveForm'
 end

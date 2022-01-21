@@ -1,4 +1,4 @@
-public enum Quarter {
+public enum Quarter: String, CaseIterable {
     case q1
     case q2
     case q3
