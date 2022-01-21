@@ -12,7 +12,7 @@ struct LoadableExampleView: HookView {
   
   @available(iOS 15.0, *)
   @ViewBuilder var bookNameViews: some View {
-    let selectedCategory = useRecoilValue(BookShop.selectedCategoryState)
+    let selectedCategory = useRecoilValue(BookList.selectedCategoryState)
     let categoryName = selectedCategory?.rawValue ?? "ALL"
     let loadable = useRecoilValueLoadable(BookShop.fetchRemoteBookNamesByCategory(categoryName))
     

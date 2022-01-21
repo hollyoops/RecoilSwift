@@ -5,8 +5,8 @@ struct AllBooksView: HookView {
     @State var isFilterVisible = false
     
     var hookBody: some View {
-        let currentBooks = useRecoilValue(BookShop.currentBooks)
-        let selectedCategoryState = useRecoilState(BookShop.selectedCategoryState)
+        let currentBooks = useRecoilValue(BookList.currentBooks)
+        let selectedCategoryState = useRecoilState(BookList.selectedCategoryState)
         
         NavigationView {
             BooksContent()

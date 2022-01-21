@@ -16,14 +16,14 @@
 		EE92C69B2743C3C000A003BF /* BooksContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE92C69A2743C3C000A003BF /* BooksContent.swift */; };
 		EE92C69E2743C59400A003BF /* CartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE92C69D2743C59400A003BF /* CartView.swift */; };
 		EE99DF79279B1D46007BD272 /* AllBooks.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE99DF78279B1D46007BD272 /* AllBooks.swift */; };
+		EE99DF7B279B211B007BD272 /* BookListService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE99DF7A279B211B007BD272 /* BookListService.swift */; };
 		EEBB99392744D557007D2581 /* MainTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99272744D557007D2581 /* MainTabBar.swift */; };
 		EEBB993B2744D557007D2581 /* AddBookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB992B2744D557007D2581 /* AddBookView.swift */; };
 		EEBB993C2744D557007D2581 /* AppEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB992C2744D557007D2581 /* AppEntryView.swift */; };
 		EEBB993D2744D557007D2581 /* AllBooksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB992E2744D557007D2581 /* AllBooksView.swift */; };
 		EEBB993E2744D557007D2581 /* DB.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99312744D557007D2581 /* DB.swift */; };
-		EEBB993F2744D557007D2581 /* Atoms.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99322744D557007D2581 /* Atoms.swift */; };
 		EEBB99402744D557007D2581 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99332744D557007D2581 /* API.swift */; };
-		EEBB99412744D557007D2581 /* Business.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99342744D557007D2581 /* Business.swift */; };
+		EEBB99412744D557007D2581 /* BookListRecoil.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99342744D557007D2581 /* BookListRecoil.swift */; };
 		EEBB99422744D557007D2581 /* Quarter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99362744D557007D2581 /* Quarter.swift */; };
 		EEBB99432744D557007D2581 /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99372744D557007D2581 /* Book.swift */; };
 		EEBB99442744D557007D2581 /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99382744D557007D2581 /* Mocks.swift */; };
@@ -48,14 +48,14 @@
 		EE92C69A2743C3C000A003BF /* BooksContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooksContent.swift; sourceTree = "<group>"; };
 		EE92C69D2743C59400A003BF /* CartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CartView.swift; sourceTree = "<group>"; };
 		EE99DF78279B1D46007BD272 /* AllBooks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllBooks.swift; sourceTree = "<group>"; };
+		EE99DF7A279B211B007BD272 /* BookListService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookListService.swift; sourceTree = "<group>"; };
 		EEBB99272744D557007D2581 /* MainTabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBar.swift; sourceTree = "<group>"; };
 		EEBB992B2744D557007D2581 /* AddBookView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddBookView.swift; sourceTree = "<group>"; };
 		EEBB992C2744D557007D2581 /* AppEntryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppEntryView.swift; sourceTree = "<group>"; };
 		EEBB992E2744D557007D2581 /* AllBooksView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AllBooksView.swift; sourceTree = "<group>"; };
 		EEBB99312744D557007D2581 /* DB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DB.swift; sourceTree = "<group>"; };
-		EEBB99322744D557007D2581 /* Atoms.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Atoms.swift; sourceTree = "<group>"; };
 		EEBB99332744D557007D2581 /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
-		EEBB99342744D557007D2581 /* Business.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Business.swift; sourceTree = "<group>"; };
+		EEBB99342744D557007D2581 /* BookListRecoil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BookListRecoil.swift; sourceTree = "<group>"; };
 		EEBB99362744D557007D2581 /* Quarter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Quarter.swift; sourceTree = "<group>"; };
 		EEBB99372744D557007D2581 /* Book.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
 		EEBB99382744D557007D2581 /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
@@ -168,6 +168,8 @@
 		EEBB992D2744D557007D2581 /* BookList */ = {
 			isa = PBXGroup;
 			children = (
+				EEBB99342744D557007D2581 /* BookListRecoil.swift */,
+				EE99DF7A279B211B007BD272 /* BookListService.swift */,
 				EEBB992E2744D557007D2581 /* AllBooksView.swift */,
 				EE92C6982743C38200A003BF /* FilterInfoView.swift */,
 				EE92C69A2743C3C000A003BF /* BooksContent.swift */,
@@ -189,9 +191,7 @@
 			isa = PBXGroup;
 			children = (
 				EEBB99312744D557007D2581 /* DB.swift */,
-				EEBB99322744D557007D2581 /* Atoms.swift */,
 				EEBB99332744D557007D2581 /* API.swift */,
-				EEBB99342744D557007D2581 /* Business.swift */,
 			);
 			path = "Atoms & Selectors";
 			sourceTree = "<group>";
@@ -356,11 +356,11 @@
 				EE92C69B2743C3C000A003BF /* BooksContent.swift in Sources */,
 				EE023C7826AD98A3002EBF0C /* AppDelegate.swift in Sources */,
 				EEBB993B2744D557007D2581 /* AddBookView.swift in Sources */,
-				EEBB993F2744D557007D2581 /* Atoms.swift in Sources */,
 				EEBC589A27DD0AEE00987CD2 /* RemoteControllView.swift in Sources */,
-				EEBB99412744D557007D2581 /* Business.swift in Sources */,
+				EEBB99412744D557007D2581 /* BookListRecoil.swift in Sources */,
 				EEBB99442744D557007D2581 /* Mocks.swift in Sources */,
 				EEBB99432744D557007D2581 /* Book.swift in Sources */,
+				EE99DF7B279B211B007BD272 /* BookListService.swift in Sources */,
 				EE023C7A26AD98A3002EBF0C /* SceneDelegate.swift in Sources */,
 				EE92C69E2743C59400A003BF /* CartView.swift in Sources */,
 				EE92C6992743C38200A003BF /* FilterInfoView.swift in Sources */,
