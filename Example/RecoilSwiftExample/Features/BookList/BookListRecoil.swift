@@ -1,12 +1,12 @@
 import RecoilSwift
 
-// Atoms
+// MARK: - Atoms
 struct BookList {
   static let selectedCategoryState = Atom<BookCategory?>(nil)
   static let selectedQuarterState = Atom<Int?>(nil)
 }
 
-// Selectors
+// MARK: - Selectors
 extension BookList {
   static let currentBooks = selector { get -> [Book] in
     let books = get(AllBook.allBookState)

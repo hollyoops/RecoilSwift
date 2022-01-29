@@ -14,7 +14,7 @@ struct LoadableExampleView: HookView {
   @ViewBuilder var bookNameViews: some View {
     let selectedCategory = useRecoilValue(BookList.selectedCategoryState)
     let categoryName = selectedCategory?.rawValue ?? "ALL"
-    let loadable = useRecoilValueLoadable(BookShop.fetchRemoteBookNamesByCategory(categoryName))
+    let loadable = useRecoilValueLoadable(MoreUsage.fetchRemoteBookNamesByCategory(categoryName))
     
     VStack {
       if loadable.isLoading {
