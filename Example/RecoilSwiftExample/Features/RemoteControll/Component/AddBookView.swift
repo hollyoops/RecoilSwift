@@ -24,6 +24,7 @@ struct AddBookView: HookView {
   
   var hookBody: some View {
     let addBook = useRecoilCallback(AllBooks.addNew(context:newBook:))
+    let navigateTo = useRecoilCallback(Home.selectTab(_:tab:))
     
     Form {
       VStack(alignment: .leading) {
@@ -56,7 +57,9 @@ struct AddBookView: HookView {
       
       VStack(alignment: .center) {
         Button("Add Book") {
-          addBook(form.toBook())
+          if (addBook(form.toBook())) {
+            navigateTo(HomeTab.list)
+          }
         }.disabled(form.isInvalid)
       }
     }

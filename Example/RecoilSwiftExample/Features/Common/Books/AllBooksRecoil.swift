@@ -7,13 +7,16 @@ struct AllBooks {
 
 // MARK: - Action
 extension AllBooks {
-  static func addNew(context: RecoilCallbackContext, newBook: Book) {
+  static func addNew(context: RecoilCallbackContext, newBook: Book) -> Bool {
     let books = context.get(allBookState)
     let isAdded = books.contains { $0.name == newBook.name }
     
     if !isAdded {
       context.set(allBookState, books + [newBook])
+      return true
     }
+    
+    return false
   }
   
   /// You also can create a custom hooks like this:
