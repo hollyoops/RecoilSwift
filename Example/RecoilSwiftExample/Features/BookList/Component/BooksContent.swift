@@ -3,7 +3,7 @@ import RecoilSwift
 
 struct BooksContent: HookView {
   var hookBody: some View {
-    let callback = useRecoilCallback(BookList.getRemoteBooks)
+    let callback = useRecoilCallback(AllBooks.getFromRemote)
     let currentBooks = useRecoilValue(BookList.currentBooks)
     
     return VStack {

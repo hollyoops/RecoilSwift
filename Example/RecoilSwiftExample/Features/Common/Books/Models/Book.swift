@@ -19,7 +19,3 @@ public struct Book: Identifiable {
 extension Book: Hashable {
     
 }
-
-
-
-enum BookError: Error { }

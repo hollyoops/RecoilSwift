@@ -23,7 +23,7 @@ struct AddBookView: HookView {
   @StateObject var form = NewBookForm()
   
   var hookBody: some View {
-    let addBook = useRecoilCallback(AllBook.addBook(context:newBook:))
+    let addBook = useRecoilCallback(AllBooks.addNew(context:newBook:))
     
     Form {
       VStack(alignment: .leading) {

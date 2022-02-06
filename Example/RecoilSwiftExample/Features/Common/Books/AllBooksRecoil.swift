@@ -1,11 +1,13 @@
 import RecoilSwift
 
-struct AllBook {
-  // Atom
+// MARK: - Atom
+struct AllBooks {
   static let allBookState = atom { [Book]() }
+}
 
-  // Action
-  static func addBook(context: RecoilCallbackContext, newBook: Book) {
+// MARK: - Action
+extension AllBooks {
+  static func addNew(context: RecoilCallbackContext, newBook: Book) {
     let books = context.get(allBookState)
     let isAdded = books.contains { $0.name == newBook.name }
     
@@ -25,4 +27,13 @@ struct AllBook {
   ///      }
   ///    }
   ///  }
+  ///
+  
+  static func getFromRemote(_ context: RecoilCallbackContext) {
+    // let someValue = context.get(someAtom)
+    AllBooksService.getAllBooks()
+      .sink(receiveCompletion: { _ in },
+            receiveValue: { context.set(allBookState, $0) })
+      .store(in: context)
+  }
 }

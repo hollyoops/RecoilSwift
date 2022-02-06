@@ -1,8 +1,10 @@
 import Foundation
 import Combine
 
-struct BookListService {
-  static func getALLBooks() -> AnyPublisher<[Book], BookError> {
+enum BookError: Error { }
+
+struct AllBooksService {
+  static func getAllBooks() -> AnyPublisher<[Book], BookError> {
       Deferred {
           Future { promise in
               DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
