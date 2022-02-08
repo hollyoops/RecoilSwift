@@ -1,8 +1,8 @@
 PODS:
   - Nimble (9.2.1)
   - Quick (4.0.0)
-  - RecoilSwift (0.1.0)
-  - RecoilSwift/Tests (0.1.0):
+  - RecoilSwift (0.2.0)
+  - RecoilSwift/Tests (0.2.0):
     - Nimble
     - Quick
 
@@ -22,8 +22,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Nimble: e7e615c0335ee4bf5b0d786685451e62746117d5
   Quick: 6473349e43b9271a8d43839d9ba1c442ed1b7ac4
-  RecoilSwift: 00e5923b8b7ca3acc64a7bb6d57823e380aed453
+  RecoilSwift: 0722a49b53cef17d1c28f8cb9b52cccfc60dadbd
 
 PODFILE CHECKSUM: b94a3da39ce27f814c5349a9173a8b50ec05e206
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2

@@ -33,7 +33,7 @@ extension RecoilSyncReadable where Self: RecoilValue {
 public protocol RecoilAsyncReadable {
     associatedtype T: Equatable
     
-    associatedtype E: Error
+    associatedtype E: Error = Error
     
     var get: CombineGetBody<T, E> { get }
 }
