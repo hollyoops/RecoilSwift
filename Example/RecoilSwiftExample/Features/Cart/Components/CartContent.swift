@@ -14,23 +14,34 @@ struct CartContent: HookView {
     HStack {
       Text(item.book.name)
       Spacer()
-      actionView(item)
+      ActionView(item)
     }
     .padding()
   }
+}
+
+struct ActionView: HookView {
   
-  private func actionView(_ item: CartItem) -> some View {
+  private var cartItem: CartItem
+  
+  init(_ item: CartItem) {
+    self.cartItem = item
+  }
+  
+  var hookBody: some View {
+    let increaseCount = useRecoilCallback(Cart.increasItemCount(context:item:))
+    let decreaseCount = useRecoilCallback(Cart.decreasItemCount(context:item:))
     HStack(spacing: 10) {
       Button("-") {
-        
+        decreaseCount(cartItem)
       }
-      TextField("", text: .constant(String(item.count)))
+      TextField("", text: .constant(String(cartItem.count)))
         .multilineTextAlignment(.center)
         .frame(width: 20)
         .background(Color.white)
         .border(Color.black)
       Button("+") {
-        
+        increaseCount(cartItem)
       }
     }
   }
