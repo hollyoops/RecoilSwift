@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B770FC6327E06C2C00088B9F /* CartRecoil.swift in Sources */ = {isa = PBXBuildFile; fileRef = B770FC6227E06C2C00088B9F /* CartRecoil.swift */; };
+		B770FC6627E06DFF00088B9F /* CartItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B770FC6527E06DFF00088B9F /* CartItem.swift */; };
+		B770FC6827E06F2100088B9F /* CartContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B770FC6727E06F2100088B9F /* CartContent.swift */; };
 		EE023C7826AD98A3002EBF0C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE023C7726AD98A3002EBF0C /* AppDelegate.swift */; };
 		EE023C7A26AD98A3002EBF0C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE023C7926AD98A3002EBF0C /* SceneDelegate.swift */; };
 		EE023C7E26AD98A6002EBF0C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE023C7D26AD98A6002EBF0C /* Assets.xcassets */; };
@@ -38,6 +41,9 @@
 		0685FD532F6BAF3D4032452B /* Pods-RecoilSwiftExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecoilSwiftExample.release.xcconfig"; path = "Target Support Files/Pods-RecoilSwiftExample/Pods-RecoilSwiftExample.release.xcconfig"; sourceTree = "<group>"; };
 		50409628D206510C6539F8DE /* Pods_RecoilSwiftExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RecoilSwiftExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93A4B12EDA1146C8E2B4EDEA /* Pods-RecoilSwiftExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecoilSwiftExample.debug.xcconfig"; path = "Target Support Files/Pods-RecoilSwiftExample/Pods-RecoilSwiftExample.debug.xcconfig"; sourceTree = "<group>"; };
+		B770FC6227E06C2C00088B9F /* CartRecoil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartRecoil.swift; sourceTree = "<group>"; };
+		B770FC6527E06DFF00088B9F /* CartItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItem.swift; sourceTree = "<group>"; };
+		B770FC6727E06F2100088B9F /* CartContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CartContent.swift; sourceTree = "<group>"; };
 		EE023C7426AD98A3002EBF0C /* RecoilSwiftExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecoilSwiftExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE023C7726AD98A3002EBF0C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EE023C7926AD98A3002EBF0C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -87,6 +93,23 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		B770FC6427E06DEF00088B9F /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B770FC6527E06DFF00088B9F /* CartItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B770FC6927E06F2F00088B9F /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				EE92C69D2743C59400A003BF /* CartView.swift */,
+				B770FC6727E06F2100088B9F /* CartContent.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		EE023C6B26AD98A3002EBF0C = {
 			isa = PBXGroup;
 			children = (
@@ -132,7 +155,9 @@
 		EE92C69C2743C59400A003BF /* Cart */ = {
 			isa = PBXGroup;
 			children = (
-				EE92C69D2743C59400A003BF /* CartView.swift */,
+				B770FC6927E06F2F00088B9F /* Components */,
+				B770FC6427E06DEF00088B9F /* Models */,
+				B770FC6227E06C2C00088B9F /* CartRecoil.swift */,
 			);
 			path = Cart;
 			sourceTree = "<group>";
@@ -386,12 +411,15 @@
 				EE99DF9527DEC156007BD272 /* Book.swift in Sources */,
 				EE99DF7D279B29BF007BD272 /* MoreUsageRecoil.swift in Sources */,
 				EEBB99412744D557007D2581 /* BookListRecoil.swift in Sources */,
+				B770FC6327E06C2C00088B9F /* CartRecoil.swift in Sources */,
 				EE023C7A26AD98A3002EBF0C /* SceneDelegate.swift in Sources */,
+				B770FC6827E06F2100088B9F /* CartContent.swift in Sources */,
 				EE92C69E2743C59400A003BF /* CartView.swift in Sources */,
 				EE99DF7F279B29E7007BD272 /* MoreUsageService.swift in Sources */,
 				EE99DF9327DEC156007BD272 /* AllBooksRecoil.swift in Sources */,
 				EE92C6992743C38200A003BF /* FilterInfoView.swift in Sources */,
 				EE99DF9627DEC156007BD272 /* Mocks.swift in Sources */,
+				B770FC6627E06DFF00088B9F /* CartItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

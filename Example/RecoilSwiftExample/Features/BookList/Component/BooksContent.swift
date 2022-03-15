@@ -22,11 +22,20 @@ struct BooksContent: HookView {
   }
   
   private func allBooks(books: [Book]) -> some View {
-    List(books) { book in
+    let addToCart = useRecoilCallback(Cart.addToCart(context:newBook:))
+    return List(books) { book in
       HStack {
-        Text(book.name)
+        Text(book.name + "(\(book.category.rawValue))")
         Spacer()
-        Text(book.category.rawValue)
+        Button(action: {
+          addToCart(book)
+        }) {
+          Text("Add")
+            .font(Font.system(size: 12))
+        }
+        .frame(width: 35)
+        .background(Color.gray)
+        .cornerRadius(5)
       }
       .padding()
     }
