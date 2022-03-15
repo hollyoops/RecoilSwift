@@ -7,7 +7,7 @@ let package = Package(
     
     platforms: [
         .iOS(.v13),
-        .macOS("99")
+        .macOS(.v10_15)
     ],
     
     products: [
@@ -19,8 +19,6 @@ let package = Package(
     
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "4.0.0")), // dev
-        .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.2.0")), // dev
     ],
     
     targets: [
@@ -34,9 +32,7 @@ let package = Package(
         .testTarget(
             name: "RecoilSwiftTests",
             dependencies: [
-                "RecoilSwift",
-                "Quick",
-                "Nimble"
+                "RecoilSwift"
             ],
             path: "Tests"),
     ],

@@ -15,12 +15,10 @@ Pod::Spec.new do |s|
   s.platform = :ios, '13.0'
 
   s.source_files = 'Sources/**/*.swift'
-  s.exclude_files = 'Sources/**/*Spec.swift'
+  s.exclude_files = 'Sources/**/*Tests.swift'
   s.swift_version = '5'
   
   s.test_spec 'Tests' do |test_spec|
-    test_spec.source_files = 'Tests/**/*Spec.Swift', 'Sources/**/*Spec.swift'
-    test_spec.dependency 'Quick'
-    test_spec.dependency 'Nimble'
+    test_spec.source_files = 'Tests/**/*Tests.Swift', 'Sources/**/*Tests.swift'
   end
 end

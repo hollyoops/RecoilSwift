@@ -9,6 +9,11 @@ public func useRecoilValue<P: Equatable, Return: RecoilValue>(_ value: Parametri
     return useHook(hook)
 }
 
+/// A hook will subscribe the component to re-render if there are changing in the Recoil state.
+/// - Parameters:
+///   - initialState: a recoil state (`atom` or `selector`)
+/// - Returns: return a readable inner value that wrapped in recoil state.
+/// if the state is async state, it return will `'value?'`, otherwise it return `'value'`
 public func useRecoilValue<Value: RecoilValue>(_ initialState: Value) -> Value.DataType {
     useHook(RecoilValueHook(initialValue: initialState))
 }
@@ -20,6 +25,11 @@ public func useRecoilState<P: Equatable, Return: RecoilState>(_ value: Parametri
     return useHook(hook)
 }
 
+/// A hook will subscribe the component to re-render if there are changing in the Recoil state.
+/// - Parameters:
+///   - initialState: a writeable recoil state(`atom` or writeable `selector`)
+/// - Returns: return a ``Binding`` value that wrapped in recoil state.
+/// if the state is async state, it return will `'Binding<value?>'`, otherwise it return `'Binding<value>'`
 public func useRecoilState<Value: RecoilState> (_ initialState: Value) -> Binding<Value.DataType> {
     useHook(RecoilStateHook(initialValue: initialState))
 }
