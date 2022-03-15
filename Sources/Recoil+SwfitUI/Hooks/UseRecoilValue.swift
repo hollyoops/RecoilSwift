@@ -31,7 +31,9 @@ public func useRecoilState<P: Equatable, Return: RecoilState>(_ value: Parametri
 /// - Returns: return a ``Binding`` value that wrapped in recoil state.
 /// if the state is async state, it return will `'Binding<value?>'`, otherwise it return `'Binding<value>'`
 public func useRecoilState<Value: RecoilState> (_ initialState: Value) -> Binding<Value.DataType> {
-    useHook(RecoilStateHook(initialValue: initialState))
+  let hook = RecoilStateHook(initialValue: initialState,
+                             updateStrategy: .preserved(by: initialState.key))
+  return useHook(hook)
 }
 
 public func useRecoilValueLoadable<P: Equatable, Return: RecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> Return.LoadableType {
@@ -101,7 +103,6 @@ private struct RecoilStateHook<T: RecoilState>: RecoilHook {
                 }
 
                 coordinator.state.value.update(with: newState)
-                coordinator.updateView()
             }
         )
     }
@@ -113,7 +114,6 @@ private final class Ref<Value: RecoilValue> {
     }
     
     var isDisposed = false
-    var cancellable: RecoilCancelable?
     var storeSubscriber: Subscriber?
     
     init(initialState: Value) {
@@ -138,10 +138,8 @@ private final class Ref<Value: RecoilValue> {
     }
     
     private func cancelTasks() {
-        cancellable?.cancel()
         storeSubscriber?.cancel()
         
-        cancellable = nil
         storeSubscriber = nil
     }
 }

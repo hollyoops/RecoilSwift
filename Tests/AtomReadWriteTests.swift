@@ -20,4 +20,15 @@ final class AtomReadWriteTests: XCTestCase {
     XCTAssertEqual(tester.value, "rawValue")
   }
   
+  func testReadWriteAtom() {
+    let tester = HookTester {
+      useRecoilState(TestModule.stringAtom)
+    }
+    
+    XCTAssertEqual(tester.value.wrappedValue, "rawValue")
+    
+    tester.value.wrappedValue = "newValue"
+
+    XCTAssertEqual(tester.value.wrappedValue, "newValue")
+  }
 }
