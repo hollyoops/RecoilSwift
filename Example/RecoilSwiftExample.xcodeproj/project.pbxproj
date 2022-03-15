@@ -214,10 +214,10 @@
 			isa = PBXGroup;
 			children = (
 				EEBB992F2744D557007D2581 /* Common */,
-				EE92C69C2743C59400A003BF /* Cart */,
-				EEBB99262744D557007D2581 /* Home */,
-				EEBB992A2744D557007D2581 /* RemoteControll */,
 				EEBB992D2744D557007D2581 /* BookList */,
+				EE92C69C2743C59400A003BF /* Cart */,
+				EEBB992A2744D557007D2581 /* RemoteControll */,
+				EEBB99262744D557007D2581 /* Home */,
 			);
 			path = Features;
 			sourceTree = "<group>";

@@ -37,4 +37,3 @@ extension Cart {
     context.set(allCartItemState, items.map { $0.id == itm.id ? itm: $0 })
   }
 }
-
