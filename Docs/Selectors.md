@@ -26,14 +26,14 @@ A bi-directional selector receives the incoming value as a parameter and can use
 ```swift
 let tempFahrenheitState = atom(32)
 let tempCelsiusSelector = selector(
-    get: { get -> String
+      get: { get in
         let fahrenheit = get(tempFahrenheitState)
         return (fahrenheit - 32) * 5 / 9
-    },
-    set: { set, newValue in
+      },
+      set: { context, newValue in
         let newFahrenheit = (newValue * 9) / 5 + 32
-        set(tempFahrenheitState, newFahrenheit)
-    }
+        context.set(tempFahrenheitState, newFahrenheit)
+      }
 )
 
 func celsiusView() -> some View {

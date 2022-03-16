@@ -20,18 +20,6 @@ internal class TopologySorting {
     
     var queue = Queue<String>()
     
-    func prepareTable(with states: [String: Store.Node]) {
-        queue = Queue<String>()
-        
-        table = states.mapValues { node -> MetricNode in
-            let upstreamCount = node.upstream.count
-            if upstreamCount == 0 {
-                queue.enqueue(node.key)
-            }
-            return MetricNode(upstreamCount: upstreamCount, downstream: node.downstream)
-        }
-    }
-    
     func checkCircleRef(in states: [String: Store.Node],
                         forKey key: String,
                         upstream upKey: String) -> Bool {
@@ -39,16 +27,31 @@ internal class TopologySorting {
             return true
         }
         
-        prepareTable(with: states)
-        addNode(forKey: key, upstream: upKey)
+        prepareTable(with: states, key: key, upKey: upKey)
         
         while !queue.isEmpty {
             if let value = queue.dequeue() {
-                removeNode(forKey: value)
+                removeNodeFromTable(forKey: value)
             }
         }
         
         return table.count > 0
+    }
+    
+    private func prepareTable(with states: [String: Store.Node],
+                      key: String,
+                      upKey: String) {
+        table = states.mapValues { node -> MetricNode in
+            let upstreamCount = node.upstream.count
+            return MetricNode(upstreamCount: upstreamCount, downstream: node.downstream)
+        }
+        
+        addNode(forKey: key, upstream: upKey)
+        table.forEach { key, node in
+            if node.upstreamCount == 0 {
+                queue.enqueue(key)
+            }
+        }
     }
     
     private func increaseUpstream(forKey key: String) {
@@ -74,7 +77,7 @@ internal class TopologySorting {
             return
         }
 
-        node.appendDownstream(forKey: key)
+        node.appendDownstream(forKey: downstreamKey)
         table[key] = node
     }
     
@@ -83,7 +86,7 @@ internal class TopologySorting {
         appendDownstream(forKey: upKey, downstreamKey: key)
     }
     
-    private func removeNode(forKey key: String) {
+    private func removeNodeFromTable(forKey key: String) {
         guard let node = table[key] else {
             return
         }
