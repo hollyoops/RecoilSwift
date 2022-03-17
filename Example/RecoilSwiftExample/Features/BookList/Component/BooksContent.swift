@@ -38,6 +38,7 @@ struct BooksContent: HookView {
         .cornerRadius(5)
       }
       .padding()
+      .buttonStyle(PlainButtonStyle())
     }
   }
 }
