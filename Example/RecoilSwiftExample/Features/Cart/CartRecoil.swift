@@ -36,4 +36,10 @@ extension Cart {
     }
     context.set(allCartItemState, items.map { $0.id == itm.id ? itm: $0 })
   }
+  
+  static func deleteItem(context: RecoilCallbackContext, atIndex index: IndexSet) {
+    var items = context.get(allCartItemState)
+    items.remove(atOffsets: index)
+    context.set(allCartItemState, items)
+  }
 }
