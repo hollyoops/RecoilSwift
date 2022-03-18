@@ -15,7 +15,7 @@ final class SelectorFamilyTests: XCTestCase {
     static let getBookByCategory = selectorFamily { (category: String, get: Getter) -> AnyPublisher<[String], Error> in
       Deferred {
         Future { promise in
-          DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             promise(.success(["\(category):Book1", "\(category):Book2"]))
           }
         }
@@ -24,7 +24,7 @@ final class SelectorFamilyTests: XCTestCase {
     
     @available(iOS 15.0, *)
     static let fetchBookByCategory = selectorFamily { (category: String, get: Getter) async -> [String] in
-        try? await Task.sleep(nanoseconds: 1_000_000_000)
+        try? await Task.sleep(nanoseconds: 300_000_000)
         return ["\(category):Book1", "\(category):Book2"]
     }
   }
@@ -65,7 +65,7 @@ extension SelectorFamilyTests {
     
     XCTAssertEqual(tester.value, nil)
     
-    wait(for: [expectation], timeout: 1.5)
+    wait(for: [expectation], timeout: 0.5)
   }
   
   @available(iOS 15.0, *)
@@ -83,6 +83,6 @@ extension SelectorFamilyTests {
     
     XCTAssertEqual(tester.value, nil)
     
-    wait(for: [expectation], timeout: 1.5)
+    wait(for: [expectation], timeout: 0.5)
   }
 }

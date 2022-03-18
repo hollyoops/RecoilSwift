@@ -7,10 +7,10 @@ public protocol RecoilSyncReadable {
 extension RecoilSyncReadable where Self: RecoilValue {
     public typealias DataType = T
     
-    public typealias LoadableType = LoadBox<T, Never>
+    public typealias LoadableType = LoadBox<T, Error>
     
     public func data(from loadable: Loadable) -> T {
-        guard let loadBox = loadable as? LoadBox<T, Never> else {
+        guard let loadBox = loadable as? LoadBox<T, Error> else {
             fatalError("Can not convert loadable to synchronous selector.")
         }
         
@@ -22,7 +22,7 @@ extension RecoilSyncReadable where Self: RecoilValue {
         return loadBox.data! // Couldn't be nil
     }
     
-    public func makeLoadable() -> LoadBox<T, Never> {
+    public func makeLoadable() -> LoadBox<T, Error> {
         let getFn = self.get
         let key = self.key
         let loader = SynchronousLoader { try getFn(Getter(key)) }
