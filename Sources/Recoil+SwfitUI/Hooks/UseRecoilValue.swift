@@ -2,6 +2,11 @@
 import SwiftUI
 #endif
 
+/// A hook will subscribe the component to re-render if there are changing in the Recoil state.
+/// - Parameters:
+///   - initialState: Selectors which with user-defined parameters
+/// - Returns: return a readable inner value that wrapped in recoil state.
+/// if the state is async state, it return will `'value?'`, otherwise it return `'value'`
 public func useRecoilValue<P: Equatable, Return: RecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> Return.DataType {
     let hook = RecoilValueHook(initialValue: value.recoilValue,
                                 updateStrategy: .preserved(by: value.param))

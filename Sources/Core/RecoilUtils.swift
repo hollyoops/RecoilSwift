@@ -27,6 +27,11 @@ public func selector<T: Equatable>(get getBody: @escaping GetBody<T>, set setBod
 }
 
 //MARK: - Families
+
+/// A ``selectorFamily`` is a powerful pattern that is similar to a selector, but allows you to pass parameters
+/// - Parameters:
+///   - getBody: A function that is passed an object of named callbacks that returns the value of the selector
+/// - Returns: A function which can be called with user-defined parameters and returns a selector. Each unique parameter value will return the same memoized selector instance.
 public func selectorFamily<P, T: Equatable>(
     _ getBody: @escaping ParametricGetBody<P, T>
 ) -> FamilyFunc<P, Selector<T>> {
