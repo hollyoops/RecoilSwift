@@ -86,18 +86,15 @@ internal final class Store {
             self?.states[upKey] = upstreamNode
         }
     }
-
+  
+    // TODO: Try to sovle performance issue here
     private func checkCircleRef(forKey key: String,
                                 upstream upKey: String,
                                 completion: @escaping (Bool) -> Void) {
-        DispatchQueue.global().async {
-            let checker = TopologySorting()
-            let ret = checker.checkCircleRef(in: self.states, forKey: key, upstream: upKey)
-    
-            DispatchQueue.main.sync {
-                completion(ret)
-            }
-        }
+        let checker = TopologySorting()
+        let ret = checker.checkCircleRef(in: self.states, forKey: key, upstream: upKey)
+
+        completion(ret)
     }
     
     func update<T: RecoilValue>(value: T)  {

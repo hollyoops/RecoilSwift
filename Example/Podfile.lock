@@ -1,11 +1,10 @@
 PODS:
-  - Nimble (9.2.1)
-  - Quick (4.0.0)
+  - Hooks (0.0.3)
   - ReactiveForm (0.2.0)
-  - RecoilSwift (0.2.0)
+  - RecoilSwift (0.2.0):
+    - Hooks (~> 0.0.3)
   - RecoilSwift/Tests (0.2.0):
-    - Nimble
-    - Quick
+    - Hooks (~> 0.0.3)
 
 DEPENDENCIES:
   - ReactiveForm
@@ -14,8 +13,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - Nimble
-    - Quick
+    - Hooks
     - ReactiveForm
 
 EXTERNAL SOURCES:
@@ -23,10 +21,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Nimble: e7e615c0335ee4bf5b0d786685451e62746117d5
-  Quick: 6473349e43b9271a8d43839d9ba1c442ed1b7ac4
+  Hooks: 0172b132ec72da000f86ddfb3d3e55977b29d54c
   ReactiveForm: cabc8eebd3c6de2943d603b8941ca0a95df2eea4
-  RecoilSwift: 0722a49b53cef17d1c28f8cb9b52cccfc60dadbd
+  RecoilSwift: 86b6914f9bce0e1b8f8cf6eb5017e2c7adaa1397
 
 PODFILE CHECKSUM: 1024c4693d7052a1690f1ac2bef1172d9c1751e3
 

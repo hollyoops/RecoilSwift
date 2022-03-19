@@ -7,7 +7,7 @@ let package = Package(
     
     platforms: [
         .iOS(.v13),
-        .macOS("99")
+        .macOS(.v10_15)
     ],
     
     products: [
@@ -18,9 +18,11 @@ let package = Package(
     ],
     
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "4.0.0")), // dev
-        .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.2.0")), // dev
+      // Dependencies declare other packages that this package depends on.
+      .package(
+        url: "https://github.com/hollyoops/SwiftUI-Hooks",
+        from: "0.0.3"
+      )
     ],
     
     targets: [
@@ -28,15 +30,15 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "RecoilSwift",
-            dependencies: [],
+            dependencies: [
+              .product(name: "Hooks", package: "SwiftUI-Hooks")
+            ],
             path: "Sources"),
         
         .testTarget(
             name: "RecoilSwiftTests",
             dependencies: [
-                "RecoilSwift",
-                "Quick",
-                "Nimble"
+                "RecoilSwift"
             ],
             path: "Tests"),
     ],

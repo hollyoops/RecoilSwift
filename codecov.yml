@@ -1,0 +1,5 @@
+ignore:
+  - "Tests" # ignore folders and all its contents
+  - "Debug"
+  - "OptionalExtendings"
+  - "HookAdaptor"
