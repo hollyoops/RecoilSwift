@@ -17,6 +17,7 @@ Pod::Spec.new do |s|
   s.source_files = 'Sources/**/*.swift'
   s.exclude_files = 'Sources/**/*Tests.swift'
   s.swift_version = '5'
+  s.dependency 'Hooks', '~> 0.0.3'
   
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'Tests/**/*Tests.Swift', 'Sources/**/*Tests.swift'

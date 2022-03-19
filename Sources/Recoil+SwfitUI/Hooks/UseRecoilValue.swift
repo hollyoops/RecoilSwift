@@ -1,6 +1,7 @@
 #if canImport(SwiftUI)
 import SwiftUI
 #endif
+import Hooks
 
 /// A hook will subscribe the component to re-render if there are changing in the Recoil state.
 /// - Parameters:
@@ -161,3 +162,4 @@ private final class Ref<Value: RecoilValue> {
         storeSubscriber = nil
     }
 }
+

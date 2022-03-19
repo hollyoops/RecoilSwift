@@ -1,6 +1,7 @@
 #if canImport(Combine)
 import Combine
 #endif
+import Hooks
 
 public struct RecoilCallbackContext {
     public let get = Getter()

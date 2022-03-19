@@ -18,7 +18,11 @@ let package = Package(
     ],
     
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
+      // Dependencies declare other packages that this package depends on.
+      .package(
+        url: "https://github.com/hollyoops/SwiftUI-Hooks",
+        from: "0.0.3"
+      )
     ],
     
     targets: [
@@ -26,7 +30,9 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "RecoilSwift",
-            dependencies: [],
+            dependencies: [
+              .product(name: "Hooks", package: "SwiftUI-Hooks")
+            ],
             path: "Sources"),
         
         .testTarget(

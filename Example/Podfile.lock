@@ -1,7 +1,10 @@
 PODS:
+  - Hooks (0.0.3)
   - ReactiveForm (0.2.0)
-  - RecoilSwift (0.2.0)
-  - RecoilSwift/Tests (0.2.0)
+  - RecoilSwift (0.2.0):
+    - Hooks (~> 0.0.3)
+  - RecoilSwift/Tests (0.2.0):
+    - Hooks (~> 0.0.3)
 
 DEPENDENCIES:
   - ReactiveForm
@@ -10,6 +13,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - Hooks
     - ReactiveForm
 
 EXTERNAL SOURCES:
@@ -17,8 +21,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
+  Hooks: 0172b132ec72da000f86ddfb3d3e55977b29d54c
   ReactiveForm: cabc8eebd3c6de2943d603b8941ca0a95df2eea4
-  RecoilSwift: be6249050bcd1deb27a351bd86ec41fbbe0b2da1
+  RecoilSwift: 86b6914f9bce0e1b8f8cf6eb5017e2c7adaa1397
 
 PODFILE CHECKSUM: 1024c4693d7052a1690f1ac2bef1172d9c1751e3
 
