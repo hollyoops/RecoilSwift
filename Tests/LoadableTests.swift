@@ -99,6 +99,7 @@ extension LoadableTests {
     }
     
     XCTAssertEqual(tester.value.isAsynchronous, true)
+    XCTAssertEqual(tester.value.isLoading, true)
     
     wait(for: [expectation], timeout: 0.5)
   }
