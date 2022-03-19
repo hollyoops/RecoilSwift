@@ -2,7 +2,7 @@
 
 [![Version](https://img.shields.io/cocoapods/v/RecoilSwift.svg?style=flat)](https://cocoapods.org/pods/RecoilSwift)
 [![License](https://img.shields.io/cocoapods/l/RecoilSwift.svg?style=flat)](https://cocoapods.org/pods/RecoilSwift)
-[![Main workflow](https://github.com/hollyoops/RecoilSwift/workflows/main.yml/badge.svg)](https://github.com/hollyoops/RecoilSwift/actions/workflows/main.yml)
+[![Main workflow](https://github.com/hollyoops/RecoilSwift/actions/workflows/main.yml/badge.svg)](https://github.com/hollyoops/RecoilSwift/actions/workflows/main.yml)
 
 RecoilSwift is a lightweight & reactive swift state management library. RecoilSwift is a SwiftUI implementation of [recoil.js](https://recoiljs.org/) which powered by Facebook.
 
