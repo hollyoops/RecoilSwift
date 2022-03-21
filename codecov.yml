@@ -1,5 +1,6 @@
 ignore:
   - "Tests" # ignore folders and all its contents
-  - "Debug"
-  - "OptionalExtendings"
-  - "HookAdaptor"
+  - "**/Debug.swift"
+  - "**/OptionalExtendings.swift"
+  - "**/HookAdaptor.swift"
+  - "**/Curry.swift"
