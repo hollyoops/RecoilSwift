@@ -27,6 +27,13 @@ final class CallbackTests: XCTestCase {
       return final
     }
     
+    static func addThenMultiple(context: RecoilCallbackContext, number: Int, multiple: Int) -> Int {
+      let num = context.get(numberState)
+      let final = (number + num) * multiple
+      context.set(numberState, final)
+      return final
+    }
+    
     static func addByRemote(context: RecoilCallbackContext) {
       func fetchRemoteNumber() -> AnyPublisher<Int, Error> {
         Deferred {
@@ -66,6 +73,17 @@ extension CallbackTests {
     
     XCTAssertEqual(value, 12)
     XCTAssertEqual(Getter()(TestModule.numberState), 12)
+  }
+  
+  func testSyncAddThenMultipleCallback() {
+    let tester = HookTester {
+      useRecoilCallback(TestModule.addThenMultiple(context:number:multiple:))
+    }
+    
+    let value = tester.value(10, 5)
+    
+    XCTAssertEqual(value, 60)
+    XCTAssertEqual(Getter()(TestModule.numberState), 60)
   }
   
   func testSyncDoubleCallback() {

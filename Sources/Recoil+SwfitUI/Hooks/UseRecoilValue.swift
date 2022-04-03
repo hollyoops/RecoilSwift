@@ -62,7 +62,7 @@ public func useRecoilValueLoadable<P: Equatable, Return: RecoilValue>(_ value: P
 /// - Parameters:
 ///   - value: A selector
 /// - Returns: return a loadable object that contains loading informations
-public func useRecoilValueLoadble<Value: RecoilValue>(_ value: Value) -> Value.LoadableType {
+public func useRecoilValueLoadable<Value: RecoilValue>(_ value: Value) -> Value.LoadableType {
     useHook(RecoilLoadableValueHook(initialValue: value))
 }
 
