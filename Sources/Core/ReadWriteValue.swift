@@ -27,7 +27,7 @@ public struct Setter {
     public func callAsFunction<T: RecoilState>(_ recoilValue: T, _ newValue: T.DataType) -> Void {
         let storeRef = Store.shared
         
-        storeRef.registerIfNotExist(for: recoilValue)
+        _ = storeRef.getLoadable(for: recoilValue)
         
         recoilValue.update(with: newValue)
     }

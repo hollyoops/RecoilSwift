@@ -18,6 +18,10 @@ final class LoadableTests: XCTestCase {
       get(myNumberState) * 2;
     }
     
+    static let myCustomMultipliedState = selectorFamily { (multiplier: Int, get: Getter) -> Int in
+      get(myNumberState) * multiplier;
+    }
+    
     static let myMultipliedStateError = selector { get throws -> Int in
       throw MyError.unknown
     }
@@ -62,7 +66,7 @@ final class LoadableTests: XCTestCase {
 extension LoadableTests {
   func testSyncLoadableFullFilled() {
     let tester = HookTester {
-      useRecoilValueLoadble(TestModule.myMultipliedState)
+      useRecoilValueLoadable(TestModule.myMultipliedState)
     }
     
     XCTAssertEqual(tester.value.isAsynchronous, false)
@@ -70,9 +74,19 @@ extension LoadableTests {
     XCTAssertEqual(tester.value.data, 4)
   }
   
+  func testCustomLoadableFullFilled() {
+    let tester = HookTester {
+      useRecoilValueLoadable(TestModule.myCustomMultipliedState(3))
+    }
+    
+    XCTAssertEqual(tester.value.isAsynchronous, false)
+    
+    XCTAssertEqual(tester.value.data, 6)
+  }
+  
   func testSyncLoadableRejected() {
     let tester = HookTester {
-      useRecoilValueLoadble(TestModule.myMultipliedStateError)
+      useRecoilValueLoadable(TestModule.myMultipliedStateError)
     }
     
     XCTAssertEqual(tester.value.isAsynchronous, false)
@@ -89,7 +103,7 @@ extension LoadableTests {
     let expectation = XCTestExpectation(description: "Combine value reovled")
     
     let tester = HookTester { () -> LoadBox<[String], Error> in
-      let loadable = useRecoilValueLoadble(TestModule.getBooks)
+      let loadable = useRecoilValueLoadable(TestModule.getBooks)
       
       if let value = loadable.data, value == ["Book1", "Book2"] {
         expectation.fulfill()
@@ -108,7 +122,7 @@ extension LoadableTests {
     let expectation = XCTestExpectation(description: "Combine error")
     
     let tester = HookTester { () -> LoadBox<[String], Error> in
-      let loadable = useRecoilValueLoadble(TestModule.getBooksError)
+      let loadable = useRecoilValueLoadable(TestModule.getBooksError)
       
       if let error = loadable.error as? MyError, error == .param {
         expectation.fulfill()
@@ -126,7 +140,7 @@ extension LoadableTests {
   func testAsyncLoadableFullFilled() {
     let expectation = XCTestExpectation(description: "Async selector resolved.")
     let tester = HookTester { () -> LoadBox<[String], Error> in
-      let loadable = useRecoilValueLoadble(TestModule.fetchBook)
+      let loadable = useRecoilValueLoadable(TestModule.fetchBook)
       
       if let value = loadable.data, value == ["Book1", "Book2"] {
         expectation.fulfill()
@@ -146,7 +160,7 @@ extension LoadableTests {
     let expectation = XCTestExpectation(description: "Combine error")
     
     let tester = HookTester { () -> LoadBox<[String], Error> in
-      let loadable = useRecoilValueLoadble(TestModule.fetchBookError)
+      let loadable = useRecoilValueLoadable(TestModule.fetchBookError)
       
       if let error = loadable.error as? MyError, error == .param {
         expectation.fulfill()
