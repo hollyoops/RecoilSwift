@@ -4,3 +4,10 @@ ignore:
   - "**/OptionalExtendings.swift"
   - "**/HookAdaptor.swift"
   - "**/Curry.swift"
+  
+coverage:
+  status:
+    project:
+      default:
+        target: 90%    # the required coverage value
+        threshold: 1%  # the leniency in hitting the target
