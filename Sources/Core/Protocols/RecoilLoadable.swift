@@ -1,4 +1,5 @@
 public enum LoadingStatus {
+    case initiated
     case loading
     case solved
     case error

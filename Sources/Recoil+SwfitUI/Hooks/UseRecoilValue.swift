@@ -148,12 +148,15 @@ private final class Ref<Value: RecoilValue> {
         }
         
         let loadable = storeRef.getLoadable(for: newValue)
-        loadable.load()
+        if loadable.status == .initiated {
+          loadable.load()
+        }
     }
     
     func dispose() {
         isDisposed = true
         cancelTasks()
+        // TODO: Remove dynamic recoil value in store?
     }
     
     private func cancelTasks() {
