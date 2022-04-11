@@ -23,15 +23,7 @@ final class RecoilReactiveTests: XCTestCase {
       let string = get(TestModule.upstreamSyncState)
       return string.uppercased()
     }
-    TestModule.upstreamAsyncState = selector { get -> AnyPublisher<String, Error> in
-      Deferred {
-        Future { promise in
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            promise(Result.success("async value"))
-          }
-        }
-      }.eraseToAnyPublisher()
-    }
+    TestModule.upstreamAsyncState = makeAsyncSelector(value: "async value")
     TestModule.downstreamAsyncState = selector { get throws -> String in
       let string = get(TestModule.upstreamAsyncState) ?? ""
       return string.uppercased()
@@ -61,6 +53,6 @@ final class RecoilReactiveTests: XCTestCase {
     
     XCTAssertNil(tester.value.data)
 
-    wait(for: [expectation], timeout: 0.3)
+    wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
   }
 }

@@ -4,12 +4,12 @@ import Combine
 
 @testable import RecoilSwift
 
-final class LoadableTests: XCTestCase {
-  
   enum MyError: String, Error {
     case unknown
     case param
   }
+  
+final class LoadableTests: XCTestCase {
   
   struct TestModule  {
     static var myNumberState = atom { 2 }
@@ -22,44 +22,20 @@ final class LoadableTests: XCTestCase {
       get(myNumberState) * multiplier;
     }
     
-    static let myMultipliedStateError = selector { get throws -> Int in
-      throw MyError.unknown
-    }
+    static let myMultipliedStateError = makeSelector(error: MyError.unknown, type: Int.self)
     
-    static let getBooks = selector { _ in
-      makeCombine(result: .success(["Book1", "Book2"]))
-    }
+    static let getBooks = makeCombineSelector(value: ["Book1", "Book2"])
     
-    static let getBooksError = selector { get -> AnyPublisher<[String], Error> in
-      makeCombine(result: .failure(MyError.param))
-    }
-    
-    private static func makeCombine(result: Result<[String], Error>) -> AnyPublisher<[String], Error> {
-      Deferred {
-        Future { promise in
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            promise(result)
-          }
-        }
-      }.eraseToAnyPublisher()
-    }
+    static let getBooksError = makeCombineSelector(error: MyError.param, type: [String].self)
+  
+    @available(iOS 15.0, *)
+    static let fetchBook = makeAsyncSelector(value: ["Book1", "Book2"])
     
     @available(iOS 15.0, *)
-    static let fetchBook = selector { get async -> [String] in
-      try? await Task.sleep(nanoseconds: 300_000_000)
-      return ["Book1", "Book2"]
-    }
-    
-    @available(iOS 15.0, *)
-    static let fetchBookError = selector { get async throws -> [String] in
-      try? await Task.sleep(nanoseconds: 300_000_000)
-      throw MyError.param
-    }
+    static let fetchBookError = makeAsyncSelector(error: MyError.param, type: [String].self)
   }
   
-  override func setUp() {
-    
-  }
+  override func setUp() { }
 }
 
 // MARK: - sync loadable
@@ -97,7 +73,7 @@ extension LoadableTests {
   }
 }
 
-// MARK: - async
+// MARK: - async selector
 extension LoadableTests {
   func testCombineLoadableFullFilled() {
     let expectation = XCTestExpectation(description: "Combine value reovled")
@@ -115,7 +91,7 @@ extension LoadableTests {
     XCTAssertEqual(tester.value.isAsynchronous, true)
     XCTAssertEqual(tester.value.isLoading, true)
     
-    wait(for: [expectation], timeout: 0.5)
+    wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
   }
   
   func testCombineLoadableFailed() {
@@ -133,7 +109,7 @@ extension LoadableTests {
     
     XCTAssertEqual(tester.value.isAsynchronous, true)
     
-    wait(for: [expectation], timeout: 0.5)
+    wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
   }
   
   @available(iOS 15.0, *)
@@ -151,7 +127,7 @@ extension LoadableTests {
     
     XCTAssertEqual(tester.value.isAsynchronous, true)
     
-    wait(for: [expectation], timeout: 0.5)
+    wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
   }
   
   
@@ -171,6 +147,6 @@ extension LoadableTests {
     
     XCTAssertEqual(tester.value.isAsynchronous, true)
     
-    wait(for: [expectation], timeout: 0.5)
+    wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
   }
 }
