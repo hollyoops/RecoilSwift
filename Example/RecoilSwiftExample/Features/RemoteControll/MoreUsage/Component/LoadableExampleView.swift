@@ -3,14 +3,9 @@ import RecoilSwift
 
 struct LoadableExampleView: HookView {
   var hookBody: some View {
-    if #available(iOS 15, *)  {
-      bookNameViews
-    } else {
-      EmptyView()
-    }
+    bookNameViews
   }
   
-  @available(iOS 15.0, *)
   @ViewBuilder var bookNameViews: some View {
     let selectedCategory = useRecoilValue(BookList.selectedCategoryState)
     let categoryName = selectedCategory?.rawValue ?? "ALL"

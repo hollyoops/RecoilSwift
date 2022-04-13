@@ -4,11 +4,11 @@ import Combine
 
 @testable import RecoilSwift
 
-  enum MyError: String, Error {
-    case unknown
-    case param
-  }
-  
+enum MyError: String, Error {
+  case unknown
+  case param
+}
+
 final class LoadableTests: XCTestCase {
   
   struct TestModule  {
@@ -25,13 +25,15 @@ final class LoadableTests: XCTestCase {
     static let myMultipliedStateError = makeSelector(error: MyError.unknown, type: Int.self)
     
     static let getBooks = makeCombineSelector(value: ["Book1", "Book2"])
-    
     static let getBooksError = makeCombineSelector(error: MyError.param, type: [String].self)
-  
-    @available(iOS 15.0, *)
-    static let fetchBook = makeAsyncSelector(value: ["Book1", "Book2"])
     
-    @available(iOS 15.0, *)
+    static let fetchBookAtomState = makeAsyncAtom(value: ["Book1", "Book2"])
+    static let fetchBookAtomStateWithError = makeAsyncAtom(error: MyError.param, type: [String].self)
+  
+    static let getBooksAtom = makeCombineAtom(value: ["Book1", "Book2"])
+    static let getBooksErrorAtom = makeCombineAtom(error: MyError.param, type: [String].self)
+    
+    static let fetchBook = makeAsyncSelector(value: ["Book1", "Book2"])
     static let fetchBookError = makeAsyncSelector(error: MyError.param, type: [String].self)
   }
   
@@ -130,13 +132,88 @@ extension LoadableTests {
     wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
   }
   
-  
-  @available(iOS 15.0, *)
   func testAsyncLoadableFailed() {
     let expectation = XCTestExpectation(description: "Combine error")
     
     let tester = HookTester { () -> LoadBox<[String], Error> in
       let loadable = useRecoilValueLoadable(TestModule.fetchBookError)
+      
+      if let error = loadable.error as? MyError, error == .param {
+        expectation.fulfill()
+      }
+      
+      return loadable
+    }
+    
+    XCTAssertEqual(tester.value.isAsynchronous, true)
+    
+    wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
+  }
+}
+
+// MARK: - async atom
+extension LoadableTests {
+  func testShouldLoadAsyncAtomTaskSuccess() {
+    let expectation = XCTestExpectation(description: "Async value reovled")
+    
+    let tester = HookTester { () -> LoadBox<[String], Error> in
+      let loadable = useRecoilValueLoadable(TestModule.fetchBookAtomState)
+      
+      if let value = loadable.data, value == ["Book1", "Book2"] {
+        expectation.fulfill()
+      }
+      
+      return loadable
+    }
+    
+    XCTAssertEqual(tester.value.isAsynchronous, true)
+    XCTAssertEqual(tester.value.isLoading, true)
+    
+    wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
+  }
+  
+  func testShouldLoadAsyncAtomTaskFailed() {
+    let expectation = XCTestExpectation(description: "Async error")
+    
+    let tester = HookTester { () -> LoadBox<[String], Error> in
+      let loadable = useRecoilValueLoadable(TestModule.fetchBookAtomStateWithError)
+      
+      if let error = loadable.error as? MyError, error == .param {
+        expectation.fulfill()
+      }
+      
+      return loadable
+    }
+    
+    XCTAssertEqual(tester.value.isAsynchronous, true)
+    
+    wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
+  }
+  
+  func testShouldLoadCombineAtomTaskSuccess() {
+    let expectation = XCTestExpectation(description: "Combine value reovled")
+    
+    let tester = HookTester { () -> LoadBox<[String], Error> in
+      let loadable = useRecoilValueLoadable(TestModule.getBooksAtom)
+      
+      if let value = loadable.data, value == ["Book1", "Book2"] {
+        expectation.fulfill()
+      }
+      
+      return loadable
+    }
+    
+    XCTAssertEqual(tester.value.isAsynchronous, true)
+    XCTAssertEqual(tester.value.isLoading, true)
+    
+    wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
+  }
+  
+  func testShouldLoadCombineAtomTaskFailed() {
+    let expectation = XCTestExpectation(description: "Combine error")
+    
+    let tester = HookTester { () -> LoadBox<[String], Error> in
+      let loadable = useRecoilValueLoadable(TestModule.getBooksErrorAtom)
       
       if let error = loadable.error as? MyError, error == .param {
         expectation.fulfill()

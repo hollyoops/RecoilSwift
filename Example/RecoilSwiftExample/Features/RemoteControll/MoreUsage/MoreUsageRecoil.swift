@@ -6,7 +6,6 @@ struct MoreUsage {
 
 // MARK:- Selectors
 extension MoreUsage {
-  @available(iOS 15.0, *)
   static let fetchRemoteBookNamesByCategory = selectorFamily { (category: String, get: Getter) async -> [String] in
       // let value = get(someAtom)
       try? await Task.sleep(nanoseconds: 2_000_000_000)

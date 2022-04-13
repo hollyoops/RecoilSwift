@@ -16,6 +16,25 @@ public func atom<T: Equatable>(_ fn: () -> T) -> Atom<T> {
     Atom(fn())
 }
 
+
+/// An atom represents state in Recoil. The ``atom()`` function returns a writeable ``RecoilState`` object.
+/// - Parameters:
+///  - fn: A closure that provide init value for the atom
+/// - Returns: A writeable RecoilState object.
+@available(iOS 13.0, *)
+public func atom<T: Equatable, E: Error>(_ fn: @escaping CombineAtomBody<T, E>) -> AsyncAtom<T, E> {
+    AsyncAtom(get: fn)
+}
+
+/// An atom represents state in Recoil. The ``atom()`` function returns a writeable ``RecoilState`` object.
+/// - Parameters:
+///  - fn: A closure that provide init value for the atom
+/// - Returns: A writeable RecoilState object.
+@available(iOS 15.0, *)
+public func atom<T: Equatable>(_ fn: @escaping AsyncAtomBody<T>) -> AsyncAtom<T, Error> {
+    AsyncAtom(get: fn)
+}
+
 //MARK: - Selectors
 
 /// A Selector represent a derived state in Recoil. If only a get function is provided, the selector is read-only and returns a ``Readonly Selector``

@@ -35,12 +35,11 @@ internal final class Store {
     }
   }
   
-  func update<Recoil: RecoilValue>(recoilValue: Recoil, newValue: Recoil.LoadableType.Data)  {
+  func update<Recoil: RecoilValue>(recoilValue: Recoil, newValue: Recoil.LoadableType.Data?) {
     guard
       let loadable = states[recoilValue.key],
-      let loadBox = recoilValue.castToLoadBox(from: loadable) else {
-      return
-    }
+      let loadBox = recoilValue.castToLoadBox(from: loadable)
+    else { return }
     
     loadBox.data = newValue
   }
