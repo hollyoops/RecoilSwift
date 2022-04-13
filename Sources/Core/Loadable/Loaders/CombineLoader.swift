@@ -17,8 +17,13 @@ class CombineLoader<T: Equatable, Failure: Error>: AbstractLoader<T> {
     }
 
     override func cancel() {
+        if let c = cancellable {
+          c.cancel()
+          cancellable = nil
+          fireFinish()
+        }
+      
         super.cancel()
-        cancellable?.cancel()
     }
 
     override func run() {
@@ -26,6 +31,7 @@ class CombineLoader<T: Equatable, Failure: Error>: AbstractLoader<T> {
             watch(try body())
         } catch {
             fireError(error)
+            fireFinish()
         }
     }
 
@@ -36,7 +42,9 @@ class CombineLoader<T: Equatable, Failure: Error>: AbstractLoader<T> {
 
     private func loadingFinish(_ completion: Subscribers.Completion<Failure>) {
         switch completion {
-        case .failure(let error): fireError(error)
+        case .failure(let error):
+          fireError(error)
+          fireFinish()
         case .finished: fireFinish()
         }
     }

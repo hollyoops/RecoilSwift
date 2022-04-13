@@ -41,6 +41,6 @@ extension Atom: RecoilValue {
 extension Atom: RecoilWriteable {
     public func update(with value: T) {
         self.get = { value }
-        Store.shared.update(value: self)
+        Store.shared.update(recoilValue: self, newValue: value)
     }
 }

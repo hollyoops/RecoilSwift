@@ -35,9 +35,14 @@ internal final class Store {
     }
   }
   
-  func update<T: RecoilValue>(value: T)  {
-    let loadable = register(value: value)
-    loadable.load()
+  func update<Recoil: RecoilValue>(recoilValue: Recoil, newValue: Recoil.LoadableType.Data)  {
+    guard
+      let loadable = states[recoilValue.key],
+      let loadBox = recoilValue.castToLoadBox(from: loadable) else {
+      return
+    }
+    
+    loadBox.data = newValue
   }
   
   func addObserver(forKey key: String, onChange: @escaping () -> Void) -> Subscriber {

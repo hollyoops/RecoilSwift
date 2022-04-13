@@ -13,6 +13,10 @@ public struct Getter {
             storeRef.makeConnect(key: host, upstream: recoilValue.key)
         }
         
+        if loadable.status == .initiated {
+          loadable.load()
+        }
+      
         return recoilValue.data(from: loadable)
     }
 }

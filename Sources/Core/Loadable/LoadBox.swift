@@ -14,7 +14,7 @@ public class LoadBox<T: Equatable, E: Error>: RecoilLoadable {
         }
     }
     public var error: E?
-    public var status = LoadingStatus.solved
+    public var status = LoadingStatus.initiated
 
     private let loader: LoaderProtocol
     private var valueDidChanged: (() -> Void)?
