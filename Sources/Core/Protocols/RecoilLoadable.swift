@@ -8,13 +8,11 @@ public enum LoadingStatus {
 public protocol Loadable {
     var status: LoadingStatus { get }
     
+    var isAsynchronous: Bool { get }
+    
+    var isLoading: Bool { get }
+  
     func load()
-}
-
-public extension Loadable {
-    var isLoading: Bool {
-        status == .loading
-    }
 }
 
 public protocol RecoilLoadable: Loadable {

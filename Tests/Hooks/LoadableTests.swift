@@ -83,7 +83,7 @@ extension LoadableTests {
     let tester = HookTester { () -> LoadBox<[String], Error> in
       let loadable = useRecoilValueLoadable(TestModule.getBooks)
       
-      if let value = loadable.data, value == ["Book1", "Book2"] {
+      if loadable.data == ["Book1", "Book2"] {
         expectation.fulfill()
       }
       
@@ -120,7 +120,7 @@ extension LoadableTests {
     let tester = HookTester { () -> LoadBox<[String], Error> in
       let loadable = useRecoilValueLoadable(TestModule.fetchBook)
       
-      if let value = loadable.data, value == ["Book1", "Book2"] {
+      if loadable.data == ["Book1", "Book2"] {
         expectation.fulfill()
       }
       
@@ -159,7 +159,7 @@ extension LoadableTests {
     let tester = HookTester { () -> LoadBox<[String], Error> in
       let loadable = useRecoilValueLoadable(TestModule.fetchBookAtomState)
       
-      if let value = loadable.data, value == ["Book1", "Book2"] {
+      if loadable.data == ["Book1", "Book2"] {
         expectation.fulfill()
       }
       
@@ -196,7 +196,7 @@ extension LoadableTests {
     let tester = HookTester { () -> LoadBox<[String], Error> in
       let loadable = useRecoilValueLoadable(TestModule.getBooksAtom)
       
-      if let value = loadable.data, value == ["Book1", "Book2"] {
+      if loadable.data == ["Book1", "Book2"] {
         expectation.fulfill()
       }
       
