@@ -9,7 +9,7 @@ public protocol RecoilReadable: RecoilIdentifiable {
     
     func makeLoadable() -> LoadableType
     
-    func data(from: Loadable) -> DataType
+    func data(from: Loadable) throws -> DataType
 }
 
 public protocol RecoilWriteable {
@@ -21,3 +21,7 @@ public protocol RecoilWriteable {
 public typealias RecoilState = RecoilValue & RecoilWriteable
 
 public typealias RecoilValue = RecoilReadable
+
+enum RecoilError: Error {
+  case unknown
+}

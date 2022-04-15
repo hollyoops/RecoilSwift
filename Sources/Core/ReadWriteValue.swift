@@ -17,7 +17,7 @@ public struct Getter {
           loadable.load()
         }
       
-        return recoilValue.data(from: loadable)
+        return try! recoilValue.data(from: loadable)
     }
 }
 

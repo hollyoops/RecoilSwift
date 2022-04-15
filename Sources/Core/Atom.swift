@@ -28,15 +28,18 @@ public final class Atom<T: Equatable> {
 }
 
 extension Atom: RecoilValue {
-  public func data(from loadable: Loadable) -> T {
+  public func data(from loadable: Loadable) throws -> T {
     let loadBox = loadable as! LoadBox<T, Never>
     
-    if let data = loadBox.data {
-      return data
+    if loadBox.status == .initiated {
+      loadBox.load()
+    }
+  
+    guard let data = loadBox.data else {
+      throw loadBox.error ?? RecoilError.unknown
     }
     
-    loadBox.load()
-    return loadBox.data!
+    return data
   }
   
   public func makeLoadable() -> LoadBox<T, Never> {
