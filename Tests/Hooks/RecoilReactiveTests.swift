@@ -43,7 +43,7 @@ final class RecoilReactiveTests: XCTestCase {
   func testShouldGetValueFromUpstreamAsyncSelector() {
     let expectation = XCTestExpectation(description: "Async value reovled")
     
-    let tester = HookTester { () -> LoadableContent<String, Error> in
+    let tester = HookTester { () -> LoadableContent<String> in
       let loadable = useRecoilValueLoadable(TestModule.downstreamAsyncState)
       
       if loadable.data == "async value".uppercased() {
@@ -61,7 +61,7 @@ final class RecoilReactiveTests: XCTestCase {
   func testShouldReturnLoadingWhenUpstream() {
     let expectation = XCTestExpectation(description: "should return correct loading status")
     
-    let tester = HookTester { () -> LoadableContent<String, Error> in
+    let tester = HookTester { () -> LoadableContent<String> in
        useRecoilValueLoadable(TestModule.downstreamAsyncState)
     }
     
@@ -83,7 +83,7 @@ final class RecoilReactiveTests: XCTestCase {
       return string.uppercased()
     }
     
-    let tester = HookTester { () -> LoadableContent<String, Error> in
+    let tester = HookTester { () -> LoadableContent<String> in
        useRecoilValueLoadable(selectorWithError)
     }
     

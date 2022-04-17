@@ -2,10 +2,8 @@ import Hooks
 import Foundation
 
 /// A loadable object that contains loading informations
-public struct LoadableContent<DataType, Failure> {
-  let key: String
-  public let data: DataType?
-  public let error: Failure?
+public struct LoadableContent<DataType> {
+  public let key: String
   
   public var isAsynchronous: Bool {
     guard let loadable = Store.shared.getLoadable(key: key) else {
@@ -13,6 +11,10 @@ public struct LoadableContent<DataType, Failure> {
     }
     
     return loadable.isAsynchronous
+  }
+  
+  public var data: DataType? {
+    Store.shared.getLoadable(key: key)?.getData(of: DataType.self)
   }
   
   public var isLoading: Bool {
@@ -24,7 +26,16 @@ public struct LoadableContent<DataType, Failure> {
   }
 
   public var errors: [Error] {
-    return Store.shared.getErrors(for: key)
+    Store.shared.getErrors(for: key)
+  }
+  
+  public func containError<T: Error & Equatable>(of err: T) -> Bool {
+    errors.contains { e in
+      if let concreteError = e as? T {
+        return concreteError == err
+      }
+      return false
+    }
   }
   
   public func load() {
@@ -36,7 +47,7 @@ public struct LoadableContent<DataType, Failure> {
 /// - Parameters:
 ///   - value: A selector wrapper which with user-defined parameters
 /// - Returns: return a loadable object that contains loading informations
-public func useRecoilValueLoadable<P: Equatable, Return: RecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> LoadableContent<Return.LoadableType.Data, Return.LoadableType.Failure> {
+public func useRecoilValueLoadable<P: Equatable, Return: RecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> LoadableContent<Return.LoadableType.Data> {
   let hook = RecoilLoadableValueHook(initialValue: value.recoilValue,
                                      updateStrategy: .preserved(by: value.param))
   
@@ -47,7 +58,7 @@ public func useRecoilValueLoadable<P: Equatable, Return: RecoilValue>(_ value: P
 /// - Parameters:
 ///   - value: A selector
 /// - Returns: return a loadable object that contains loading informations
-public func useRecoilValueLoadable<Value: RecoilValue>(_ value: Value) -> LoadableContent<Value.LoadableType.Data, Value.LoadableType.Failure> {
+public func useRecoilValueLoadable<Value: RecoilValue>(_ value: Value) -> LoadableContent<Value.LoadableType.Data> {
   useHook(RecoilLoadableValueHook(initialValue: value))
 }
 
@@ -55,11 +66,7 @@ private struct RecoilLoadableValueHook<T: RecoilValue>: RecoilHook {
   var initialValue: T
   var updateStrategy: HookUpdateStrategy?
   
-  func value(coordinator: Coordinator) -> LoadableContent<T.LoadableType.Data, T.LoadableType.Failure> {
-    let value = coordinator.state.value
-    let data = Store.shared.getData(for: value)
-    let error = Store.shared.getError(for: value)
-    
-    return LoadableContent(key: value.key, data: data, error: error)
+  func value(coordinator: Coordinator) -> LoadableContent<T.LoadableType.Data> {
+    LoadableContent<T.LoadableType.Data>(key: coordinator.state.value.key)
   }
 }
