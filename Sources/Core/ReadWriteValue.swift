@@ -7,7 +7,7 @@ public struct Getter {
     
     public func callAsFunction<T: RecoilValue>(_ recoilValue: T) -> T.DataType {
         let storeRef = Store.shared
-        let loadable = storeRef.getLoadable(for: recoilValue)
+        let loadable = storeRef.safeGetLoadable(for: recoilValue)
         
         if let host = contextKey {
             storeRef.makeConnect(key: host, upstream: recoilValue.key)
@@ -31,7 +31,7 @@ public struct Setter {
     public func callAsFunction<T: RecoilState>(_ recoilValue: T, _ newValue: T.DataType) -> Void {
         let storeRef = Store.shared
         
-        _ = storeRef.getLoadable(for: recoilValue)
+        _ = storeRef.safeGetLoadable(for: recoilValue)
         
         recoilValue.update(with: newValue)
     }

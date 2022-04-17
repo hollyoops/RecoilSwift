@@ -6,7 +6,7 @@ public struct LoadableContent<DataType> {
   public let key: String
   
   public var isAsynchronous: Bool {
-    guard let loadable = Store.shared.getLoadable(key: key) else {
+    guard let loadable = Store.shared.getLoadable(for: key) else {
       return false
     }
     
@@ -14,7 +14,7 @@ public struct LoadableContent<DataType> {
   }
   
   public var data: DataType? {
-    Store.shared.getLoadable(key: key)?.getData(of: DataType.self)
+    Store.shared.getData(for: key, dataType: DataType.self)
   }
   
   public var isLoading: Bool {
@@ -39,7 +39,7 @@ public struct LoadableContent<DataType> {
   }
   
   public func load() {
-    Store.shared.getLoadable(key: key)?.load()
+    Store.shared.getLoadable(for: key)?.load()
   }
 }
 

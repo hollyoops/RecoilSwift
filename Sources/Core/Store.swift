@@ -7,26 +7,21 @@ internal final class Store {
   private let checker = DFSCircularChecker()
   static let shared = Store()
   
-  func getLoadable<T: RecoilValue>(for value: T) -> Loadable {
-    getLoadable(key: value.key) ?? register(value: value)
+  func safeGetLoadable<T: RecoilValue>(for value: T) -> Loadable {
+    getLoadable(for: value.key) ?? register(value: value)
   }
   
-  func getLoadable(key: String) -> Loadable? {
+  func getLoadable(for key: String) -> Loadable? {
     states[key]
   }
   
-  func getData<T: RecoilValue>(for value: T) -> T.LoadableType.Data? {
-    let load = getLoadbox(for: value)
-    return load?.data
+  func getData<T>(for key: String, dataType: T.Type) -> T? {
+    let load = getLoadable(for: key)
+    return load?.getData(of: dataType)
   }
-  
-  func getError<T: RecoilValue>(for value: T) -> T.LoadableType.Failure? {
-    let load = getLoadbox(for: value)
-    return load?.error
-  }
-  
+
   func getLoadingStatus(for key: String) -> Bool {
-    guard let loadbox = states[key] else {
+    guard let loadbox = getLoadable(for: key) else {
       return false
     }
     
@@ -49,7 +44,7 @@ internal final class Store {
     var errors = [Error]()
     
     func doGetError(key: String) {
-      guard let loadbox = states[key] else {
+      guard let loadbox = getLoadable(for: key) else {
         return
       }
       
@@ -176,7 +171,7 @@ extension Dictionary {
 
 private extension Store {
   private func getLoadbox<T: RecoilValue>(for value: T) -> LoadBox<T.LoadableType.Data, T.LoadableType.Failure>? {
-    value.castToLoadBox(from: getLoadable(for: value))
+    value.castToLoadBox(from: safeGetLoadable(for: value))
   }
 }
 
