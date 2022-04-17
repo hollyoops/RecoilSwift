@@ -16,7 +16,6 @@ public func atom<T: Equatable>(_ fn: () -> T) -> Atom<T> {
     Atom(fn())
 }
 
-
 /// An atom represents state in Recoil. The ``atom()`` function returns a writeable ``RecoilState`` object.
 /// - Parameters:
 ///  - fn: A closure that provide init value for the atom
@@ -73,6 +72,51 @@ public func selector<T: Equatable>(get getBody: @escaping GetBody<T>, set setBod
 }
 
 //MARK: - Families
+
+/// A ``atomFamily`` is a powerful pattern that is similar to a atom, but allows you to pass parameters
+/// - Parameters:
+///   - getBody: A function that is passed an object of named callbacks that returns the value of the atom
+/// - Returns: A function which can be called with user-defined parameters and returns a selector. Each unique parameter value will return the same memoized selector instance.
+public func atomFamily<P, T: Equatable>(
+  _ getBody: @escaping ParametricGetBody<P, T>
+) -> FamilyFunc<P, Atom<T>> {
+  
+  return { (param: P) -> ParametricRecoilValue<P, Atom<T>> in
+    let body = curry(getBody)(param)
+    let get = { body(Getter()) }
+    return ParametricRecoilValue(recoilValue: atom(get), param: param)
+  }
+}
+
+/// A ``atomFamily`` is a powerful pattern that is similar to a atom, but allows you to pass parameters
+/// - Parameters:
+///   - getBody: A function that can pass an user-defined parameter.
+/// - Returns: A function which can be called with user-defined parameters and returns a asynchronous atom with combine. Each unique parameter value will return the same memoized atom instance.
+public func atomFamily<P, T: Equatable, E: Error>(
+  _ getBody: @escaping ParametricCombineGetBody<P, T, E>
+) -> FamilyFunc<P, AsyncAtom<T, E>> {
+  
+  return { (param: P) -> ParametricRecoilValue<P, AsyncAtom<T, E>> in
+    let body = curry(getBody)(param)
+    let get = { try body(Getter()) }
+    return ParametricRecoilValue(recoilValue: atom(get), param: param)
+  }
+}
+
+/// A ``atomFamily`` is a powerful pattern that is similar to a atom, but allows you to pass parameters
+/// - Parameters:
+///   - getBody: A function that can pass an user-defined parameter. 
+/// - Returns: A function which can be called with user-defined parameters and returns a asynchronous atom with ``async/await``. Each unique parameter value will return the same memoized atom instance.
+public func atomFamily<P, T: Equatable>(
+  _ getBody: @escaping ParametricAsyncGetBody<P, T>
+) -> FamilyFunc<P, AsyncAtom<T, Error>> {
+  
+  return { (param: P) -> ParametricRecoilValue<P, AsyncAtom<T, Error>> in
+    let body = curry(getBody)(param)
+    let get = { try await body(Getter()) }
+    return ParametricRecoilValue(recoilValue: atom(get), param: param)
+  }
+}
 
 /// A ``selectorFamily`` is a powerful pattern that is similar to a selector, but allows you to pass parameters
 /// - Parameters:
