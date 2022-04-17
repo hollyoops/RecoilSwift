@@ -45,6 +45,30 @@ internal final class Store {
     return false
   }
   
+  func getErrors(for key: String) -> [Error] {
+    var errors = [Error]()
+    
+    func doGetError(key: String) {
+      guard let loadbox = states[key] else {
+        return
+      }
+      
+      if let e = loadbox.getError() {
+        errors.append(e)
+      }
+
+      if let node = graph.getNode(for: key) {
+        for key in node.upstream {
+          doGetError(key: key)
+        }
+      }
+    }
+    
+    doGetError(key: key)
+    
+    return errors
+  }
+  
   func makeConnect(key: String, upstream upKey: String) {
     guard states.has(key), states.has(upKey) else {
       dePrint("Cannot make connect! \(key)")

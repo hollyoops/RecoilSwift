@@ -12,6 +12,8 @@ final class RecoilReactiveTests: XCTestCase {
     static var upstreamSyncState: Selector<String>!
     static var downstreamSyncState: Selector<String>!
     
+    static var upstreamErrorState = makeCombineAtom(error: MyError.param, type: String.self)
+    
     static var upstreamAsyncState: AsyncSelector<String, Error>!
     static var downstreamAsyncState: AsyncSelector<String, Error>!
   }
@@ -66,6 +68,28 @@ final class RecoilReactiveTests: XCTestCase {
     XCTAssertTrue(tester.value.isLoading)
     DispatchQueue.main.asyncAfter(deadline: .now() + TestConfig.expectation_wait_seconds) {
       if tester.value.isLoading == false {
+        expectation.fulfill()
+      }
+    }
+
+    wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
+  }
+  
+  func testShouldReturnErrorWhenOnOfUpstreamIsError() {
+    let expectation = XCTestExpectation(description: "should return correct loading status")
+    
+    let selectorWithError = Selector { get throws -> String in
+      let string = get(TestModule.upstreamErrorState) ?? ""
+      return string.uppercased()
+    }
+    
+    let tester = HookTester { () -> LoadableContent<String, Error> in
+       useRecoilValueLoadable(selectorWithError)
+    }
+    
+    XCTAssertFalse(tester.value.hasError)
+    DispatchQueue.main.asyncAfter(deadline: .now() + TestConfig.expectation_wait_seconds) {
+      if tester.value.hasError {
         expectation.fulfill()
       }
     }

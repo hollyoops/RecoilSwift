@@ -11,8 +11,12 @@ public protocol Loadable {
     var isAsynchronous: Bool { get }
     
     var isLoading: Bool { get }
-  
+     
     func load()
+  
+    func getData<T>(of type: T.Type) -> T?
+  
+    func getError() -> Error?
 }
 
 public protocol RecoilLoadable: Loadable {
@@ -23,4 +27,14 @@ public protocol RecoilLoadable: Loadable {
     var data: Data? { get }
     
     var error: Failure? { get }
+}
+
+public extension RecoilLoadable {
+    func getError() -> Error? {
+        error
+    }
+  
+    func getData<T>(of type: T.Type) -> T? {
+        data as? T
+    }
 }

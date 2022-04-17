@@ -19,6 +19,14 @@ public struct LoadableContent<DataType, Failure> {
     Store.shared.getLoadingStatus(for: key)
   }
   
+  public var hasError: Bool {
+    !errors.isEmpty
+  }
+
+  public var errors: [Error] {
+    return Store.shared.getErrors(for: key)
+  }
+  
   public func load() {
     Store.shared.getLoadable(key: key)?.load()
   }
