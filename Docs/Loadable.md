@@ -4,15 +4,17 @@
 
 A `Loadable` object represents the current state of a Recoil atom or selector. This state may either have a value available, may be in an error state, or may still be pending asynchronous resolution. A Loadable has the following interface:
 
-- `status`: The current state of the atom or selector. Possible values are 'solved', 'error', or 'loading'.
+- `data(of: type)`: The value represented by this Loadable, return optional value. 
 
-- `data`: The value represented by this Loadable. 
+- `errors`: get all errors in this recoil value & it's upstream 
 
-- `error`: the error represented by this Loadable. 
+- `hasError`: get all errors in this recoil value & it's upstream 
 
 Loadables also contain helper methods for accessing the current state.
 
-`isLoading()` - return true or false
+`isLoading` - return true or false
+
+`isAsynchronous` - tell it's asynchronous task or not, return true or false
 
 `retry()` - recompute atom or selector 
 

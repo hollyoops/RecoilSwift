@@ -15,16 +15,6 @@ Recoil is an alternate option to replace of the `Redux(reswift)` or `MVVM`.
 
 ## State Management Data Flow
 
-```
-       ← ← ← ← ← ← ← ← ← ← ← atoms ← ← ← ← ← ← ← ← ← ← ← ← ← ←
-       ↓                                                     ↑ 
-       ↓                                                     ↑
-selectors/callback                              mutable selectors/callback    
-       ↓                                                     ↑ 
-       ↓                                                     ↑
-       → → → → → → → → → → → view(hooks) → → → → → → → → → → →
-```
-
 ![<img src="image.png" width="700" height="378"/>](./Docs/Images/Flow.png)
 
 ## Requirements
@@ -32,7 +22,7 @@ selectors/callback                              mutable selectors/callback
 - iOS 13+
 - Xcode 12.4+
 
-*NOTE: Currently this library only support for SwiftUI, UIKit is not available. But it planned.*
+*NOTE: Currently this library only support for SwiftUI*
 
 > In recent release, we re-implement this library with react hooks pattern which making the usage of this lib is more similar with official way. 
 
@@ -95,9 +85,11 @@ struct YourView: RecoilView { // You have to implement the RecoilView protocol
 
 ## Advance Usage
 
+You can use `atomFamily/selectorFamily` to execute the async tasks with customized parameter.
+
 **Async task above iOS 15**
 ```Swift
-let fetchRemoteDataById = selectorFamily { (id: String, get: ReadonlyContext) async -> [String] in
+let fetchRemoteDataById = atomFamily { (id: String, get: Getter) async -> [String] in
    let posts = await fetchAllData()
    return posts[id]
 }
@@ -132,7 +124,7 @@ func someView() -> some View {
 **Below iOS 15 you can use Combine to run async tasks...**
 
 ```Swift
-let fetchRemoteDataById = selectorFamily { (id: String, get: ReadonlyContext) -> AnyPublisher<[String], Error> in
+let fetchRemoteDataById = selectorFamily { (id: String, get: Getter) -> AnyPublisher<[String], Error> in
       Deferred {
         Future { promise in
               // Do some logic in here with id
@@ -164,15 +156,15 @@ let fetchRemoteDataById = selectorFamily { (id: String, get: ReadonlyContext) ->
   * [useRecoilState()][2] 
   * [useRecoilCallback()](Docs/Hooks.md#useRecoilCallback)
   * [useRecoilValueLoadable()](Docs/Hooks.md#useRecoilValueLoadable)
-  * [selectorFamily()](Docs/Utils.md#Selector-Family)
+  * [atomFamily()](Docs/Utils.md#Selector-Family)
+  * [selectorFamily()](Docs/Utils.md#Atom-Family)
 
 [1]:Docs/Hooks.md#useRecoilValue(state)
 [2]:Docs/Hooks.md#useRecoilValue(state)
 
 ## TODOs
 
-- [ ] [performance]avoid duplicated compute when rerender hook
-- [ ] [Bug]Use callback not work when you click refetch button while updating view
+- [ ] [performance]Remove unused recoil value in the store.
 - [ ] [feature]Make UIKit compatible
 
 ## Reference:
