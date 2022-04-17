@@ -9,17 +9,20 @@ extension RecoilSyncReadable where Self: RecoilValue {
     
     public typealias LoadableType = LoadBox<T, Error>
     
-    public func data(from loadable: Loadable) -> T {
+    public func data(from loadable: Loadable) throws -> T {
         guard let loadBox = loadable as? LoadBox<T, Error> else {
             fatalError("Can not convert loadable to synchronous selector.")
         }
         
-        if let data = loadBox.data {
-            return data
+        if loadBox.status == .initiated {
+          loadBox.load()
+        }
+      
+        guard let data = loadBox.data else {
+          throw loadBox.error ?? RecoilError.unknown
         }
         
-        loadBox.load()
-        return loadBox.data! // Couldn't be nil
+        return data
     }
     
     public func makeLoadable() -> LoadBox<T, Error> {

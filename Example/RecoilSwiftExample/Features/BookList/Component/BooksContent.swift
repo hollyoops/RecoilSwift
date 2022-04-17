@@ -3,15 +3,15 @@ import RecoilSwift
 
 struct BooksContent: HookView {
   var hookBody: some View {
-    let callback = useRecoilCallback(AllBooks.getFromRemote)
-    let currentBooks = useRecoilValue(BookList.currentBooks)
+//    let callback = useRecoilCallback(AllBooks.getFromRemote)
+    let loadable = useRecoilValueLoadable(BookList.currentBooks)
     
     return VStack {
-      if currentBooks.isEmpty {
-        Button("Tap to fetch books") {
-          callback()
-        }
-      } else {
+      if loadable.isLoading {
+        Text("Fetch books...")
+        ProgressView()
+          .padding(.vertical, 10)
+      } else if let currentBooks = loadable.data {
         VStack(alignment: .leading, spacing: 8) {
           FilterInfoView()
             .padding([.leading], 24)

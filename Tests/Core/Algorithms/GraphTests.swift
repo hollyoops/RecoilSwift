@@ -17,6 +17,7 @@ extension GraphTests {
     XCTAssertNotNil(graph.getNode(for: "A"))
     XCTAssertNotNil(graph.getNode(for: "B"))
     XCTAssertEqual(graph.getNode(for: "A")?.downstream.contains("B"), true)
+    XCTAssertEqual(graph.getNode(for: "B")?.upstream.contains("A"), true)
   }
   
   func testAddEdgeWhenTargetNodeExist() {
@@ -28,6 +29,30 @@ extension GraphTests {
     XCTAssertNotNil(graph.getNode(for: "A"))
     XCTAssertNotNil(graph.getNode(for: "B"))
     XCTAssertEqual(graph.getNode(for: "A")?.downstream.contains("B"), true)
+    XCTAssertEqual(graph.getNode(for: "B")?.upstream.contains("A"), true)
+  }
+  
+  func testShouldMakeCorrectEdgeWhen_C_NotExsit() {
+    let graph = Graph() {
+      GraphNode("A") { "C" }
+    }
+    
+    XCTAssertNotNil(graph.getNode(for: "A"))
+    XCTAssertNotNil(graph.getNode(for: "C"))
+    XCTAssertEqual(graph.getNode(for: "A")?.downstream.contains("C"), true)
+    XCTAssertEqual(graph.getNode(for: "C")?.upstream.contains("A"), true)
+  }
+  
+  func testShouldMakeCorrectEdgeWhen_C_Exsit() {
+    let graph = Graph() {
+      GraphNode("A") { "C" }
+      GraphNode("C")
+    }
+    
+    XCTAssertNotNil(graph.getNode(for: "A"))
+    XCTAssertNotNil(graph.getNode(for: "C"))
+    XCTAssertEqual(graph.getNode(for: "A")?.downstream.contains("C"), true)
+    XCTAssertEqual(graph.getNode(for: "C")?.upstream.contains("A"), true)
   }
 }
 

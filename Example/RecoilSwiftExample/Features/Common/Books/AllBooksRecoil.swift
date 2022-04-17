@@ -2,13 +2,13 @@ import RecoilSwift
 
 // MARK: - Atom
 struct AllBooks {
-  static let allBookState = atom { [Book]() }
+  static let allBookState = atom { AllBooksService.getAllBooks() }
 }
 
 // MARK: - Action
 extension AllBooks {
   static func addNew(context: RecoilCallbackContext, newBook: Book) -> Bool {
-    let books = context.get(allBookState)
+    let books = context.get(allBookState) ?? []
     let isAdded = books.contains { $0.name == newBook.name }
     
     if !isAdded {

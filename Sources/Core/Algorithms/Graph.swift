@@ -22,6 +22,7 @@ internal class Graph {
   struct Node {
     let key: String
     private(set) var downstream: Set<String>
+    private(set) var upstream: Set<String> = []
     
     init(_ key: String, downstream: Set<String> = []) {
       self.key = key
@@ -36,6 +37,10 @@ internal class Graph {
     mutating func add(downstream key: String) {
       downstream.insert(key)
     }
+    
+    mutating func add(upstream key: String) {
+      upstream.insert(key)
+    }
   }
   
   init() {
@@ -44,6 +49,7 @@ internal class Graph {
   
   init(@GraphBuilder _ builder: () -> [String: Node]) {
     nodes = builder()
+    fixUpstreams()
   }
 
   func addEdge(key: String, downstream downKey: String) {
@@ -51,13 +57,18 @@ internal class Graph {
       nodes[downKey] = Node(downKey)
     }
     
-    guard var node = nodes[key] else {
-      nodes[key] = Node(key) { downKey }
-      return
+    if !nodes.has(key) {
+      nodes[key] = Node(key)
     }
     
-    node.add(downstream: downKey)
-    nodes[key] = node
+    var upNode = nodes[key]!
+    var downNode = nodes[downKey]!
+  
+    upNode.add(downstream: downKey)
+    downNode.add(upstream: key)
+    
+    nodes[key] = upNode
+    nodes[downKey] = downNode
   }
   
   func isContainEdge(key: String, downstream downKey: String) -> Bool {
@@ -74,5 +85,19 @@ internal class Graph {
   
   func getNode(for key: String) -> Node? {
     nodes[key]
+  }
+  
+  private func fixUpstreams() {
+    nodes.forEach { element in
+      element.value.downstream.forEach { downKey in
+        if !nodes.has(downKey) {
+          nodes[downKey] = Node(downKey)
+        }
+    
+        var downNode = nodes[downKey]!
+        downNode.add(upstream: element.key)
+        nodes[downKey] = downNode
+      }
+    }
   }
 }

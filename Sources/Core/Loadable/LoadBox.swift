@@ -19,9 +19,13 @@ public class LoadBox<T: Equatable, E: Error>: RecoilLoadable {
     private let loader: LoaderProtocol
     private var valueDidChanged: (() -> Void)?
 
-    var isAsynchronous: Bool {
+    public var isAsynchronous: Bool {
         let isSync = loader is SynchronousLoader<T>
         return !isSync
+    }
+  
+    public var isLoading: Bool {
+        status == .loading
     }
 
     init(loader: LoaderProtocol) {

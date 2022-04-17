@@ -32,6 +32,45 @@ func makeSelector<T>(error: Error, type: T.Type) -> RecoilSwift.Selector<T> {
   }
 }
 
+func makeCombineAtom<T>(
+  value: T,
+  delayInSeconds: Double = TestConfig.mock_async_wait_seconds
+) -> AsyncAtom<T, Error> {
+  atom {
+    MockAPI.makeCombine(result: .success(value), delay: delayInSeconds)
+  }
+}
+
+func makeCombineAtom<T>(
+  error: Error,
+  type: T.Type,
+  delayInSeconds: Double = TestConfig.mock_async_wait_seconds
+) -> AsyncAtom<T, Error> {
+  atom {
+    MockAPI.makeCombine(result: .failure(error), delay: delayInSeconds)
+  }
+}
+
+func makeAsyncAtom<T>(
+  value: T,
+  delayInNanoSecounds: UInt64 = TestConfig.mock_async_wait_nanoseconds
+) -> AsyncAtom<T, Error> {
+  atom { () async -> T in
+    await MockAPI.makeAsync(value: value, delay: delayInNanoSecounds)
+  }
+}
+
+func makeAsyncAtom<T>(
+  error: Error,
+  type: T.Type,
+  delayInNanoSecounds: UInt64 = TestConfig.mock_async_wait_nanoseconds
+) -> AsyncAtom<T, Error> {
+  atom { () async throws -> T in
+    try? await Task.sleep(nanoseconds: TestConfig.mock_async_wait_nanoseconds)
+    throw error
+  }
+}
+
 func makeCombineSelector<T>(
   value: T,
   delayInSeconds: Double = TestConfig.mock_async_wait_seconds
