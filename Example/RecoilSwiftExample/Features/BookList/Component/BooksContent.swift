@@ -8,7 +8,7 @@ struct BooksContent: HookView {
     
     return VStack {
       if loadable.isLoading {
-        Text("Automatic fetching names...")
+        Text("Fetch books...")
         ProgressView()
           .padding(.vertical, 10)
       } else if let currentBooks = loadable.data {

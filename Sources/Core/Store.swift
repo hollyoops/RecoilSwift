@@ -8,7 +8,41 @@ internal final class Store {
   static let shared = Store()
   
   func getLoadable<T: RecoilValue>(for value: T) -> Loadable {
-    states[value.key] ?? register(value: value)
+    getLoadable(key: value.key) ?? register(value: value)
+  }
+  
+  func getLoadable(key: String) -> Loadable? {
+    states[key]
+  }
+  
+  func getData<T: RecoilValue>(for value: T) -> T.LoadableType.Data? {
+    let load = getLoadbox(for: value)
+    return load?.data
+  }
+  
+  func getError<T: RecoilValue>(for value: T) -> T.LoadableType.Failure? {
+    let load = getLoadbox(for: value)
+    return load?.error
+  }
+  
+  func getLoadingStatus(for key: String) -> Bool {
+    guard let loadbox = states[key] else {
+      return false
+    }
+    
+    if loadbox.status == .loading {
+      return true
+    }
+  
+    if let node = graph.getNode(for: key) {
+      for key in node.upstream {
+        if getLoadingStatus(for: key) {
+          return true
+        }
+      }
+    }
+  
+    return false
   }
   
   func makeConnect(key: String, upstream upKey: String) {
@@ -36,11 +70,7 @@ internal final class Store {
   }
   
   func update<Recoil: RecoilValue>(recoilValue: Recoil, newValue: Recoil.LoadableType.Data?) {
-    guard
-      let loadable = states[recoilValue.key],
-      let loadBox = recoilValue.castToLoadBox(from: loadable)
-    else { return }
-    
+    guard let loadBox = getLoadbox(for: recoilValue) else { return }
     loadBox.data = newValue
   }
   
@@ -117,6 +147,12 @@ internal final class Store {
 extension Dictionary {
   func has(_ key: Self.Key) -> Bool {
     self[key] != nil
+  }
+}
+
+private extension Store {
+  private func getLoadbox<T: RecoilValue>(for value: T) -> LoadBox<T.LoadableType.Data, T.LoadableType.Failure>? {
+    value.castToLoadBox(from: getLoadable(for: value))
   }
 }
 

@@ -41,10 +41,10 @@ final class RecoilReactiveTests: XCTestCase {
   func testShouldGetValueFromUpstreamAsyncSelector() {
     let expectation = XCTestExpectation(description: "Async value reovled")
     
-    let tester = HookTester { () -> LoadBox<String, Error> in
+    let tester = HookTester { () -> LoadableContent<String, Error> in
       let loadable = useRecoilValueLoadable(TestModule.downstreamAsyncState)
       
-      if let value = loadable.data, value == "async value".uppercased() {
+      if loadable.data == "async value".uppercased() {
         expectation.fulfill()
       }
       
@@ -52,6 +52,23 @@ final class RecoilReactiveTests: XCTestCase {
     }
     
     XCTAssertNil(tester.value.data)
+
+    wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
+  }
+  
+  func testShouldReturnLoadingWhenUpstream() {
+    let expectation = XCTestExpectation(description: "should return correct loading status")
+    
+    let tester = HookTester { () -> LoadableContent<String, Error> in
+       useRecoilValueLoadable(TestModule.downstreamAsyncState)
+    }
+    
+    XCTAssertTrue(tester.value.isLoading)
+    DispatchQueue.main.asyncAfter(deadline: .now() + TestConfig.expectation_wait_seconds) {
+      if tester.value.isLoading == false {
+        expectation.fulfill()
+      }
+    }
 
     wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
   }

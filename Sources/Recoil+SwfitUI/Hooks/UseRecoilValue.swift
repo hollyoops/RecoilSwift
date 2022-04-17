@@ -47,40 +47,12 @@ public func useRecoilState<Value: RecoilState> (_ initialState: Value) -> Bindin
   return useHook(hook)
 }
 
-/// A hook is intended to be used for reading the value of asynchronous selectors. eg: You can get the ``loading``, ``error`` status with this hooks
-/// - Parameters:
-///   - value: A selector wrapper which with user-defined parameters
-/// - Returns: return a loadable object that contains loading informations
-public func useRecoilValueLoadable<P: Equatable, Return: RecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> Return.LoadableType {
-    let hook = RecoilLoadableValueHook(initialValue: value.recoilValue,
-                                updateStrategy: .preserved(by: value.param))
-    
-    return useHook(hook)
-}
-
-/// A hook is intended to be used for reading the value of asynchronous selectors. eg: You can get the ``loading``, ``error`` status with this hooks
-/// - Parameters:
-///   - value: A selector
-/// - Returns: return a loadable object that contains loading informations
-public func useRecoilValueLoadable<Value: RecoilValue>(_ value: Value) -> Value.LoadableType {
-    useHook(RecoilLoadableValueHook(initialValue: value))
-}
-
-private struct RecoilLoadableValueHook<T: RecoilValue>: RecoilHook {
-    var initialValue: T
-    var updateStrategy: HookUpdateStrategy?
-
-    func value(coordinator: Coordinator) -> T.LoadableType {
-        Store.shared.getLoadable(for: coordinator.state.value) as! T.LoadableType
-    }
-}
-
-private protocol RecoilHook: Hook where State == Ref<T> {
+protocol RecoilHook: Hook where State == Ref<T> {
     associatedtype T: RecoilValue
     var initialValue: T { get }
 }
 
-private extension RecoilHook {
+extension RecoilHook {
     func makeState() -> Ref<T> {
         Ref(initialState: initialValue)
     }
@@ -126,43 +98,3 @@ private struct RecoilStateHook<T: RecoilState>: RecoilHook {
         )
     }
 }
-
-private final class Ref<Value: RecoilValue> {
-    var value: Value {
-        willSet { cancelTasks() }
-    }
-    
-    var isDisposed = false
-    var storeSubscriber: Subscriber?
-    
-    init(initialState: Value) {
-        value = initialState
-    }
-    
-    func update(newValue: Value, viewUpdator: @escaping () -> Void) {
-        value = newValue
-   
-        let storeRef = Store.shared
-        self.storeSubscriber = storeRef.addObserver(forKey: newValue.key) {
-            viewUpdator()
-        }
-        
-        let loadable = storeRef.getLoadable(for: newValue)
-        if loadable.status == .initiated {
-          loadable.load()
-        }
-    }
-    
-    func dispose() {
-        isDisposed = true
-        cancelTasks()
-        // TODO: Remove dynamic recoil value in store?
-    }
-    
-    private func cancelTasks() {
-        storeSubscriber?.cancel()
-        
-        storeSubscriber = nil
-    }
-}
-
