@@ -18,7 +18,7 @@ internal final class Ref<Value: RecoilValue> {
             viewUpdator()
         }
         
-        let loadable = storeRef.getLoadable(for: newValue)
+        let loadable = storeRef.safeGetLoadable(for: newValue)
         if loadable.status == .initiated {
           loadable.load()
         }

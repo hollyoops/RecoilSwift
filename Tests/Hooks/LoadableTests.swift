@@ -71,7 +71,7 @@ extension LoadableTests {
     
     XCTAssertEqual(tester.value.data, nil)
     
-    XCTAssertEqual(tester.value.error as? MyError, MyError.unknown)
+    XCTAssertTrue(tester.value.containError(of: MyError.unknown))
   }
 }
 
@@ -80,7 +80,7 @@ extension LoadableTests {
   func testCombineLoadableFullFilled() {
     let expectation = XCTestExpectation(description: "Combine value reovled")
     
-    let tester = HookTester { () -> LoadableContent<[String], Error> in
+    let tester = HookTester { () -> LoadableContent<[String]> in
       let loadable = useRecoilValueLoadable(TestModule.getBooks)
       
       if loadable.data == ["Book1", "Book2"] {
@@ -99,10 +99,10 @@ extension LoadableTests {
   func testCombineLoadableFailed() {
     let expectation = XCTestExpectation(description: "Combine error")
     
-    let tester = HookTester { () -> LoadableContent<[String], Error> in
+    let tester = HookTester { () -> LoadableContent<[String]> in
       let loadable = useRecoilValueLoadable(TestModule.getBooksError)
       
-      if let error = loadable.error as? MyError, error == .param {
+      if loadable.containError(of: MyError.param) {
         expectation.fulfill()
       }
       
@@ -117,7 +117,7 @@ extension LoadableTests {
   @available(iOS 15.0, *)
   func testAsyncLoadableFullFilled() {
     let expectation = XCTestExpectation(description: "Async selector resolved.")
-    let tester = HookTester { () -> LoadableContent<[String], Error> in
+    let tester = HookTester { () -> LoadableContent<[String]> in
       let loadable = useRecoilValueLoadable(TestModule.fetchBook)
       
       if loadable.data == ["Book1", "Book2"] {
@@ -135,10 +135,10 @@ extension LoadableTests {
   func testAsyncLoadableFailed() {
     let expectation = XCTestExpectation(description: "Combine error")
     
-    let tester = HookTester { () -> LoadableContent<[String], Error> in
+    let tester = HookTester { () -> LoadableContent<[String]> in
       let loadable = useRecoilValueLoadable(TestModule.fetchBookError)
       
-      if let error = loadable.error as? MyError, error == .param {
+      if loadable.containError(of: MyError.param) {
         expectation.fulfill()
       }
       
@@ -156,7 +156,7 @@ extension LoadableTests {
   func testShouldLoadAsyncAtomTaskSuccess() {
     let expectation = XCTestExpectation(description: "Async value reovled")
     
-    let tester = HookTester { () -> LoadableContent<[String], Error> in
+    let tester = HookTester { () -> LoadableContent<[String]> in
       let loadable = useRecoilValueLoadable(TestModule.fetchBookAtomState)
       
       if loadable.data == ["Book1", "Book2"] {
@@ -175,10 +175,10 @@ extension LoadableTests {
   func testShouldLoadAsyncAtomTaskFailed() {
     let expectation = XCTestExpectation(description: "Async error")
     
-    let tester = HookTester { () -> LoadableContent<[String], Error> in
+    let tester = HookTester { () -> LoadableContent<[String]> in
       let loadable = useRecoilValueLoadable(TestModule.fetchBookAtomStateWithError)
       
-      if let error = loadable.error as? MyError, error == .param {
+      if loadable.containError(of: MyError.param) {
         expectation.fulfill()
       }
       
@@ -193,7 +193,7 @@ extension LoadableTests {
   func testShouldLoadCombineAtomTaskSuccess() {
     let expectation = XCTestExpectation(description: "Combine value reovled")
     
-    let tester = HookTester { () -> LoadableContent<[String], Error> in
+    let tester = HookTester { () -> LoadableContent<[String]> in
       let loadable = useRecoilValueLoadable(TestModule.getBooksAtom)
       
       if loadable.data == ["Book1", "Book2"] {
@@ -212,10 +212,10 @@ extension LoadableTests {
   func testShouldLoadCombineAtomTaskFailed() {
     let expectation = XCTestExpectation(description: "Combine error")
     
-    let tester = HookTester { () -> LoadableContent<[String], Error> in
+    let tester = HookTester { () -> LoadableContent<[String]> in
       let loadable = useRecoilValueLoadable(TestModule.getBooksErrorAtom)
       
-      if let error = loadable.error as? MyError, error == .param {
+      if loadable.containError(of: MyError.param) {
         expectation.fulfill()
       }
       
