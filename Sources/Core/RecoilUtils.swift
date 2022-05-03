@@ -107,6 +107,7 @@ public func atomFamily<P, T: Equatable, E: Error>(
 /// - Parameters:
 ///   - getBody: A function that can pass an user-defined parameter. 
 /// - Returns: A function which can be called with user-defined parameters and returns a asynchronous atom with ``async/await``. Each unique parameter value will return the same memoized atom instance.
+@available(iOS 15, *)
 public func atomFamily<P, T: Equatable>(
   _ getBody: @escaping ParametricAsyncGetBody<P, T>
 ) -> FamilyFunc<P, AsyncAtom<T, Error>> {
