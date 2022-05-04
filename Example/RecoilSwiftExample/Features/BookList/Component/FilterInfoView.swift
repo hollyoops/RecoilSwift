@@ -6,9 +6,16 @@ struct FilterInfoView: HookView {
         let selectedCategoryState = useRecoilState(BookList.selectedCategoryState)
         let value = selectedCategoryState.wrappedValue?.rawValue ??  "None"
         
-        Text(verbatim:  "Current Category: \(value.capitalized)")
-            .font(.headline)
-            .fontWeight(.regular)
-            .foregroundColor(.primary)
+        HStack {
+            Text(verbatim: "Selected Category: ")
+                .font(.headline)
+                .fontWeight(.regular)
+                .foregroundColor(.primary)
+            
+            Text("\(value.capitalized)")
+                .foregroundColor(.cyan)
+        
+            Spacer()
+        }
     }
 }

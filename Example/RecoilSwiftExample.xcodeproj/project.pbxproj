@@ -34,6 +34,8 @@
 		EEBC589627DB4B7400987CD2 /* MoreUsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589527DB4B7400987CD2 /* MoreUsageView.swift */; };
 		EEBC589827DB4B7400987CD2 /* LoadableExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589727DB4B7400987CD2 /* LoadableExampleView.swift */; };
 		EEBC589A27DD0AEE00987CD2 /* RemoteControllView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589927DD0AEE00987CD2 /* RemoteControllView.swift */; };
+		EEED4F9F282188540072D9AC /* TabBarReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED4F9E282188540072D9AC /* TabBarReader.swift */; };
+		EEED4FA12822CEE60072D9AC /* FilterOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED4FA02822CEE60072D9AC /* FilterOptionsView.swift */; };
 		F8A23484346E049FB65F8685 /* Pods_RecoilSwiftExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50409628D206510C6539F8DE /* Pods_RecoilSwiftExample.framework */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +72,8 @@
 		EEBC589527DB4B7400987CD2 /* MoreUsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreUsageView.swift; sourceTree = "<group>"; };
 		EEBC589727DB4B7400987CD2 /* LoadableExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadableExampleView.swift; sourceTree = "<group>"; };
 		EEBC589927DD0AEE00987CD2 /* RemoteControllView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControllView.swift; sourceTree = "<group>"; };
+		EEED4F9E282188540072D9AC /* TabBarReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarReader.swift; sourceTree = "<group>"; };
+		EEED4FA02822CEE60072D9AC /* FilterOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptionsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,6 +192,7 @@
 				EEBB992E2744D557007D2581 /* AllBooksView.swift */,
 				EE92C6982743C38200A003BF /* FilterInfoView.swift */,
 				EE92C69A2743C3C000A003BF /* BooksContent.swift */,
+				EEED4FA02822CEE60072D9AC /* FilterOptionsView.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -252,6 +257,7 @@
 		EEBB992F2744D557007D2581 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				EEED4F9D282188320072D9AC /* Components */,
 				EE99DF8B27DEC156007BD272 /* Books */,
 			);
 			path = Common;
@@ -280,6 +286,14 @@
 				50409628D206510C6539F8DE /* Pods_RecoilSwiftExample.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EEED4F9D282188320072D9AC /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				EEED4F9E282188540072D9AC /* TabBarReader.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -399,6 +413,7 @@
 				EE99DF9427DEC156007BD272 /* Quarter.swift in Sources */,
 				EEBC589627DB4B7400987CD2 /* MoreUsageView.swift in Sources */,
 				EEBB993C2744D557007D2581 /* AppEntryView.swift in Sources */,
+				EEED4F9F282188540072D9AC /* TabBarReader.swift in Sources */,
 				EEBC589827DB4B7400987CD2 /* LoadableExampleView.swift in Sources */,
 				EEBB993D2744D557007D2581 /* AllBooksView.swift in Sources */,
 				EE99DF9B27DEC1E2007BD272 /* HomeRecoil.swift in Sources */,
@@ -418,6 +433,7 @@
 				EE99DF7F279B29E7007BD272 /* MoreUsageService.swift in Sources */,
 				EE99DF9327DEC156007BD272 /* AllBooksRecoil.swift in Sources */,
 				EE92C6992743C38200A003BF /* FilterInfoView.swift in Sources */,
+				EEED4FA12822CEE60072D9AC /* FilterOptionsView.swift in Sources */,
 				EE99DF9627DEC156007BD272 /* Mocks.swift in Sources */,
 				B770FC6627E06DFF00088B9F /* CartItem.swift in Sources */,
 			);
