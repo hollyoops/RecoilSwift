@@ -32,10 +32,11 @@ struct FilterOptionsView: HookView {
             })
             .frame(width: 200, height: 60)
             .background(Color.red)
+            .cornerRadius(8)
             .layoutPriority(999)
             
             Spacer()
             
-        }.background(Color(UIColor.lightGray))
+        }.background(Color(white: 0.949))
     }
 }
