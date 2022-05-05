@@ -108,7 +108,7 @@ func someView() -> some View {
             }
 
             // when error
-            if let err = loadable.error {
+            if let err = loadable.errors.first {
                 errorView(err)
             }
 
@@ -161,6 +161,10 @@ let fetchRemoteDataById = selectorFamily { (id: String, get: Getter) -> AnyPubli
 
 [1]:Docs/Hooks.md#useRecoilValue(state)
 [2]:Docs/Hooks.md#useRecoilValue(state)
+
+## Example
+
+![demo](./Docs/Images/Example.gif)
 
 ## TODOs
 

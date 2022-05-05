@@ -26,6 +26,7 @@ struct FilterOptionsView: HookView {
             
             Button(action: {
                 selectedCategoryState.wrappedValue = nil
+                mode.wrappedValue.dismiss()
             }, label: {
                 Text("Reset")
                     .foregroundColor(Color.white)

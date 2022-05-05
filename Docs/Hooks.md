@@ -51,7 +51,7 @@ func someView() -> some View {
             }
 
             // when error
-            if let err = loadable.error {
+            if let err = loadable.errors.first {
                 errorView(err)
             }
 
