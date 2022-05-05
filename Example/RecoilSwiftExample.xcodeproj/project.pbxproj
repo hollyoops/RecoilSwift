@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,6 +15,8 @@
 		EE023C7E26AD98A6002EBF0C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE023C7D26AD98A6002EBF0C /* Assets.xcassets */; };
 		EE023C8126AD98A6002EBF0C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE023C8026AD98A6002EBF0C /* Preview Assets.xcassets */; };
 		EE023C8426AD98A6002EBF0C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EE023C8226AD98A6002EBF0C /* LaunchScreen.storyboard */; };
+		EE7508E728234F1E001D306B /* ReactiveForm in Frameworks */ = {isa = PBXBuildFile; productRef = EE7508E628234F1E001D306B /* ReactiveForm */; };
+		EE7508EB28235020001D306B /* RecoilSwift in Frameworks */ = {isa = PBXBuildFile; productRef = EE7508EA28235020001D306B /* RecoilSwift */; };
 		EE92C6992743C38200A003BF /* FilterInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE92C6982743C38200A003BF /* FilterInfoView.swift */; };
 		EE92C69B2743C3C000A003BF /* BooksContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE92C69A2743C3C000A003BF /* BooksContent.swift */; };
 		EE92C69E2743C59400A003BF /* CartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE92C69D2743C59400A003BF /* CartView.swift */; };
@@ -34,13 +36,11 @@
 		EEBC589627DB4B7400987CD2 /* MoreUsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589527DB4B7400987CD2 /* MoreUsageView.swift */; };
 		EEBC589827DB4B7400987CD2 /* LoadableExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589727DB4B7400987CD2 /* LoadableExampleView.swift */; };
 		EEBC589A27DD0AEE00987CD2 /* RemoteControllView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589927DD0AEE00987CD2 /* RemoteControllView.swift */; };
-		F8A23484346E049FB65F8685 /* Pods_RecoilSwiftExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50409628D206510C6539F8DE /* Pods_RecoilSwiftExample.framework */; };
+		EEED4F9F282188540072D9AC /* TabBarReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED4F9E282188540072D9AC /* TabBarReader.swift */; };
+		EEED4FA12822CEE60072D9AC /* FilterOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED4FA02822CEE60072D9AC /* FilterOptionsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0685FD532F6BAF3D4032452B /* Pods-RecoilSwiftExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecoilSwiftExample.release.xcconfig"; path = "Target Support Files/Pods-RecoilSwiftExample/Pods-RecoilSwiftExample.release.xcconfig"; sourceTree = "<group>"; };
-		50409628D206510C6539F8DE /* Pods_RecoilSwiftExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RecoilSwiftExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		93A4B12EDA1146C8E2B4EDEA /* Pods-RecoilSwiftExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RecoilSwiftExample.debug.xcconfig"; path = "Target Support Files/Pods-RecoilSwiftExample/Pods-RecoilSwiftExample.debug.xcconfig"; sourceTree = "<group>"; };
 		B770FC6227E06C2C00088B9F /* CartRecoil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartRecoil.swift; sourceTree = "<group>"; };
 		B770FC6527E06DFF00088B9F /* CartItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItem.swift; sourceTree = "<group>"; };
 		B770FC6727E06F2100088B9F /* CartContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CartContent.swift; sourceTree = "<group>"; };
@@ -51,6 +51,7 @@
 		EE023C8026AD98A6002EBF0C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		EE023C8326AD98A6002EBF0C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EE023C8526AD98A6002EBF0C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EE7508E828234F45001D306B /* RecoilSwift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = RecoilSwift; path = ..; sourceTree = "<group>"; };
 		EE92C6982743C38200A003BF /* FilterInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterInfoView.swift; sourceTree = "<group>"; };
 		EE92C69A2743C3C000A003BF /* BooksContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooksContent.swift; sourceTree = "<group>"; };
 		EE92C69D2743C59400A003BF /* CartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CartView.swift; sourceTree = "<group>"; };
@@ -70,6 +71,8 @@
 		EEBC589527DB4B7400987CD2 /* MoreUsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreUsageView.swift; sourceTree = "<group>"; };
 		EEBC589727DB4B7400987CD2 /* LoadableExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadableExampleView.swift; sourceTree = "<group>"; };
 		EEBC589927DD0AEE00987CD2 /* RemoteControllView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControllView.swift; sourceTree = "<group>"; };
+		EEED4F9E282188540072D9AC /* TabBarReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarReader.swift; sourceTree = "<group>"; };
+		EEED4FA02822CEE60072D9AC /* FilterOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptionsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,22 +80,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F8A23484346E049FB65F8685 /* Pods_RecoilSwiftExample.framework in Frameworks */,
+				EE7508EB28235020001D306B /* RecoilSwift in Frameworks */,
+				EE7508E728234F1E001D306B /* ReactiveForm in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4FF803F006E8B838FCE31932 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				93A4B12EDA1146C8E2B4EDEA /* Pods-RecoilSwiftExample.debug.xcconfig */,
-				0685FD532F6BAF3D4032452B /* Pods-RecoilSwiftExample.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		B770FC6427E06DEF00088B9F /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -116,8 +111,7 @@
 				EE023C7626AD98A3002EBF0C /* RecoilSwiftExample */,
 				EED6FD5826AD996E0076F145 /* Packages */,
 				EE023C7526AD98A3002EBF0C /* Products */,
-				EED6FD5A26AD99C80076F145 /* Frameworks */,
-				4FF803F006E8B838FCE31932 /* Pods */,
+				EE7508E928235020001D306B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -150,6 +144,13 @@
 				EE023C8026AD98A6002EBF0C /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		EE7508E928235020001D306B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		EE92C69C2743C59400A003BF /* Cart */ = {
@@ -188,6 +189,7 @@
 				EEBB992E2744D557007D2581 /* AllBooksView.swift */,
 				EE92C6982743C38200A003BF /* FilterInfoView.swift */,
 				EE92C69A2743C3C000A003BF /* BooksContent.swift */,
+				EEED4FA02822CEE60072D9AC /* FilterOptionsView.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -252,6 +254,7 @@
 		EEBB992F2744D557007D2581 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				EEED4F9D282188320072D9AC /* Components */,
 				EE99DF8B27DEC156007BD272 /* Books */,
 			);
 			path = Common;
@@ -270,16 +273,17 @@
 		EED6FD5826AD996E0076F145 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				EE7508E828234F45001D306B /* RecoilSwift */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
 		};
-		EED6FD5A26AD99C80076F145 /* Frameworks */ = {
+		EEED4F9D282188320072D9AC /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				50409628D206510C6539F8DE /* Pods_RecoilSwiftExample.framework */,
+				EEED4F9E282188540072D9AC /* TabBarReader.swift */,
 			);
-			name = Frameworks;
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -289,17 +293,19 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EE023C8826AD98A6002EBF0C /* Build configuration list for PBXNativeTarget "RecoilSwiftExample" */;
 			buildPhases = (
-				5BDFC39EFDDFCB1B72E82C7C /* [CP] Check Pods Manifest.lock */,
 				EE023C7026AD98A3002EBF0C /* Sources */,
 				EE023C7126AD98A3002EBF0C /* Frameworks */,
 				EE023C7226AD98A3002EBF0C /* Resources */,
-				683B27EC3DD7382049CBF61B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = RecoilSwiftExample;
+			packageProductDependencies = (
+				EE7508E628234F1E001D306B /* ReactiveForm */,
+				EE7508EA28235020001D306B /* RecoilSwift */,
+			);
 			productName = RecoilSwiftExample;
 			productReference = EE023C7426AD98A3002EBF0C /* RecoilSwiftExample.app */;
 			productType = "com.apple.product-type.application";
@@ -327,6 +333,9 @@
 				Base,
 			);
 			mainGroup = EE023C6B26AD98A3002EBF0C;
+			packageReferences = (
+				EE7508E528234F1E001D306B /* XCRemoteSwiftPackageReference "ReactiveForm" */,
+			);
 			productRefGroup = EE023C7526AD98A3002EBF0C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -349,48 +358,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		5BDFC39EFDDFCB1B72E82C7C /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-RecoilSwiftExample-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		683B27EC3DD7382049CBF61B /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-RecoilSwiftExample/Pods-RecoilSwiftExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-RecoilSwiftExample/Pods-RecoilSwiftExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RecoilSwiftExample/Pods-RecoilSwiftExample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		EE023C7026AD98A3002EBF0C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -399,6 +366,7 @@
 				EE99DF9427DEC156007BD272 /* Quarter.swift in Sources */,
 				EEBC589627DB4B7400987CD2 /* MoreUsageView.swift in Sources */,
 				EEBB993C2744D557007D2581 /* AppEntryView.swift in Sources */,
+				EEED4F9F282188540072D9AC /* TabBarReader.swift in Sources */,
 				EEBC589827DB4B7400987CD2 /* LoadableExampleView.swift in Sources */,
 				EEBB993D2744D557007D2581 /* AllBooksView.swift in Sources */,
 				EE99DF9B27DEC1E2007BD272 /* HomeRecoil.swift in Sources */,
@@ -418,6 +386,7 @@
 				EE99DF7F279B29E7007BD272 /* MoreUsageService.swift in Sources */,
 				EE99DF9327DEC156007BD272 /* AllBooksRecoil.swift in Sources */,
 				EE92C6992743C38200A003BF /* FilterInfoView.swift in Sources */,
+				EEED4FA12822CEE60072D9AC /* FilterOptionsView.swift in Sources */,
 				EE99DF9627DEC156007BD272 /* Mocks.swift in Sources */,
 				B770FC6627E06DFF00088B9F /* CartItem.swift in Sources */,
 			);
@@ -555,7 +524,6 @@
 		};
 		EE023C8926AD98A6002EBF0C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 93A4B12EDA1146C8E2B4EDEA /* Pods-RecoilSwiftExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -576,7 +544,6 @@
 		};
 		EE023C8A26AD98A6002EBF0C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0685FD532F6BAF3D4032452B /* Pods-RecoilSwiftExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -617,6 +584,29 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EE7508E528234F1E001D306B /* XCRemoteSwiftPackageReference "ReactiveForm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hollyoops/ReactiveForm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EE7508E628234F1E001D306B /* ReactiveForm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EE7508E528234F1E001D306B /* XCRemoteSwiftPackageReference "ReactiveForm" */;
+			productName = ReactiveForm;
+		};
+		EE7508EA28235020001D306B /* RecoilSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RecoilSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EE023C6C26AD98A3002EBF0C /* Project object */;
 }

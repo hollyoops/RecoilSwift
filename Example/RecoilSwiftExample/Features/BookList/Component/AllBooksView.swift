@@ -2,43 +2,27 @@ import SwiftUI
 import RecoilSwift
 
 struct AllBooksView: HookView {
-    @State var isFilterVisible = false
-    
     var hookBody: some View {
         let currentBooks = useRecoilValue(BookList.currentBooks)
-        let selectedCategoryState = useRecoilState(BookList.selectedCategoryState)
         
         NavigationView {
-            BooksContent()
-                .actionSheet(isPresented: $isFilterVisible) {
-                    filterSheet(currentCategory: selectedCategoryState)
-                }
-                .navigationTitle("Book shop")
-                .ifTrue(!currentBooks.isEmpty) {
-                    $0.navigationBarItems(
-                        trailing: Button("Filter") {
-                            isFilterVisible = true
-                        }
-                    )
-                }
+            TabBarReader { tabBar in
+                BooksContent()
+                    .navigationTitle("Book shop")
+                    .onAppear {
+                        tabBar?.isHidden = false
+                    }
+                    .ifTrue(!currentBooks.isEmpty) {
+                        $0.navigationBarItems(
+                            trailing: NavigationLink(
+                                "Filter",
+                                destination: FilterOptionsView().onAppear {
+                                tabBar?.isHidden = true
+                            })
+                        )
+                    }
+            }
         }
-    }
-    
-    private func filterSheet(currentCategory: Binding<BookCategory?>) -> ActionSheet {
-        let actions: [ActionSheet.Button] = BookCategory.allCases.map { category in
-                .default(Text(category.rawValue.capitalized)) {
-                    currentCategory.wrappedValue = category
-                }
-        }
-        
-        return ActionSheet(
-            title: Text("Choose a category"),
-            buttons: actions + [
-                .destructive(Text("Clear")) {
-                    currentCategory.wrappedValue = nil
-                },
-                .cancel()]
-        )
     }
 }
 

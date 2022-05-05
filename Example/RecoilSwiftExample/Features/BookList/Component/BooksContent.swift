@@ -25,17 +25,22 @@ struct BooksContent: HookView {
     let addToCart = useRecoilCallback(Cart.addToCart(context:newBook:))
     return List(books) { book in
       HStack {
-        Text(book.name + "(\(book.category.rawValue))")
+          VStack(alignment: .leading) {
+            Text(book.name)
+              Spacer()
+            Text("Category: \(book.category.rawValue)")
+                  .font(.system(size: 13))
+                  .foregroundColor(.gray)
+          }
+      
         Spacer()
         Button(action: {
           addToCart(book)
         }) {
-          Text("Add")
-            .font(Font.system(size: 12))
+          Image(systemName: "cart.fill.badge.plus")
+                .resizable()
+                .frame(width: 32.0, height: 26.0)
         }
-        .frame(width: 35)
-        .background(Color.gray)
-        .cornerRadius(5)
       }
       .padding()
       .buttonStyle(PlainButtonStyle())
