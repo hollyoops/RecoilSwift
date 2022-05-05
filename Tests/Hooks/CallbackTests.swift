@@ -58,6 +58,7 @@ final class CallbackTests: XCTestCase {
   }
   
   override func setUp() {
+    Store.shared.reset()
     TestModule.numberState = atom { 2 }
   }
 }

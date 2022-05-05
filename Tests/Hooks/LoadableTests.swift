@@ -37,7 +37,9 @@ final class LoadableTests: XCTestCase {
     static let fetchBookError = makeAsyncSelector(error: MyError.param, type: [String].self)
   }
   
-  override func setUp() { }
+  override func setUp() {
+    Store.shared.reset()
+  }
 }
 
 // MARK: - sync loadable

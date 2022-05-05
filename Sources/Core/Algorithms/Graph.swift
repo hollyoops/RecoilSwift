@@ -87,6 +87,10 @@ internal class Graph {
     nodes[key]
   }
   
+  func reset() {
+    nodes = [:]
+  }
+  
   private func fixUpstreams() {
     nodes.forEach { element in
       element.value.downstream.forEach { downKey in

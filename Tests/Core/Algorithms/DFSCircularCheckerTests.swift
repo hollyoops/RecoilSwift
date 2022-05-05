@@ -6,7 +6,9 @@ import XCTest
 final class DFSCircularCheckerTests: XCTestCase {
   let checker = DFSCircularChecker()
   
-  override func setUp() { }
+  override func setUp() {
+    Store.shared.reset()
+  }
 }
 
 // MARK: - No circular

@@ -106,6 +106,12 @@ internal final class Store {
     return subscriber
   }
   
+  func reset() {
+    states = [:]
+    subscriberMap = [:]
+    graph.reset()
+  }
+  
   private func removeObserver(forKey key: String, subscriberID: UUID) {
     guard var subscribers = getSubscribers(forKey: key) else {
       return
