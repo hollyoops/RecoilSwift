@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "ReactiveForm",
+        "repositoryURL": "https://github.com/hollyoops/ReactiveForm",
+        "state": {
+          "branch": null,
+          "revision": "d7d7f405d878e421e6c0fe14f89c803a31422c5e",
+          "version": "0.2.0"
+        }
+      },
+      {
+        "package": "Hooks",
+        "repositoryURL": "https://github.com/hollyoops/SwiftUI-Hooks",
+        "state": {
+          "branch": null,
+          "revision": "9fb4367ad9655d14746a993207daf8cfc05c6428",
+          "version": "0.0.3"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -20,7 +20,7 @@ Recoil is an alternate option to replace of the `Redux(reswift)` or `MVVM`.
 ## Requirements
 
 - iOS 13+
-- Xcode 12.4+
+- Xcode 13.2+
 
 *NOTE: Currently this library only support for SwiftUI*
 
