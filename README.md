@@ -5,15 +5,27 @@
 [![Main workflow](https://github.com/hollyoops/RecoilSwift/actions/workflows/main.yml/badge.svg)](https://github.com/hollyoops/RecoilSwift/actions/workflows/main.yml)
 [![codecov](https://codecov.io/gh/hollyoops/RecoilSwift/branch/master/graph/badge.svg?token=AZ9YSL9H0H)](https://codecov.io/gh/hollyoops/RecoilSwift)
 
+:closed_book: [**中文文档**](./README-ZH.md)
+
 RecoilSwift is a lightweight & reactive swift state management library. RecoilSwift is a SwiftUI implementation of [recoil.js](https://recoiljs.org/) which powered by Facebook.
 
-Recoil is an alternate option to replace of the `Redux(reswift)` or `MVVM`.
+Recoil is an alternate option to replace of the `Redux(reswift/tca)` or `MVVM`.
 
 ## What is recoil
 
 [![Watch the video](./Docs/Images/Recoil.png)](https://www.youtube.com/watch?v=_ISAA_Jt9kI)
 
 ## State Management Data Flow
+
+In recoil, there are mainly two concepts: `atom` and `selector`. `atom` is the primitive data(sync/async), `selector` is derived data(sync/async).
+
+generally we put the business logic & UI login into selector.
+
+> 1. Recoil state is atomic, you can easily to compose and reuse state  
+> 2. Recoil state is reactive. current selector will be recomputed when any of upstream state changed
+> 3. Recoil is shared, you can easy to reuse it in different component。
+
+The tree pillar is really important. this is why `recoil` let you code more concise and more reusable.
 
 ![<img src="image.png" width="700" height="378"/>](./Docs/Images/Flow.png)
 
