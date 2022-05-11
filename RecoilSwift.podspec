@@ -1,10 +1,10 @@
 Pod::Spec.new do |s|
   s.name             = 'RecoilSwift'
-  s.version          = '0.2.0'
+  s.version          = '0.2.1'
   s.summary          = 'RecoilSwift is a next generation state management library'
 
   s.description      = <<-DESC
-  Recoil is a next generation state management library power by facebook. RecoilSwift is a implementation of recoil for swift and swiftUI. We are making it UIKit compatible
+  RecoilSwift is a lightweight & reactive swift state management library. It's an alternate option to replace of the `Redux(reswift/tca)` or `MVVM`
                        DESC
 
   s.homepage         = 'https://github.com/hollyoops/RecoilSwift'
@@ -19,7 +19,4 @@ Pod::Spec.new do |s|
   s.swift_version = '5'
   s.dependency 'Hooks', '~> 0.0.3'
   
-  s.test_spec 'Tests' do |test_spec|
-    test_spec.source_files = 'Tests/**/*Tests.Swift', 'Sources/**/*Tests.swift'
-  end
 end

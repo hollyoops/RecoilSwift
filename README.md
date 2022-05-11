@@ -9,7 +9,7 @@
 
 RecoilSwift is a lightweight & reactive swift state management library. RecoilSwift is a SwiftUI implementation of [recoil.js](https://recoiljs.org/) which powered by Facebook.
 
-Recoil is an alternate option to replace of the `Redux(reswift/tca)` or `MVVM`.
+RecoilSwift is an alternate option to replace of the `Redux(reswift/tca)` or `MVVM`.
 
 ## What is recoil
 
@@ -176,7 +176,7 @@ let fetchRemoteDataById = selectorFamily { (id: String, get: Getter) -> AnyPubli
 
 ## Example
 
-This is a easy demo, we highly recommend you to check out the `Example` code. with recoil. You'll see sharing states between different components is supper easy. and the code become very concise.
+This is a easy demo, but we highly recommend you to check out the `Example` code. You'll see sharing states between different components is super easy. and the code become quite concise.
 
 ![demo](./Docs/Images/Example.gif)
 
