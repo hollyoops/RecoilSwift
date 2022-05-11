@@ -1,0 +1,23 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  doc:
+    runs-on: macos-latest
+
+    env:
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Netlify CLI
+        run: yarn global add netlify-cli
+      - name: Build documentation
+        run: netlify build
+      - name: Deploy documentation to Netlify
+        run: netlify deploy --prod --message ${GITHUB_SHA}
