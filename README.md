@@ -176,6 +176,8 @@ let fetchRemoteDataById = selectorFamily { (id: String, get: Getter) -> AnyPubli
 
 ## Example
 
+This is a easy demo, we highly recommend you to check out the `Example` code. with recoil. You'll see sharing states between different components is supper easy. and the code become very concise.
+
 ![demo](./Docs/Images/Example.gif)
 
 ## TODOs
