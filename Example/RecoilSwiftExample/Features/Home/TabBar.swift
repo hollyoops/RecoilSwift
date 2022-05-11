@@ -33,11 +33,12 @@ struct TabBarItem: View {
     var selectedTab: Binding<Home.Tab>
     var label: String
     var systemImage: String
-    
+
     private var configuration = _Configuration()
     
     struct _Configuration {
         var tag: Home.Tab? = nil
+        var badgeText: String? = nil
     }
     
     init(selectedTab: Binding<Home.Tab>, label: String, systemImage: String) {
@@ -47,14 +48,36 @@ struct TabBarItem: View {
     }
     
     var body: some View {
-        Label(label, systemImage: systemImage)
-            .labelStyle(VerticalLabelStyle())
-            .foregroundColor(selectedTab.wrappedValue == configuration.tag ? Color.blue : Color.black)
-            .onTapGesture {
-                if let tag = configuration.tag {
-                    selectedTab.wrappedValue = tag
-                }
+        ZStack(alignment: .topTrailing) {
+            if let badge = configuration.badgeText {
+                ZStack(alignment: .center) {
+                    Circle()
+                        .frame(width: 18, height: 18)
+                        .foregroundColor(Color.red)
+                    
+                    Text(badge)
+                        .font(Font.system(size: 12))
+                        .foregroundColor(.white)
+                }.offset(x: 16, y: 6)
             }
+            
+            VStack(spacing: 8) {
+                Image(systemName: systemImage)
+                    .aspectRatio(contentMode: .fit)
+                    .padding(.top, 16)
+                
+                Text(label)
+                    .font(.footnote)
+                
+                Spacer()
+            }
+        }
+        .foregroundColor(selectedTab.wrappedValue == configuration.tag ? Color.blue : Color.black)
+        .onTapGesture {
+            if let tag = configuration.tag {
+                selectedTab.wrappedValue = tag
+            }
+        }
     }
 }
 
@@ -62,13 +85,8 @@ extension TabBarItem {
     func tag(_ tag: HomeTab) -> Self {
         then { $0.configuration.tag = tag }
     }
-}
-
-struct VerticalLabelStyle: LabelStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        VStack(alignment: .center, spacing: 8) {
-            configuration.icon
-            configuration.title.font(Font.system(size: 12))
-        }
+    
+    func badge(text badge: String?) -> Self {
+        then { $0.configuration.badgeText = badge }
     }
 }

@@ -5,6 +5,7 @@ public struct MainTabView: HookView {
     public var hookBody: some View  {
         let selectedTab = useRecoilState(Home.selectedTabState)
         let isTabBarVisible = useRecoilValue(Home.tabBarVisibleState)
+        let badgeText = useRecoilValue(Cart.cartItemBadgeState)
         
         ZStack(alignment: .bottom) {
             TabView(selection: selectedTab) {
@@ -25,6 +26,7 @@ public struct MainTabView: HookView {
                     
                     TabBarItem(selectedTab: selectedTab, label: "Cart", systemImage: "cart")
                         .tag(.cart)
+                        .badge(text: badgeText)
                     
                     TabBarItem(selectedTab: selectedTab, label: "Remote", systemImage: "externaldrive.badge.icloud")
                         .tag(.remote)
