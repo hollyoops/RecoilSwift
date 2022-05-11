@@ -4,7 +4,7 @@ import Combine
 
 struct AppEntryView: View {
     var body: some View {
-        MainTabBar()
+       MainTabView()
     }
 }
 

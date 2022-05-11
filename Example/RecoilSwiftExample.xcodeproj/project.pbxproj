@@ -28,7 +28,7 @@
 		EE99DF9527DEC156007BD272 /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE99DF9027DEC156007BD272 /* Book.swift */; };
 		EE99DF9627DEC156007BD272 /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE99DF9127DEC156007BD272 /* Mocks.swift */; };
 		EE99DF9B27DEC1E2007BD272 /* HomeRecoil.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE99DF9A27DEC1E2007BD272 /* HomeRecoil.swift */; };
-		EEBB99392744D557007D2581 /* MainTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99272744D557007D2581 /* MainTabBar.swift */; };
+		EEBB99392744D557007D2581 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99272744D557007D2581 /* TabBar.swift */; };
 		EEBB993B2744D557007D2581 /* AddBookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB992B2744D557007D2581 /* AddBookView.swift */; };
 		EEBB993C2744D557007D2581 /* AppEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB992C2744D557007D2581 /* AppEntryView.swift */; };
 		EEBB993D2744D557007D2581 /* AllBooksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB992E2744D557007D2581 /* AllBooksView.swift */; };
@@ -36,7 +36,7 @@
 		EEBC589627DB4B7400987CD2 /* MoreUsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589527DB4B7400987CD2 /* MoreUsageView.swift */; };
 		EEBC589827DB4B7400987CD2 /* LoadableExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589727DB4B7400987CD2 /* LoadableExampleView.swift */; };
 		EEBC589A27DD0AEE00987CD2 /* RemoteControllView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589927DD0AEE00987CD2 /* RemoteControllView.swift */; };
-		EEED4F9F282188540072D9AC /* TabBarReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED4F9E282188540072D9AC /* TabBarReader.swift */; };
+		EEE848AB282ABA1C0021EB32 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE848AA282ABA1B0021EB32 /* MainTabView.swift */; };
 		EEED4FA12822CEE60072D9AC /* FilterOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED4FA02822CEE60072D9AC /* FilterOptionsView.swift */; };
 /* End PBXBuildFile section */
 
@@ -63,7 +63,7 @@
 		EE99DF9027DEC156007BD272 /* Book.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
 		EE99DF9127DEC156007BD272 /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
 		EE99DF9A27DEC1E2007BD272 /* HomeRecoil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRecoil.swift; sourceTree = "<group>"; };
-		EEBB99272744D557007D2581 /* MainTabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabBar.swift; sourceTree = "<group>"; };
+		EEBB99272744D557007D2581 /* TabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		EEBB992B2744D557007D2581 /* AddBookView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddBookView.swift; sourceTree = "<group>"; };
 		EEBB992C2744D557007D2581 /* AppEntryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppEntryView.swift; sourceTree = "<group>"; };
 		EEBB992E2744D557007D2581 /* AllBooksView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AllBooksView.swift; sourceTree = "<group>"; };
@@ -71,7 +71,7 @@
 		EEBC589527DB4B7400987CD2 /* MoreUsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreUsageView.swift; sourceTree = "<group>"; };
 		EEBC589727DB4B7400987CD2 /* LoadableExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadableExampleView.swift; sourceTree = "<group>"; };
 		EEBC589927DD0AEE00987CD2 /* RemoteControllView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControllView.swift; sourceTree = "<group>"; };
-		EEED4F9E282188540072D9AC /* TabBarReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarReader.swift; sourceTree = "<group>"; };
+		EEE848AA282ABA1B0021EB32 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		EEED4FA02822CEE60072D9AC /* FilterOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptionsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -227,7 +227,8 @@
 		EEBB99262744D557007D2581 /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				EEBB99272744D557007D2581 /* MainTabBar.swift */,
+				EEBB99272744D557007D2581 /* TabBar.swift */,
+				EEE848AA282ABA1B0021EB32 /* MainTabView.swift */,
 				EE99DF9A27DEC1E2007BD272 /* HomeRecoil.swift */,
 			);
 			path = Home;
@@ -254,7 +255,6 @@
 		EEBB992F2744D557007D2581 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				EEED4F9D282188320072D9AC /* Components */,
 				EE99DF8B27DEC156007BD272 /* Books */,
 			);
 			path = Common;
@@ -276,14 +276,6 @@
 				EE7508E828234F45001D306B /* RecoilSwift */,
 			);
 			name = Packages;
-			sourceTree = "<group>";
-		};
-		EEED4F9D282188320072D9AC /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				EEED4F9E282188540072D9AC /* TabBarReader.swift */,
-			);
-			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -365,12 +357,12 @@
 			files = (
 				EE99DF9427DEC156007BD272 /* Quarter.swift in Sources */,
 				EEBC589627DB4B7400987CD2 /* MoreUsageView.swift in Sources */,
+				EEE848AB282ABA1C0021EB32 /* MainTabView.swift in Sources */,
 				EEBB993C2744D557007D2581 /* AppEntryView.swift in Sources */,
-				EEED4F9F282188540072D9AC /* TabBarReader.swift in Sources */,
 				EEBC589827DB4B7400987CD2 /* LoadableExampleView.swift in Sources */,
 				EEBB993D2744D557007D2581 /* AllBooksView.swift in Sources */,
 				EE99DF9B27DEC1E2007BD272 /* HomeRecoil.swift in Sources */,
-				EEBB99392744D557007D2581 /* MainTabBar.swift in Sources */,
+				EEBB99392744D557007D2581 /* TabBar.swift in Sources */,
 				EE92C69B2743C3C000A003BF /* BooksContent.swift in Sources */,
 				EE023C7826AD98A3002EBF0C /* AppDelegate.swift in Sources */,
 				EEBB993B2744D557007D2581 /* AddBookView.swift in Sources */,
