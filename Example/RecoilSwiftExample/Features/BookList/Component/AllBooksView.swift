@@ -4,24 +4,23 @@ import RecoilSwift
 struct AllBooksView: HookView {
     var hookBody: some View {
         let currentBooks = useRecoilValue(BookList.currentBooks)
+        let isTabbarVisible = useRecoilState(Home.tabBarVisibleState)
         
         NavigationView {
-            TabBarReader { tabBar in
-                BooksContent()
-                    .navigationTitle("Book shop")
-                    .onAppear {
-                        tabBar?.isHidden = false
-                    }
-                    .ifTrue(!currentBooks.isEmpty) {
-                        $0.navigationBarItems(
-                            trailing: NavigationLink(
-                                "Filter",
-                                destination: FilterOptionsView().onAppear {
-                                tabBar?.isHidden = true
+            BooksContent()
+                .navigationTitle("Book shop")
+                .ifTrue(!currentBooks.isEmpty) {
+                    $0.navigationBarItems(
+                        trailing: NavigationLink(
+                            "Filter",
+                            destination: FilterOptionsView().onAppear {
+                                isTabbarVisible.wrappedValue = false
+                            }.onDisappear {
+                                isTabbarVisible.wrappedValue = true
                             })
-                        )
-                    }
-            }
+                    )
+                }
+            
         }
     }
 }

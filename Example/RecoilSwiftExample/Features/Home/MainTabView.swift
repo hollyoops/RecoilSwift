@@ -1,0 +1,48 @@
+import SwiftUI
+import RecoilSwift
+
+public struct MainTabView: HookView {
+    public var hookBody: some View  {
+        let selectedTab = useRecoilState(Home.selectedTabState)
+        let isTabBarVisible = useRecoilValue(Home.tabBarVisibleState)
+        
+        ZStack(alignment: .bottom) {
+            TabView(selection: selectedTab) {
+                AllBooksView()
+                    .tag(HomeTab.list)
+          
+                CartView()
+                    .tag(HomeTab.cart)
+            
+                RemoteControllView()
+                    .tag(HomeTab.remote)
+            }
+           
+            if isTabBarVisible {
+                TabBar {
+                    TabBarItem(selectedTab: selectedTab, label: "Books", systemImage: "books.vertical")
+                        .tag(.list)
+                    
+                    TabBarItem(selectedTab: selectedTab, label: "Cart", systemImage: "cart")
+                        .tag(.cart)
+                    
+                    TabBarItem(selectedTab: selectedTab, label: "Remote", systemImage: "externaldrive.badge.icloud")
+                        .tag(.remote)
+                }
+                .frame(height: 56)
+                .background(Color.white)
+            }
+        }
+    }
+}
+
+extension View {
+    @inlinable
+    public func then(_ body: (inout Self) -> Void) -> Self {
+        var result = self
+        
+        body(&result)
+        
+        return result
+    }
+}

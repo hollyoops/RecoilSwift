@@ -11,6 +11,8 @@ struct Home {
   }
   
   static let selectedTabState = Atom<Tab>(.list)
+    
+  static let tabBarVisibleState = Atom<Bool>(true)
 }
 
 // MARK: - Actions
