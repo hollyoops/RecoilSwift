@@ -28,7 +28,7 @@ public struct MainTabView: HookView {
                         .tag(.cart)
                         .badge(text: badgeText)
                     
-                    TabBarItem(selectedTab: selectedTab, label: "Remote", systemImage: "externaldrive.badge.icloud")
+                    TabBarItem(selectedTab: selectedTab, label: "New", systemImage: "externaldrive.badge.plus")
                         .tag(.remote)
                 }
                 .frame(height: 56)

@@ -7,7 +7,7 @@ struct RemoteControllView: HookView {
     var hookBody: some View {
         NavigationView {
             AddBookView()
-                .navigationBarTitle("New Book")
+                .navigationBarTitle("Add local book")
                 .navigationBarItems(
                     trailing: NavigationLink(
                         destination: MoreUsageView().onAppear {
