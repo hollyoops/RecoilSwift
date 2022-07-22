@@ -99,7 +99,7 @@ struct YourView: RecoilView { // You have to implement the RecoilView protocol
 
 You can use `atomFamily/selectorFamily` to execute the async tasks with customized parameter.
 
-**Async task above iOS 15**
+**Async task**
 ```Swift
 let fetchRemoteDataById = atomFamily { (id: String, get: Getter) async -> [String] in
    let posts = await fetchAllData()
@@ -133,7 +133,7 @@ func someView() -> some View {
 }
 ```
 
-**Below iOS 15 you can use Combine to run async tasks...**
+**You also can use Combine to run async tasks...**
 
 ```Swift
 let fetchRemoteDataById = selectorFamily { (id: String, get: Getter) -> AnyPublisher<[String], Error> in

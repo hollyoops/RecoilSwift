@@ -4,7 +4,7 @@ import Combine
 @available(iOS 13.0, *)
 public typealias CombineAtomBody<T: Equatable, E: Error> = () throws -> AnyPublisher<T, E>
 
-@available(iOS 15.0, *)
+@available(iOS 13.0, *)
 public typealias AsyncAtomBody<T: Equatable> = () async throws -> T
 
 /// Atoms are units of state. They're updatable and subscribable: when an atom is updated, each subscribed component is re-rendered with the new value.
@@ -65,7 +65,7 @@ struct AtomCombineCallback<T: Equatable, E: Error>: AsyncGet {
     public let get: CombineAtomBody<T, E>
 }
 
-@available(iOS 15.0, *)
+@available(iOS 13.0, *)
 struct AtomAsyncCallback<T: Equatable>: AsyncGet {
     public let get: AsyncAtomBody<T>
     
@@ -84,7 +84,7 @@ public struct AsyncAtom<T: Equatable, E: Error>: RecoilValue, RecoilAsyncReadabl
       self.get = AtomCombineCallback(get: get)
   }
   
-  @available(iOS 15.0, *)
+  @available(iOS 13.0, *)
   public init(key: String = "AsyncAtom-\(UUID())", get: @escaping AsyncAtomBody<T>) {
       self.key = key
       self.get = AtomAsyncCallback(get: get)

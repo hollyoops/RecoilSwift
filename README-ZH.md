@@ -122,7 +122,7 @@ struct YourView: RecoilView {
 
 - `atomFamily/selectorFamily` 主要是用于动态参数的状态。下面这个用法，我们实现了一个异步的atom，他的数据源来源于服务器
 
-**在iOS 15以上你可以用Async 来异步任务**
+**您可以用Async 来异步任务**
 ```Swift
 let fetchRemoteDataById = atomFamily { (id: String, get: Getter) async -> [String] in
    let posts = await fetchAllData()
@@ -156,7 +156,7 @@ func someView() -> some View {
 }
 ```
 
-**iOS 15下， 你可以用Combine来执行异步任务...**
+**你可以用Combine来执行异步任务...**
 
 ```Swift
 let fetchRemoteDataById = selectorFamily { (id: String, get: Getter) -> AnyPublisher<[String], Error> in

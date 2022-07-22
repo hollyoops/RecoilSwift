@@ -29,7 +29,7 @@ public func atom<T: Equatable, E: Error>(_ fn: @escaping CombineAtomBody<T, E>) 
 /// - Parameters:
 ///  - fn: A closure that provide init value for the atom
 /// - Returns: A writeable RecoilState object.
-@available(iOS 15.0, *)
+@available(iOS 13.0, *)
 public func atom<T: Equatable>(_ fn: @escaping AsyncAtomBody<T>) -> AsyncAtom<T, Error> {
     AsyncAtom(get: fn)
 }
@@ -57,7 +57,7 @@ public func selector<T: Equatable, E: Error>(_ getBody: @escaping CombineGetBody
 /// - Parameters:
 ///  - getBody:  A async function that evaluates the value for the derived state.
 /// - Returns: A asynchronous readonly selector with ``async/await``.
-@available(iOS 15.0, *)
+@available(iOS 13.0, *)
 public func selector<T: Equatable>(_ getBody: @escaping AsyncGetBody<T>) -> AsyncSelector<T, Error> {
     AsyncSelector(get: getBody)
 }
@@ -107,7 +107,7 @@ public func atomFamily<P, T: Equatable, E: Error>(
 /// - Parameters:
 ///   - getBody: A function that can pass an user-defined parameter. 
 /// - Returns: A function which can be called with user-defined parameters and returns a asynchronous atom with ``async/await``. Each unique parameter value will return the same memoized atom instance.
-@available(iOS 15, *)
+@available(iOS 13, *)
 public func atomFamily<P, T: Equatable>(
   _ getBody: @escaping ParametricAsyncGetBody<P, T>
 ) -> FamilyFunc<P, AsyncAtom<T, Error>> {
@@ -152,7 +152,7 @@ public func selectorFamily<P, T: Equatable, E: Error>(
 /// - Parameters:
 ///   - getBody: A function that can pass an user-defined parameter. and it evaluates the value for the derived state.
 /// - Returns: A function which can be called with user-defined parameters and returns a asynchronous selector with ``async/await``. Each unique parameter value will return the same memoized selector instance.
-@available(iOS 15.0, *)
+@available(iOS 13.0, *)
 public func selectorFamily<P, T: Equatable>(
     _ getBody: @escaping ParametricAsyncGetBody<P, T>
 ) -> FamilyFunc<P, AsyncSelector<T, Error>> {

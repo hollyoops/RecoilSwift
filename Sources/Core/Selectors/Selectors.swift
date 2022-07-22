@@ -64,7 +64,7 @@ extension MutableSelector: RecoilSyncWriteable { }
 @available(iOS 13.0, *)
 public typealias CombineGetBody<T: Equatable, E: Error> = (Getter) throws -> AnyPublisher<T, E>
 
-@available(iOS 15.0, *)
+@available(iOS 13.0, *)
 public typealias AsyncGetBody<T: Equatable> = (Getter) async throws -> T
 
 
@@ -82,7 +82,7 @@ struct CombineCallback<T: Equatable, E: Error>: AsyncGet {
     public let get: CombineGetBody<T, E>
 }
 
-@available(iOS 15.0, *)
+@available(iOS 13.0, *)
 struct AsyncCallback<T: Equatable>: AsyncGet {
     public let get: AsyncGetBody<T>
     
@@ -106,7 +106,6 @@ public struct AsyncSelector<T: Equatable, E: Error>: RecoilValue, RecoilAsyncRea
         self.get = CombineCallback(get: get)
     }
     
-    @available(iOS 15.0, *)
     public init(key: String = "R-AsyncSel-\(UUID())", get: @escaping AsyncGetBody<T>) {
         self.key = key
         self.get = AsyncCallback(get: get)

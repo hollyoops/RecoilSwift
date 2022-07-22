@@ -54,8 +54,6 @@ func celsiusView() -> some View {
 
 You can use use `async/await` or `Combine` to execute async task in iOS. For instance: 
 
-above iOS 15
-
 ```swift
 let remoteCategoriesSelector = selector { (get: Getter) async -> [String] in
     await someAPI()
@@ -63,7 +61,7 @@ let remoteCategoriesSelector = selector { (get: Getter) async -> [String] in
 }
 ```
 
-below iOS 15
+Use combine
 
 ```swift
 let remoteCategoriesSelector = selector { (get: Getter) -> AnyPublisher<[String], Error> in

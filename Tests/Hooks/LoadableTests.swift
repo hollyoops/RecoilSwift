@@ -116,7 +116,7 @@ extension LoadableTests {
     wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
   }
   
-  @available(iOS 15.0, *)
+  @available(iOS 13.0, *)
   func testAsyncLoadableFullFilled() {
     let expectation = XCTestExpectation(description: "Async selector resolved.")
     let tester = HookTester { () -> LoadableContent<[String]> in

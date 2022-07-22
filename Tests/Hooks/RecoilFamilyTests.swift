@@ -30,14 +30,14 @@ final class RecoilFamilyTests: XCTestCase {
       )
     }
     
-    @available(iOS 15.0, *)
+    @available(iOS 13.0, *)
     static let fetchBookByType = atomFamily { (type: String, get: Getter) async -> [String] in
       await MockAPI.makeAsync(
         value: ["\(type)-Book1", "\(type)-Book2"],
         delay: TestConfig.mock_async_wait_nanoseconds)
     }
     
-    @available(iOS 15.0, *)
+    @available(iOS 13.0, *)
     static let fetchBookByCategory = selectorFamily { (category: String, get: Getter) async -> [String] in
       await MockAPI.makeAsync(
         value: ["\(category):Book1", "\(category):Book2"],
@@ -84,7 +84,7 @@ extension RecoilFamilyTests {
     wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
   }
   
-  @available(iOS 15.0, *)
+  @available(iOS 13.0, *)
   func testShouldAsyncParameterSelector() {
     let expectation = XCTestExpectation(description: "Async selector resolved.")
     let tester = HookTester { () -> [String]? in
@@ -137,7 +137,7 @@ extension RecoilFamilyTests {
     wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
   }
   
-  @available(iOS 15.0, *)
+  @available(iOS 13.0, *)
   func testAsyncParameterSelector() {
     let expectation = XCTestExpectation(description: "Async selector resolved.")
     let tester = HookTester { () -> [String]? in
