@@ -21,7 +21,7 @@ public typealias SetBody<T> = (MutableContext, T) -> Void
 ///    return books
 ///}
 ///```
-public struct Selector<T: Equatable>: RecoilValue, RecoilSyncReadable {
+public struct Selector<T: Equatable>: SyncSelectorReadable {
     public let key: String
     public let get: GetBody<T>
     
@@ -46,7 +46,7 @@ public struct Selector<T: Equatable>: RecoilValue, RecoilSyncReadable {
 ///      }
 ///)
 ///```
-public struct MutableSelector<T: Equatable>: RecoilValue, RecoilSyncReadable {
+public struct MutableSelector<T: Equatable>: SyncSelectorReadable {
     public let key: String
     public let get: GetBody<T>
     public let set: SetBody<T>
@@ -58,7 +58,14 @@ public struct MutableSelector<T: Equatable>: RecoilValue, RecoilSyncReadable {
     }
 }
 
-extension MutableSelector: RecoilSyncWriteable { }
+extension MutableSelector: RecoilWriteable {
+    public func update(with value: DataType) {
+        let context = MutableContext(
+            get: Getter(key),
+            set: Setter(key))
+        set(context, value)
+    }
+}
 
 // MARK: - Async Selector
 @available(iOS 13.0, *)
@@ -97,7 +104,7 @@ struct AsyncCallback<T: Equatable>: AsyncGet {
 /// ``Selector`` and ``AsyncSelector`` can not allow you pass a user-defined argument, if you want to pass a
 /// customable parameters. please refer to ``selectorFamily``
 @available(iOS 13.0, *)
-public struct AsyncSelector<T: Equatable, E: Error>: RecoilValue, RecoilAsyncReadable {
+public struct AsyncSelector<T: Equatable, E: Error>: AsyncSelectorReadable {
     public let key: String
     public let get: AsyncGet
 
@@ -114,7 +121,7 @@ public struct AsyncSelector<T: Equatable, E: Error>: RecoilValue, RecoilAsyncRea
 
 // TODO: Not support yet
 //@available(iOS 13.0, *)
-//public struct MutableAsyncSelector<T: Equatable, E: Error>: RecoilValue, RecoilAsyncReadable {
+//public struct MutableAsyncSelector<T: Equatable, E: Error>: RecoilAsyncReadable {
 //    public let key: String
 //    public let get: AsyncGet
 //    public let set: SetBody<T?>

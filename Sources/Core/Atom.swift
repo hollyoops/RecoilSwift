@@ -27,21 +27,7 @@ public final class Atom<T: Equatable> {
   }
 }
 
-extension Atom: RecoilValue {
-  public func data(from loadable: Loadable) throws -> T {
-    let loadBox = loadable as! LoadBox<T, Never>
-    
-    if loadBox.status == .initiated {
-      loadBox.load()
-    }
-  
-    guard let data = loadBox.data else {
-      throw loadBox.error ?? RecoilError.unknown
-    }
-    
-    return data
-  }
-  
+extension Atom: RecoilSyncReadable {
   public func makeLoadable() -> LoadBox<T, Never> {
     let loader = SynchronousLoader(get)
     return LoadBox(loader: loader)
@@ -75,7 +61,7 @@ struct AtomAsyncCallback<T: Equatable>: AsyncGet {
     }
 }
 
-public struct AsyncAtom<T: Equatable, E: Error>: RecoilValue, RecoilAsyncReadable {
+public struct AsyncAtom<T: Equatable, E: Error>: RecoilAsyncReadable {
   public let key: String
   public let get: AsyncGet
   

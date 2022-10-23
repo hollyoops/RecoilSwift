@@ -47,7 +47,7 @@ public struct LoadableContent<DataType> {
 /// - Parameters:
 ///   - value: A selector wrapper which with user-defined parameters
 /// - Returns: return a loadable object that contains loading informations
-public func useRecoilValueLoadable<P: Equatable, Return: RecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> LoadableContent<Return.LoadableType.Data> {
+public func useRecoilValueLoadable<P: Equatable, Return: RecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> LoadableContent<Return.T> {
   let hook = RecoilLoadableValueHook(initialValue: value.recoilValue,
                                      updateStrategy: .preserved(by: value.param))
   
@@ -58,7 +58,7 @@ public func useRecoilValueLoadable<P: Equatable, Return: RecoilValue>(_ value: P
 /// - Parameters:
 ///   - value: A selector
 /// - Returns: return a loadable object that contains loading informations
-public func useRecoilValueLoadable<Value: RecoilValue>(_ value: Value) -> LoadableContent<Value.LoadableType.Data> {
+public func useRecoilValueLoadable<Value: RecoilValue>(_ value: Value) -> LoadableContent<Value.T> {
   useHook(RecoilLoadableValueHook(initialValue: value))
 }
 
@@ -66,7 +66,7 @@ private struct RecoilLoadableValueHook<T: RecoilValue>: RecoilHook {
   var initialValue: T
   var updateStrategy: HookUpdateStrategy?
   
-  func value(coordinator: Coordinator) -> LoadableContent<T.LoadableType.Data> {
-    LoadableContent<T.LoadableType.Data>(key: coordinator.state.value.key)
+  func value(coordinator: Coordinator) -> LoadableContent<T.T> {
+    LoadableContent<T.T>(key: coordinator.state.value.key)
   }
 }

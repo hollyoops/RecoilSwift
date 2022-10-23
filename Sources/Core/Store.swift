@@ -1,23 +1,23 @@
 import Foundation
 
 internal final class Store {
-  private var states: [String: Loadable] = [:]
+  private var states: [String: any RecoilLoadable] = [:]
   private var subscriberMap: [String: [Subscriber]] = [:]
   private let graph = Graph()
   private let checker = DFSCircularChecker()
   static let shared = Store()
   
-  func safeGetLoadable<T: RecoilValue>(for value: T) -> Loadable {
+  func safeGetLoadable<T: RecoilValue>(for value: T) -> any RecoilLoadable {
     getLoadable(for: value.key) ?? register(value: value)
   }
   
-  func getLoadable(for key: String) -> Loadable? {
+  func getLoadable(for key: String) -> (any RecoilLoadable)? {
     states[key]
   }
   
   func getData<T>(for key: String, dataType: T.Type) -> T? {
     let load = getLoadable(for: key)
-    return load?.getData(of: dataType)
+    return load?.data as? T
   }
 
   func getLoadingStatus(for key: String) -> Bool {
@@ -48,7 +48,7 @@ internal final class Store {
         return
       }
       
-      if let e = loadbox.getError() {
+      if let e = loadbox.error {
         errors.append(e)
       }
 
@@ -88,8 +88,11 @@ internal final class Store {
     }
   }
   
-  func update<Recoil: RecoilValue>(recoilValue: Recoil, newValue: Recoil.LoadableType.Data?) {
-    guard let loadBox = getLoadbox(for: recoilValue) else { return }
+  func update<Recoil: RecoilValue>(recoilValue: Recoil, newValue: Recoil.T?) {
+    guard let loadBox = getLoadbox(for: recoilValue) else {
+      debugPrint("covert to loadbox failed, only loadbox supported for Now")
+      return
+    }
     loadBox.data = newValue
   }
   
@@ -126,7 +129,7 @@ internal final class Store {
   }
   
   @discardableResult
-  private func register<T: RecoilValue>(value: T) -> Loadable {
+  private func register<T: RecoilValue>(value: T) -> any RecoilLoadable {
     //        check(value: value)
     let key = value.key
     let box = makeLoadBox(from: value)
@@ -134,17 +137,14 @@ internal final class Store {
     return box
   }
   
-  private func makeLoadBox<T: RecoilValue>(from value: T) -> LoadBox<T.LoadableType.Data, T.LoadableType.Failure> {
+  private func makeLoadBox<T: RecoilValue>(from value: T) -> any RecoilLoadable {
     let loadable = value.makeLoadable()
-    guard let loadBox = value.castToLoadBox(from: loadable) else {
-      fatalError("Make loadbox failed, only loadbox supported.")
-    }
-    
-    _ = loadBox.observe { [weak self] in
+
+    _ = loadable.observe { [weak self] in
       self?.nodeValueChanged(key: value.key)
     }
     
-    return loadBox
+    return loadable
   }
   
   private func getSubscribers(forKey key: String) -> [Subscriber]? {
@@ -176,13 +176,7 @@ extension Dictionary {
 }
 
 private extension Store {
-  private func getLoadbox<T: RecoilValue>(for value: T) -> LoadBox<T.LoadableType.Data, T.LoadableType.Failure>? {
-    value.castToLoadBox(from: safeGetLoadable(for: value))
-  }
-}
-
-private extension RecoilValue {
-  func castToLoadBox(from loadable: Loadable) -> LoadBox<LoadableType.Data, LoadableType.Failure>? {
-    loadable as? LoadBox<LoadableType.Data, LoadableType.Failure>
+  private func getLoadbox<T: RecoilValue>(for value: T) -> LoadBox<T.T, T.E>? {
+    safeGetLoadable(for: value) as? LoadBox<T.T, T.E>
   }
 }

@@ -2,25 +2,56 @@ public protocol RecoilIdentifiable {
     var key: String { get }
 }
 
-public protocol RecoilReadable: RecoilIdentifiable {
-    associatedtype DataType: Equatable
+public protocol RecoilValue: RecoilIdentifiable {
+    associatedtype T: Equatable
+  
+    associatedtype E: Error
+  
+    associatedtype DataType: Equatable = T
+  
+    func makeLoadable() -> LoadBox<T, E>
     
-    associatedtype LoadableType: RecoilLoadable
-    
-    func makeLoadable() -> LoadableType
-    
-    func data(from: Loadable) throws -> DataType
+    func data(from: some RecoilLoadable) throws -> DataType
 }
 
-public protocol RecoilWriteable {
-    associatedtype DataType: Equatable
-    
-    func update(with value: DataType)
+public protocol RecoilSyncReadable: RecoilValue { }
+
+extension RecoilSyncReadable {
+    public func data(from loadable: some RecoilLoadable) throws -> T {
+        guard let loadBox = loadable as? LoadBox<T, E> else {
+            fatalError("Can not convert loadable to synchronous selector.")
+        }
+        
+        if loadBox.status == .initiated {
+          loadBox.load()
+        }
+      
+        guard let data = loadBox.data else {
+          throw loadBox.error ?? RecoilError.unknown
+        }
+        
+        return data
+    }
 }
 
-public typealias RecoilState = RecoilValue & RecoilWriteable
+public protocol RecoilAsyncReadable: RecoilValue {
+    var get: AsyncGet { get }
+}
 
-public typealias RecoilValue = RecoilReadable
+extension RecoilAsyncReadable {
+    public func data(from loadable: some RecoilLoadable) -> T? {
+        guard let loadBox = loadable as? LoadBox<T, E> else {
+            debugPrint("Can not convert loadable to asynchronous selector.")
+            return nil
+        }
+
+        return loadBox.data
+    }
+    
+    public func makeLoadable() -> LoadBox<T, E> {
+        return LoadBox(loader: get.toLoader(for: self.key))
+    }
+}
 
 enum RecoilError: Error {
   case unknown
