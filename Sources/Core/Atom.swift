@@ -1,12 +1,6 @@
 import Foundation
 import Combine
 
-@available(iOS 13.0, *)
-public typealias CombineAtomBody<T: Equatable, E: Error> = () throws -> AnyPublisher<T, E>
-
-@available(iOS 13.0, *)
-public typealias AsyncAtomBody<T: Equatable> = () async throws -> T
-
 /// Atoms are units of state. They're updatable and subscribable: when an atom is updated, each subscribed component is re-rendered with the new value.
 ///
 /// They can be created at runtime, too. Atoms can be used in place of local component state. If the same atom is used  from multiple components, all those components share their state.
@@ -17,63 +11,40 @@ public typealias AsyncAtomBody<T: Equatable> = () async throws -> T
 /// You can retrive value with ``Recoil hooks``,
 /// eg: ``useRecoilState(allBookState)``
 
-public final class Atom<T: Equatable> {
+public final class Atom<T: Equatable>: RecoilSyncReadable {
+  public typealias T = T
+  public typealias E = Never
+  public typealias DataType = T
+    
   public let key: String
-  private var get: () throws -> T
+  public private(set) var get: AnyGetBody<T>
   
   public init(key: String = "Atom-\(UUID())", _ value: T) {
     self.key = key
-    get = { value }
-  }
-}
-
-extension Atom: RecoilSyncReadable {
-  public func makeLoadable() -> LoadBox<T, Never> {
-    let loader = SynchronousLoader(get)
-    return LoadBox(loader: loader)
+    self.get = SyncGetBody({ value }).eraseToAnyEvaluator()
   }
 }
 
 extension Atom: RecoilWriteable {
   public func update(with value: T) {
-    self.get = { value }
+    self.get = SyncGetBody({ value }).eraseToAnyEvaluator()
     Store.shared.update(recoilValue: self, newValue: value)
   }
 }
 
-@available(iOS 13.0, *)
-struct AtomCombineCallback<T: Equatable, E: Error>: AsyncGet {
-    func toLoader(for key: String) -> LoaderProtocol {
-        let getFn = self.get
-        return CombineLoader { try getFn() }
-    }
-    
-    public let get: CombineAtomBody<T, E>
-}
-
-@available(iOS 13.0, *)
-struct AtomAsyncCallback<T: Equatable>: AsyncGet {
-    public let get: AsyncAtomBody<T>
-    
-    func toLoader(for key: String) -> LoaderProtocol {
-        let getFn = self.get
-        return AsynchronousLoader { try await getFn() }
-    }
-}
-
 public struct AsyncAtom<T: Equatable, E: Error>: RecoilAsyncReadable {
   public let key: String
-  public let get: AsyncGet
+  public let get: AnyGetBody<T>
   
-  public init(key: String = "AsyncAtom-\(UUID())", get: @escaping CombineAtomBody<T, E>) {
+  public init(key: String = "AsyncAtom-\(UUID())", get: @escaping CombineGetBodyFunc<T, E>) {
       self.key = key
-      self.get = AtomCombineCallback(get: get)
+      self.get = CombineGetBody(get).eraseToAnyEvaluator()
   }
   
   @available(iOS 13.0, *)
-  public init(key: String = "AsyncAtom-\(UUID())", get: @escaping AsyncAtomBody<T>) {
+  public init(key: String = "AsyncAtom-\(UUID())", get: @escaping AsyncGetBodyFunc<T>) {
       self.key = key
-      self.get = AtomAsyncCallback(get: get)
+      self.get = AsyncGetBody(get).eraseToAnyEvaluator()
   }
 }
 

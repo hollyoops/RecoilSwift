@@ -5,7 +5,6 @@ import Combine
 #endif
 
 // MARK: - Sync Selector
-public typealias GetBody<T> = (Getter) throws -> T
 public typealias SetBody<T> = (MutableContext, T) -> Void
 
 ///A ``selector`` is a pure function that accepts atoms or other sync selectors as input. When these upstream atoms or sync selectors are updated, the selector function will be re-evaluated. Components can subscribe to selectors just like atoms, and will then be re-rendered when the selectors change.
@@ -22,12 +21,15 @@ public typealias SetBody<T> = (MutableContext, T) -> Void
 ///}
 ///```
 public struct Selector<T: Equatable>: SyncSelectorReadable {
-    public let key: String
-    public let get: GetBody<T>
+    public typealias T = T
+    public typealias E = Never
     
-    init(key: String = "R-Sel-\(UUID())", body: @escaping GetBody<T>) {
+    public let key: String
+    public let get: AnyGetBody<T>
+    
+    init(key: String = "R-Sel-\(UUID())", body: @escaping SyncGetFunc<T>) {
         self.key = key
-        self.get = body
+        self.get = SyncGetBody({ try body(Getter(key)) }).eraseToAnyEvaluator()
     }
 }
 
@@ -47,13 +49,17 @@ public struct Selector<T: Equatable>: SyncSelectorReadable {
 ///)
 ///```
 public struct MutableSelector<T: Equatable>: SyncSelectorReadable {
+    public typealias T = T
+    public typealias E = Never
+    public typealias DataType = T
+    
     public let key: String
-    public let get: GetBody<T>
+    public let get: AnyGetBody<T>
     public let set: SetBody<T>
 
-    public init(key: String = "WR-Sel-\(UUID())", get: @escaping GetBody<T>, set: @escaping SetBody<T>) {
+    public init(key: String = "WR-Sel-\(UUID())", get: @escaping SyncGetFunc<T>, set: @escaping SetBody<T>) {
         self.key = key
-        self.get = get
+        self.get = SyncGetBody({ try get(Getter(key)) }).eraseToAnyEvaluator()
         self.set = set
     }
 }
@@ -68,36 +74,6 @@ extension MutableSelector: RecoilWriteable {
 }
 
 // MARK: - Async Selector
-@available(iOS 13.0, *)
-public typealias CombineGetBody<T: Equatable, E: Error> = (Getter) throws -> AnyPublisher<T, E>
-
-@available(iOS 13.0, *)
-public typealias AsyncGetBody<T: Equatable> = (Getter) async throws -> T
-
-
-public protocol AsyncGet {
-    func toLoader(for key: String) -> LoaderProtocol
-}
-
-@available(iOS 13.0, *)
-struct CombineCallback<T: Equatable, E: Error>: AsyncGet {
-    func toLoader(for key: String) -> LoaderProtocol {
-        let getFn = self.get
-        return CombineLoader { try getFn(Getter(key)) }
-    }
-    
-    public let get: CombineGetBody<T, E>
-}
-
-@available(iOS 13.0, *)
-struct AsyncCallback<T: Equatable>: AsyncGet {
-    public let get: AsyncGetBody<T>
-    
-    func toLoader(for key: String) -> LoaderProtocol {
-        let getFn = self.get
-        return AsynchronousLoader { try await getFn(Getter(key)) }
-    }
-}
 
 /// A ``AsyncSelector`` is a pure function that other async selectors as input. those selector be impletemented
 /// by ``Combine`` or ``async/await``
@@ -106,16 +82,16 @@ struct AsyncCallback<T: Equatable>: AsyncGet {
 @available(iOS 13.0, *)
 public struct AsyncSelector<T: Equatable, E: Error>: AsyncSelectorReadable {
     public let key: String
-    public let get: AsyncGet
+    public let get: AnyGetBody<T>
 
-    public init(key: String = "R-AsyncSel-\(UUID())", get: @escaping CombineGetBody<T, E>) {
+    public init(key: String = "R-AsyncSel-\(UUID())", get: @escaping CombineGetFunc<T, E>) {
         self.key = key
-        self.get = CombineCallback(get: get)
+        self.get = CombineGetBody<T, E>( { try get(Getter(key)) }).eraseToAnyEvaluator()
     }
     
-    public init(key: String = "R-AsyncSel-\(UUID())", get: @escaping AsyncGetBody<T>) {
+    public init(key: String = "R-AsyncSel-\(UUID())", get: @escaping AsyncGetFunc<T>) {
         self.key = key
-        self.get = AsyncCallback(get: get)
+        self.get = AsyncGetBody<T>({ try await get(Getter(key))}).eraseToAnyEvaluator()
     }
 }
 

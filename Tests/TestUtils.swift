@@ -5,8 +5,8 @@ import Foundation
 
 struct TestConfig {
   static let expectation_wait_seconds = 0.3
-  static let mock_async_wait_nanoseconds: UInt64 = 100_000_000
-  static let mock_async_wait_seconds = 0.3
+  static let mock_async_wait_nanoseconds: UInt64 = 500_000_00
+  static let mock_async_wait_seconds = 0.05
 }
 
 struct MockAPI {

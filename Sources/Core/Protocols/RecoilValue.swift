@@ -9,7 +9,7 @@ public protocol RecoilValue: RecoilIdentifiable {
   
     associatedtype DataType: Equatable = T
   
-    func makeLoadable() -> LoadBox<T, E>
+    var get: AnyGetBody<T> { get }
     
     func data(from: some RecoilLoadable) throws -> DataType
 }
@@ -34,9 +34,7 @@ extension RecoilSyncReadable {
     }
 }
 
-public protocol RecoilAsyncReadable: RecoilValue {
-    var get: AsyncGet { get }
-}
+public protocol RecoilAsyncReadable: RecoilValue { }
 
 extension RecoilAsyncReadable {
     public func data(from loadable: some RecoilLoadable) -> T? {
@@ -46,10 +44,6 @@ extension RecoilAsyncReadable {
         }
 
         return loadBox.data
-    }
-    
-    public func makeLoadable() -> LoadBox<T, E> {
-        return LoadBox(loader: get.toLoader(for: self.key))
     }
 }
 

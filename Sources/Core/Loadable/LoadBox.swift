@@ -1,4 +1,4 @@
-public class LoadBox<T: Equatable, E: Error>: RecoilLoadable {
+class LoadBox<T: Equatable, E: Error>: RecoilLoadable {
     private var shouldNotify = false
     public var data: T? {
         willSet {
@@ -13,41 +13,60 @@ public class LoadBox<T: Equatable, E: Error>: RecoilLoadable {
             }
         }
     }
-    public var error: E?
+    public var error: Error?
     public var status = LoadingStatus.initiated
-
-    private let loader: LoaderProtocol
+    
+    private var task: Task<Void, Error>?
+    private let evaluator: AnyGetBody<T>
     private var valueDidChanged: (() -> Void)?
 
     public var isAsynchronous: Bool {
-        let isSync = loader is SynchronousLoader<T>
-        return !isSync
+        evaluator.isAsynchronous
     }
   
     public var isLoading: Bool {
         status == .loading
     }
-
-    init(loader: LoaderProtocol) {
-        self.loader = loader
+    
+    init(anyGetBody: AnyGetBody<T>) {
+        self.evaluator = anyGetBody
     }
-
+    
     public func load() {
         if status == .loading {
-            self.loader.cancel()
+            self.cancel()
         }
-
+        
+        isAsynchronous ? loadAsync() : loadSync()
+    }
+    
+    private func loadAsync () {
         self.status = .loading
-        self.loader
-        .toPromise()
-        .then { [weak self] in self?.fullFill($0) }
-        .catch { [weak self] in self?.reject($0) }
-
-        self.loader.run()
+        
+        self.task = Task { @MainActor in
+            do {
+                let value = try await self.evaluator.evaluate()
+                self.fullFill(value)
+            } catch {
+                self.reject(error)
+            }
+        }
+    }
+    
+    private func loadSync() {
+        self.status = .loading
+        let ret = self.evaluator.evaluate()
+        switch ret {
+        case .success(let val): self.fullFill(val)
+        case .failure(let err): self.reject(err)
+        }
     }
 
     func cancel() {
-        self.loader.cancel()
+        guard let t = self.task else { return }
+        
+        t.cancel()
+        self.task = nil
         valueDidChanged?()
     }
 }
@@ -71,7 +90,7 @@ extension LoadBox {
         self.status = .solved
     }
 
-    private func reject(_ error: E) {
+    private func reject(_ error: Error) {
         self.error = error
         self.status = .error
 

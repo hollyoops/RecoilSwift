@@ -21,7 +21,7 @@ public func atom<T: Equatable>(_ fn: () -> T) -> Atom<T> {
 ///  - fn: A closure that provide init value for the atom
 /// - Returns: A writeable RecoilState object.
 @available(iOS 13.0, *)
-public func atom<T: Equatable, E: Error>(_ fn: @escaping CombineAtomBody<T, E>) -> AsyncAtom<T, E> {
+public func atom<T: Equatable, E: Error>(_ fn: @escaping CombineGetBodyFunc<T, E>) -> AsyncAtom<T, E> {
     AsyncAtom(get: fn)
 }
 
@@ -30,7 +30,7 @@ public func atom<T: Equatable, E: Error>(_ fn: @escaping CombineAtomBody<T, E>) 
 ///  - fn: A closure that provide init value for the atom
 /// - Returns: A writeable RecoilState object.
 @available(iOS 13.0, *)
-public func atom<T: Equatable>(_ fn: @escaping AsyncAtomBody<T>) -> AsyncAtom<T, Error> {
+public func atom<T: Equatable>(_ fn: @escaping AsyncGetBodyFunc<T>) -> AsyncAtom<T, Error> {
     AsyncAtom(get: fn)
 }
 
@@ -40,7 +40,7 @@ public func atom<T: Equatable>(_ fn: @escaping AsyncAtomBody<T>) -> AsyncAtom<T,
 /// - Parameters:
 ///  - getBody: A synchronous function that evaluates the value for the derived state.
 /// - Returns: A synchronous readonly selector.
-public func selector<T: Equatable>(_ getBody: @escaping GetBody<T>) -> Selector<T> {
+public func selector<T: Equatable>(_ getBody: @escaping SyncGetFunc<T>) -> Selector<T> {
     Selector(body: getBody)
 }
 
@@ -49,7 +49,7 @@ public func selector<T: Equatable>(_ getBody: @escaping GetBody<T>) -> Selector<
 ///  - getBody:  A asynchronous function that evaluates the value for the derived state. It return ``AnyPublisher`` object.
 /// - Returns: A asynchronous readonly selector with combine.
 @available(iOS 13.0, *)
-public func selector<T: Equatable, E: Error>(_ getBody: @escaping CombineGetBody<T, E>) -> AsyncSelector<T, E> {
+public func selector<T: Equatable, E: Error>(_ getBody: @escaping CombineGetFunc<T, E>) -> AsyncSelector<T, E> {
     AsyncSelector(get: getBody)
 }
 
@@ -58,7 +58,7 @@ public func selector<T: Equatable, E: Error>(_ getBody: @escaping CombineGetBody
 ///  - getBody:  A async function that evaluates the value for the derived state.
 /// - Returns: A asynchronous readonly selector with ``async/await``.
 @available(iOS 13.0, *)
-public func selector<T: Equatable>(_ getBody: @escaping AsyncGetBody<T>) -> AsyncSelector<T, Error> {
+public func selector<T: Equatable>(_ getBody: @escaping AsyncGetFunc<T>) -> AsyncSelector<T, Error> {
     AsyncSelector(get: getBody)
 }
 
@@ -67,7 +67,7 @@ public func selector<T: Equatable>(_ getBody: @escaping AsyncGetBody<T>) -> Asyn
 ///  - get: A synchronous function that evaluates the value for the derived state.
 ///  - set: A synchronous function that can store a value to Recoil object
 /// - Returns: A asynchronous readonly selector with ``async/await``.
-public func selector<T: Equatable>(get getBody: @escaping GetBody<T>, set setBody: @escaping SetBody<T>) -> MutableSelector<T> {
+public func selector<T: Equatable>(get getBody: @escaping SyncGetFunc<T>, set setBody: @escaping SetBody<T>) -> MutableSelector<T> {
     MutableSelector(get: getBody, set: setBody)
 }
 

@@ -138,7 +138,7 @@ internal final class Store {
   }
   
   private func makeLoadBox<T: RecoilValue>(from value: T) -> any RecoilLoadable {
-    let loadable = value.makeLoadable()
+      let loadable = LoadBox<T.T, T.E>(anyGetBody: value.get)
 
     _ = loadable.observe { [weak self] in
       self?.nodeValueChanged(key: value.key)
