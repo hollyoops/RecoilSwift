@@ -7,7 +7,10 @@ public struct Getter {
     
     public func callAsFunction<T: RecoilValue>(_ recoilValue: T) -> T.DataType {
         let storeRef = Store.shared
-        let loadable = storeRef.safeGetLoadable(for: recoilValue)
+        
+        guard let loadable = storeRef.safeGetLoadable(for: recoilValue) as? LoadBox<T.T> else {
+            fatalError("Can not convert loadable to loadbox.")
+        }
         
         if let host = contextKey {
             storeRef.makeConnect(key: host, upstream: recoilValue.key)

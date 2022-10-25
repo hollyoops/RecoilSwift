@@ -2,32 +2,28 @@ public protocol RecoilIdentifiable {
     var key: String { get }
 }
 
-public protocol RecoilValue: RecoilIdentifiable {
+public protocol RecoilValue<T, E>: RecoilIdentifiable {
     associatedtype T: Equatable
   
     associatedtype E: Error
   
     associatedtype DataType: Equatable = T
   
-    var get: AnyGetBody<T> { get }
+    var get: any Evaluator<T> { get }
     
-    func data(from: some RecoilLoadable) throws -> DataType
+    func data(from: some RecoilLoadable<T, Error>) throws -> DataType
 }
 
 public protocol RecoilSyncReadable: RecoilValue { }
 
 extension RecoilSyncReadable {
-    public func data(from loadable: some RecoilLoadable) throws -> T {
-        guard let loadBox = loadable as? LoadBox<T, E> else {
-            fatalError("Can not convert loadable to synchronous selector.")
-        }
-        
-        if loadBox.status == .initiated {
-          loadBox.load()
+    public func data(from loadable: some RecoilLoadable<T, Error>) throws -> T {
+        if loadable.status == .initiated {
+            loadable.load()
         }
       
-        guard let data = loadBox.data else {
-          throw loadBox.error ?? RecoilError.unknown
+        guard let data = loadable.data else {
+          throw loadable.error ?? RecoilError.unknown
         }
         
         return data
@@ -37,13 +33,8 @@ extension RecoilSyncReadable {
 public protocol RecoilAsyncReadable: RecoilValue { }
 
 extension RecoilAsyncReadable {
-    public func data(from loadable: some RecoilLoadable) -> T? {
-        guard let loadBox = loadable as? LoadBox<T, E> else {
-            debugPrint("Can not convert loadable to asynchronous selector.")
-            return nil
-        }
-
-        return loadBox.data
+    public func data(from loadable: some RecoilLoadable<T, Error>) -> T? {
+        return loadable.data
     }
 }
 

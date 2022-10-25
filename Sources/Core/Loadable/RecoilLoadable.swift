@@ -5,7 +5,7 @@ public enum LoadingStatus {
     case error
 }
 
-public protocol RecoilLoadable: RecoilObservable {
+public protocol RecoilLoadable<Value, Failure>: RecoilObservable {
     associatedtype Value: Equatable
     
     associatedtype Failure: Error

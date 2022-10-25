@@ -17,34 +17,34 @@ public final class Atom<T: Equatable>: RecoilSyncReadable {
   public typealias DataType = T
     
   public let key: String
-  public private(set) var get: AnyGetBody<T>
+  public private(set) var get: any Evaluator<T>
   
   public init(key: String = "Atom-\(UUID())", _ value: T) {
     self.key = key
-    self.get = SyncGetBody({ value }).eraseToAnyEvaluator()
+    self.get = SyncGetBody({ value })
   }
 }
 
 extension Atom: RecoilWriteable {
   public func update(with value: T) {
-    self.get = SyncGetBody({ value }).eraseToAnyEvaluator()
+    self.get = SyncGetBody({ value })
     Store.shared.update(recoilValue: self, newValue: value)
   }
 }
 
 public struct AsyncAtom<T: Equatable, E: Error>: RecoilAsyncReadable {
   public let key: String
-  public let get: AnyGetBody<T>
+  public let get: any Evaluator<T>
   
   public init(key: String = "AsyncAtom-\(UUID())", get: @escaping CombineGetBodyFunc<T, E>) {
       self.key = key
-      self.get = CombineGetBody(get).eraseToAnyEvaluator()
+      self.get = CombineGetBody(get)
   }
   
   @available(iOS 13.0, *)
   public init(key: String = "AsyncAtom-\(UUID())", get: @escaping AsyncGetBodyFunc<T>) {
       self.key = key
-      self.get = AsyncGetBody(get).eraseToAnyEvaluator()
+      self.get = AsyncGetBody(get)
   }
 }
 

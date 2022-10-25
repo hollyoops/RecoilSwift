@@ -25,11 +25,11 @@ public struct Selector<T: Equatable>: SyncSelectorReadable {
     public typealias E = Never
     
     public let key: String
-    public let get: AnyGetBody<T>
+    public let get: any Evaluator<T>
     
     init(key: String = "R-Sel-\(UUID())", body: @escaping SyncGetFunc<T>) {
         self.key = key
-        self.get = SyncGetBody({ try body(Getter(key)) }).eraseToAnyEvaluator()
+        self.get = SyncGetBody({ try body(Getter(key)) })
     }
 }
 
@@ -54,12 +54,12 @@ public struct MutableSelector<T: Equatable>: SyncSelectorReadable {
     public typealias DataType = T
     
     public let key: String
-    public let get: AnyGetBody<T>
+    public let get: any Evaluator<T>
     public let set: SetBody<T>
 
     public init(key: String = "WR-Sel-\(UUID())", get: @escaping SyncGetFunc<T>, set: @escaping SetBody<T>) {
         self.key = key
-        self.get = SyncGetBody({ try get(Getter(key)) }).eraseToAnyEvaluator()
+        self.get = SyncGetBody({ try get(Getter(key)) })
         self.set = set
     }
 }
@@ -82,16 +82,16 @@ extension MutableSelector: RecoilWriteable {
 @available(iOS 13.0, *)
 public struct AsyncSelector<T: Equatable, E: Error>: AsyncSelectorReadable {
     public let key: String
-    public let get: AnyGetBody<T>
+    public let get: any Evaluator<T>
 
     public init(key: String = "R-AsyncSel-\(UUID())", get: @escaping CombineGetFunc<T, E>) {
         self.key = key
-        self.get = CombineGetBody<T, E>( { try get(Getter(key)) }).eraseToAnyEvaluator()
+        self.get = CombineGetBody<T, E>( { try get(Getter(key)) })
     }
     
     public init(key: String = "R-AsyncSel-\(UUID())", get: @escaping AsyncGetFunc<T>) {
         self.key = key
-        self.get = AsyncGetBody<T>({ try await get(Getter(key))}).eraseToAnyEvaluator()
+        self.get = AsyncGetBody<T>({ try await get(Getter(key))})
     }
 }
 

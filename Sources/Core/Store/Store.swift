@@ -138,7 +138,7 @@ internal final class Store {
   }
   
   private func makeLoadBox<T: RecoilValue>(from value: T) -> any RecoilLoadable {
-      let loadable = LoadBox<T.T, T.E>(anyGetBody: value.get)
+      let loadable = LoadBox<T.T>(anyGetBody: value.get)
 
     _ = loadable.observe { [weak self] in
       self?.nodeValueChanged(key: value.key)
@@ -176,7 +176,7 @@ extension Dictionary {
 }
 
 private extension Store {
-  private func getLoadbox<T: RecoilValue>(for value: T) -> LoadBox<T.T, T.E>? {
-    safeGetLoadable(for: value) as? LoadBox<T.T, T.E>
+  private func getLoadbox<T: RecoilValue>(for value: T) -> LoadBox<T.T>? {
+    safeGetLoadable(for: value) as? LoadBox<T.T>
   }
 }

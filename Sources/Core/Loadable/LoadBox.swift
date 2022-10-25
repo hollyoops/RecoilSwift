@@ -1,4 +1,6 @@
-class LoadBox<T: Equatable, E: Error>: RecoilLoadable {
+class LoadBox<T: Equatable>: RecoilLoadable {
+    typealias Failure = Error
+
     private var shouldNotify = false
     public var data: T? {
         willSet {
@@ -13,22 +15,22 @@ class LoadBox<T: Equatable, E: Error>: RecoilLoadable {
             }
         }
     }
-    public var error: Error?
+    public var error: Failure?
     public var status = LoadingStatus.initiated
     
     private var task: Task<Void, Error>?
-    private let evaluator: AnyGetBody<T>
+    private let evaluator: any Evaluator<T>
     private var valueDidChanged: (() -> Void)?
 
     public var isAsynchronous: Bool {
-        evaluator.isAsynchronous
+       evaluator is any AsyncEvaluator
     }
   
     public var isLoading: Bool {
         status == .loading
     }
     
-    init(anyGetBody: AnyGetBody<T>) {
+    init(anyGetBody: some Evaluator<T>) {
         self.evaluator = anyGetBody
     }
     
@@ -41,11 +43,30 @@ class LoadBox<T: Equatable, E: Error>: RecoilLoadable {
     }
     
     private func loadAsync () {
-        self.status = .loading
+        @Sendable func evaluate() async throws -> T {
+            if #available(iOS 16.0.0, *) {
+                guard let evaluator = evaluator as? (any AsyncEvaluator<T>) else {
+                    throw EvaluatorError.convertToAsyncFailed
+                }
+                
+                return try await evaluator.evaluate()
+            } else {
+                guard let evaluator = evaluator as? (any AsyncEvaluator) else {
+                    throw EvaluatorError.convertToAsyncFailed
+                }
+                
+                guard let val = try await evaluator.evaluate() as? T else {
+                    throw EvaluatorError.convertToAsyncFailed
+                }
+                
+                return val
+            }
+        }
         
+        self.status = .loading
         self.task = Task { @MainActor in
             do {
-                let value = try await self.evaluator.evaluate()
+                let value = try await evaluate()
                 self.fullFill(value)
             } catch {
                 self.reject(error)
@@ -54,8 +75,24 @@ class LoadBox<T: Equatable, E: Error>: RecoilLoadable {
     }
     
     private func loadSync() {
+        func evaluate() -> Result<T, Error> {
+            guard let evaluator = evaluator as? (any SyncEvaluator) else {
+                return .failure(EvaluatorError.convertToSyncFailed)
+            }
+            
+            do {
+                guard let value = try evaluator.evaluate() as? T else {
+                    throw EvaluatorError.convertToAsyncFailed
+                }
+                
+                return .success(value)
+            } catch {
+                return .failure(error)
+            }
+        }
+        
         self.status = .loading
-        let ret = self.evaluator.evaluate()
+        let ret = evaluate()
         switch ret {
         case .success(let val): self.fullFill(val)
         case .failure(let err): self.reject(err)
@@ -103,7 +140,7 @@ extension LoadBox {
 }
 
 extension LoadBox: Equatable {
-    public static func ==(lhs: LoadBox<T, E>, rhs: LoadBox<T, E>) -> Bool {
+    public static func ==(lhs: LoadBox<T>, rhs: LoadBox<T>) -> Bool {
         lhs.status == rhs.status &&
         lhs.data == rhs.data
     }
