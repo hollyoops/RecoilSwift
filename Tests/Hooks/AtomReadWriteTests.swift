@@ -6,8 +6,8 @@ import XCTest
 final class AtomReadWriteTests: XCTestCase {
   struct TestModule  {
     static var stringAtom: Atom<String>!
-    static var remoteDataSource: AsyncAtom<[String], Error>!
-    static var remoteDataSourceError: AsyncAtom<[String], Error>!
+    static var remoteDataSource: AsyncAtom<[String]>!
+    static var remoteDataSourceError: AsyncAtom<[String]>!
   }
   
   override func setUp() {

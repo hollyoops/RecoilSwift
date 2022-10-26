@@ -1,6 +1,4 @@
 class LoadBox<T: Equatable>: RecoilLoadable {
-    typealias Failure = Error
-
     private var shouldNotify = false
     public var data: T? {
         willSet {
@@ -15,7 +13,7 @@ class LoadBox<T: Equatable>: RecoilLoadable {
             }
         }
     }
-    public var error: Failure?
+    public var error: Error?
     public var status = LoadingStatus.initiated
     
     private var task: Task<Void, Error>?

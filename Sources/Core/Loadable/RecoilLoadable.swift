@@ -5,10 +5,8 @@ public enum LoadingStatus {
     case error
 }
 
-public protocol RecoilLoadable<Value, Failure>: RecoilObservable {
+public protocol RecoilLoadable<Value>: RecoilObservable {
     associatedtype Value: Equatable
-    
-    associatedtype Failure: Error
     
     var status: LoadingStatus { get }
     
@@ -20,5 +18,5 @@ public protocol RecoilLoadable<Value, Failure>: RecoilObservable {
     
     var data: Value? { get }
     
-    var error: Failure? { get }
+    var error: Error? { get }
 }

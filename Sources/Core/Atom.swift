@@ -32,11 +32,11 @@ extension Atom: RecoilWriteable {
   }
 }
 
-public struct AsyncAtom<T: Equatable, E: Error>: RecoilAsyncReadable {
+public struct AsyncAtom<T: Equatable>: RecoilAsyncReadable {
   public let key: String
   public let get: any Evaluator<T>
   
-  public init(key: String = "AsyncAtom-\(UUID())", get: @escaping CombineGetBodyFunc<T, E>) {
+  public init<E: Error>(key: String = "AsyncAtom-\(UUID())", get: @escaping CombineGetBodyFunc<T, E>) {
       self.key = key
       self.get = CombineGetBody(get)
   }

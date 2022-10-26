@@ -35,7 +35,7 @@ func makeSelector<T>(error: Error, type: T.Type) -> RecoilSwift.Selector<T> {
 func makeCombineAtom<T>(
   value: T,
   delayInSeconds: Double = TestConfig.mock_async_wait_seconds
-) -> AsyncAtom<T, Error> {
+) -> AsyncAtom<T> {
   atom {
     MockAPI.makeCombine(result: .success(value), delay: delayInSeconds)
   }
@@ -45,7 +45,7 @@ func makeCombineAtom<T>(
   error: Error,
   type: T.Type,
   delayInSeconds: Double = TestConfig.mock_async_wait_seconds
-) -> AsyncAtom<T, Error> {
+) -> AsyncAtom<T> {
   atom {
     MockAPI.makeCombine(result: .failure(error), delay: delayInSeconds)
   }
@@ -54,7 +54,7 @@ func makeCombineAtom<T>(
 func makeAsyncAtom<T>(
   value: T,
   delayInNanoSecounds: UInt64 = TestConfig.mock_async_wait_nanoseconds
-) -> AsyncAtom<T, Error> {
+) -> AsyncAtom<T> {
   atom { () async -> T in
     await MockAPI.makeAsync(value: value, delay: delayInNanoSecounds)
   }
@@ -64,7 +64,7 @@ func makeAsyncAtom<T>(
   error: Error,
   type: T.Type,
   delayInNanoSecounds: UInt64 = TestConfig.mock_async_wait_nanoseconds
-) -> AsyncAtom<T, Error> {
+) -> AsyncAtom<T> {
   atom { () async throws -> T in
     try? await Task.sleep(nanoseconds: TestConfig.mock_async_wait_nanoseconds)
     throw error
@@ -74,7 +74,7 @@ func makeAsyncAtom<T>(
 func makeCombineSelector<T>(
   value: T,
   delayInSeconds: Double = TestConfig.mock_async_wait_seconds
-) -> AsyncSelector<T, Error> {
+) -> AsyncSelector<T> {
   selector { _ in
     MockAPI.makeCombine(result: .success(value), delay: delayInSeconds)
   }
@@ -84,7 +84,7 @@ func makeCombineSelector<T>(
   error: Error,
   type: T.Type,
   delayInSeconds: Double = TestConfig.mock_async_wait_seconds
-) -> AsyncSelector<T, Error> {
+) -> AsyncSelector<T> {
   selector { get -> AnyPublisher<T, Error> in
     MockAPI.makeCombine(result: .failure(error), delay: delayInSeconds)
   }
@@ -93,7 +93,7 @@ func makeCombineSelector<T>(
 func makeAsyncSelector<T>(
   value: T,
   delayInNanoSecounds: UInt64 = TestConfig.mock_async_wait_nanoseconds
-) -> AsyncSelector<T, Error> {
+) -> AsyncSelector<T> {
   selector { _ in
     await MockAPI.makeAsync(value: value, delay: delayInNanoSecounds)
   }
@@ -103,7 +103,7 @@ func makeAsyncSelector<T>(
   error: Error,
   type: T.Type,
   delayInNanoSecounds: UInt64 = TestConfig.mock_async_wait_nanoseconds
-) -> AsyncSelector<T, Error> {
+) -> AsyncSelector<T> {
   selector { get async throws -> T in
     try? await Task.sleep(nanoseconds: TestConfig.mock_async_wait_nanoseconds)
     throw error

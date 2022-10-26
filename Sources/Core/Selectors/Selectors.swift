@@ -80,11 +80,11 @@ extension MutableSelector: RecoilWriteable {
 /// ``Selector`` and ``AsyncSelector`` can not allow you pass a user-defined argument, if you want to pass a
 /// customable parameters. please refer to ``selectorFamily``
 @available(iOS 13.0, *)
-public struct AsyncSelector<T: Equatable, E: Error>: AsyncSelectorReadable {
+public struct AsyncSelector<T: Equatable>: AsyncSelectorReadable {
     public let key: String
     public let get: any Evaluator<T>
 
-    public init(key: String = "R-AsyncSel-\(UUID())", get: @escaping CombineGetFunc<T, E>) {
+    public init<E: Error>(key: String = "R-AsyncSel-\(UUID())", get: @escaping CombineGetFunc<T, E>) {
         self.key = key
         self.get = CombineGetBody<T, E>( { try get(Getter(key)) })
     }

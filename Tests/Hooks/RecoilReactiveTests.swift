@@ -14,8 +14,8 @@ final class RecoilReactiveTests: XCTestCase {
     
     static var upstreamErrorState = makeCombineAtom(error: MyError.param, type: String.self)
     
-    static var upstreamAsyncState: AsyncSelector<String, Error>!
-    static var downstreamAsyncState: AsyncSelector<String, Error>!
+    static var upstreamAsyncState: AsyncSelector<String>!
+    static var downstreamAsyncState: AsyncSelector<String>!
   }
   
   override func setUp() {

@@ -21,7 +21,7 @@ public func atom<T: Equatable>(_ fn: () -> T) -> Atom<T> {
 ///  - fn: A closure that provide init value for the atom
 /// - Returns: A writeable RecoilState object.
 @available(iOS 13.0, *)
-public func atom<T: Equatable, E: Error>(_ fn: @escaping CombineGetBodyFunc<T, E>) -> AsyncAtom<T, E> {
+public func atom<T: Equatable, E: Error>(_ fn: @escaping CombineGetBodyFunc<T, E>) -> AsyncAtom<T> {
     AsyncAtom(get: fn)
 }
 
@@ -30,7 +30,7 @@ public func atom<T: Equatable, E: Error>(_ fn: @escaping CombineGetBodyFunc<T, E
 ///  - fn: A closure that provide init value for the atom
 /// - Returns: A writeable RecoilState object.
 @available(iOS 13.0, *)
-public func atom<T: Equatable>(_ fn: @escaping AsyncGetBodyFunc<T>) -> AsyncAtom<T, Error> {
+public func atom<T: Equatable>(_ fn: @escaping AsyncGetBodyFunc<T>) -> AsyncAtom<T> {
     AsyncAtom(get: fn)
 }
 
@@ -49,7 +49,7 @@ public func selector<T: Equatable>(_ getBody: @escaping SyncGetFunc<T>) -> Selec
 ///  - getBody:  A asynchronous function that evaluates the value for the derived state. It return ``AnyPublisher`` object.
 /// - Returns: A asynchronous readonly selector with combine.
 @available(iOS 13.0, *)
-public func selector<T: Equatable, E: Error>(_ getBody: @escaping CombineGetFunc<T, E>) -> AsyncSelector<T, E> {
+public func selector<T: Equatable, E: Error>(_ getBody: @escaping CombineGetFunc<T, E>) -> AsyncSelector<T> {
     AsyncSelector(get: getBody)
 }
 
@@ -58,7 +58,7 @@ public func selector<T: Equatable, E: Error>(_ getBody: @escaping CombineGetFunc
 ///  - getBody:  A async function that evaluates the value for the derived state.
 /// - Returns: A asynchronous readonly selector with ``async/await``.
 @available(iOS 13.0, *)
-public func selector<T: Equatable>(_ getBody: @escaping AsyncGetFunc<T>) -> AsyncSelector<T, Error> {
+public func selector<T: Equatable>(_ getBody: @escaping AsyncGetFunc<T>) -> AsyncSelector<T> {
     AsyncSelector(get: getBody)
 }
 
@@ -94,9 +94,9 @@ public func atomFamily<P, T: Equatable>(
 /// - Returns: A function which can be called with user-defined parameters and returns a asynchronous atom with combine. Each unique parameter value will return the same memoized atom instance.
 public func atomFamily<P, T: Equatable, E: Error>(
   _ getBody: @escaping ParametricCombineGetBody<P, T, E>
-) -> FamilyFunc<P, AsyncAtom<T, E>> {
+) -> FamilyFunc<P, AsyncAtom<T>> {
   
-  return { (param: P) -> ParametricRecoilValue<P, AsyncAtom<T, E>> in
+  return { (param: P) -> ParametricRecoilValue<P, AsyncAtom<T>> in
     let body = curry(getBody)(param)
     let get = { try body(Getter()) }
     return ParametricRecoilValue(recoilValue: atom(get), param: param)
@@ -110,9 +110,9 @@ public func atomFamily<P, T: Equatable, E: Error>(
 @available(iOS 13, *)
 public func atomFamily<P, T: Equatable>(
   _ getBody: @escaping ParametricAsyncGetBody<P, T>
-) -> FamilyFunc<P, AsyncAtom<T, Error>> {
+) -> FamilyFunc<P, AsyncAtom<T>> {
   
-  return { (param: P) -> ParametricRecoilValue<P, AsyncAtom<T, Error>> in
+  return { (param: P) -> ParametricRecoilValue<P, AsyncAtom<T>> in
     let body = curry(getBody)(param)
     let get = { try await body(Getter()) }
     return ParametricRecoilValue(recoilValue: atom(get), param: param)
@@ -140,9 +140,9 @@ public func selectorFamily<P, T: Equatable>(
 @available(iOS 13.0, *)
 public func selectorFamily<P, T: Equatable, E: Error>(
     _ getBody: @escaping ParametricCombineGetBody<P, T, E>
-) -> FamilyFunc<P, AsyncSelector<T, E>> {
+) -> FamilyFunc<P, AsyncSelector<T>> {
     
-    return { (param: P) -> ParametricRecoilValue<P, AsyncSelector<T, E>> in
+    return { (param: P) -> ParametricRecoilValue<P, AsyncSelector<T>> in
         let body = curry(getBody)(param)
         return ParametricRecoilValue(recoilValue: selector(body), param: param)
     }
@@ -155,9 +155,9 @@ public func selectorFamily<P, T: Equatable, E: Error>(
 @available(iOS 13.0, *)
 public func selectorFamily<P, T: Equatable>(
     _ getBody: @escaping ParametricAsyncGetBody<P, T>
-) -> FamilyFunc<P, AsyncSelector<T, Error>> {
+) -> FamilyFunc<P, AsyncSelector<T>> {
     
-    return { (param: P) -> ParametricRecoilValue<P, AsyncSelector<T, Error>> in
+    return { (param: P) -> ParametricRecoilValue<P, AsyncSelector<T>> in
         let body = curry(getBody)(param)
         return ParametricRecoilValue(recoilValue: selector(body), param: param)
     }
