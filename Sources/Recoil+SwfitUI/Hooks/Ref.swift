@@ -1,22 +1,22 @@
 internal final class Ref<Value: RecoilValue> {
-    var value: Value {
-        willSet { cancelTasks() }
-    }
+    var value: Value
     
     var isDisposed = false
-    var storeSubscriber: Subscriber?
+    
+    private var subscription: Subscription?
+    private var viewUpdator: (() -> Void)?
     
     init(initialState: Value) {
         value = initialState
     }
     
     func update(newValue: Value, viewUpdator: @escaping () -> Void) {
-        value = newValue
+        self.value = newValue
+        self.viewUpdator = viewUpdator
    
-        let storeRef = Store.shared
-        self.storeSubscriber = storeRef.addObserver(forKey: newValue.key) {
-            viewUpdator()
-        }
+        // TODO: get rid of the store refer, should pass it from environment
+        let storeRef = RecoilStore.shared
+        self.subscription = storeRef.subscribe(for: newValue.key, subscriber: self)
         
         let loadable = storeRef.safeGetLoadable(for: newValue)
         if loadable.status == .initiated {
@@ -31,8 +31,13 @@ internal final class Ref<Value: RecoilValue> {
     }
     
     private func cancelTasks() {
-        storeSubscriber?.cancel()
-        
-        storeSubscriber = nil
+        subscription?.unsubscribe()
+        subscription = nil
+    }
+}
+
+extension Ref: Subscriber {
+    func valueDidChange() {
+        self.viewUpdator?()
     }
 }

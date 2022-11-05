@@ -3,5 +3,5 @@ public protocol RecoilCancelable {
 }
 
 public protocol RecoilObservable {
-    func observe(_ change: @escaping () -> Void) -> RecoilCancelable
+    func observe(_ change: @escaping () -> Void) -> Subscription
 }

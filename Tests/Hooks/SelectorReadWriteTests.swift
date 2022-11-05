@@ -24,7 +24,7 @@ final class SelectorReadWriteTests: XCTestCase {
   }
   
   override func setUp() {
-    Store.shared.reset()
+    RecoilStore.shared.reset()
     TestModule.namesState = atom { ["", "Ella", "Chris", "", "Paul"] }
   }
 }

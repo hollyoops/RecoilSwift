@@ -6,7 +6,7 @@ public struct Getter {
     }
     
     public func callAsFunction<T: RecoilValue>(_ recoilValue: T) -> T.DataType {
-        let storeRef = Store.shared
+        let storeRef = RecoilStore.shared
         
         guard let loadable = storeRef.safeGetLoadable(for: recoilValue) as? LoadBox<T.T> else {
             fatalError("Can not convert loadable to loadbox.")
@@ -32,7 +32,7 @@ public struct Setter {
     }
     
     public func callAsFunction<T: RecoilState>(_ recoilValue: T, _ newValue: T.DataType) -> Void {
-        let storeRef = Store.shared
+        let storeRef = RecoilStore.shared
         
         _ = storeRef.safeGetLoadable(for: recoilValue)
         

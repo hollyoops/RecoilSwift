@@ -107,14 +107,12 @@ class LoadBox<T: Equatable>: RecoilLoadable {
 }
 
 extension LoadBox: RecoilObservable {
-    public func observe(_ change: @escaping () -> Void) -> RecoilCancelable {
+    public func observe(_ change: @escaping () -> Void) -> Subscription {
         self.valueDidChanged = change
 
-        let subscriber = Subscriber(change) { [weak self] _ in
+        return Subscription { [weak self] in
             self?.valueDidChanged = nil
         }
-
-        return subscriber
     }
 }
 

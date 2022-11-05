@@ -58,7 +58,7 @@ final class CallbackTests: XCTestCase {
   }
   
   override func setUp() {
-    Store.shared.reset()
+    RecoilStore.shared.reset()
     TestModule.numberState = atom { 2 }
   }
 }

@@ -6,7 +6,7 @@ public struct LoadableContent<DataType> {
   public let key: String
   
   public var isAsynchronous: Bool {
-    guard let loadable = Store.shared.getLoadable(for: key) else {
+    guard let loadable = RecoilStore.shared.getLoadable(for: key) else {
       return false
     }
     
@@ -14,11 +14,11 @@ public struct LoadableContent<DataType> {
   }
   
   public var data: DataType? {
-    Store.shared.getData(for: key, dataType: DataType.self)
+    RecoilStore.shared.getData(for: key, dataType: DataType.self)
   }
   
   public var isLoading: Bool {
-    Store.shared.getLoadingStatus(for: key)
+    RecoilStore.shared.getLoadingStatus(for: key)
   }
   
   public var hasError: Bool {
@@ -26,7 +26,7 @@ public struct LoadableContent<DataType> {
   }
 
   public var errors: [Error] {
-    Store.shared.getErrors(for: key)
+    RecoilStore.shared.getErrors(for: key)
   }
   
   public func containError<T: Error & Equatable>(of err: T) -> Bool {
@@ -39,7 +39,7 @@ public struct LoadableContent<DataType> {
   }
   
   public func load() {
-    Store.shared.getLoadable(for: key)?.load()
+    RecoilStore.shared.getLoadable(for: key)?.load()
   }
 }
 

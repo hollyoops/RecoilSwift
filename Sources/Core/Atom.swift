@@ -28,7 +28,7 @@ public final class Atom<T: Equatable>: RecoilSyncReadable {
 extension Atom: RecoilWriteable {
   public func update(with value: T) {
     self.get = SyncGetBody({ value })
-    Store.shared.update(recoilValue: self, newValue: value)
+    RecoilStore.shared.update(recoilValue: self, newValue: value)
   }
 }
 
@@ -50,6 +50,6 @@ public struct AsyncAtom<T: Equatable>: RecoilAsyncReadable {
 
 extension AsyncAtom: RecoilWriteable {
   public func update(with value: T?) {
-    Store.shared.update(recoilValue: self, newValue: value)
+    RecoilStore.shared.update(recoilValue: self, newValue: value)
   }
 }

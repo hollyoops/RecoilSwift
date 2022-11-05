@@ -1,32 +1,41 @@
-import Foundation
+/// A class that represents the subscription returned by the store when subscribing.
+protocol Subscriber: AnyObject {
+    func valueDidChange()
+}
 
-internal final class Subscriber {
-    let id = UUID()
-   
-    typealias CancelCallback = (Subscriber) -> Void
-    typealias ChangeCallback = () -> Void
+class KeyedSubscriber: Hashable, Subscriber {
+    let id: ObjectIdentifier
+    private let subscriber: Subscriber
     
-    private var changeCallback: ChangeCallback
-    private var cancelCallback: CancelCallback?
-    
-    init(_ onChange: @escaping ChangeCallback, _ onCancel: CancelCallback? = nil) {
-        changeCallback = onChange
-        cancelCallback = onCancel
+    init(subscriber: Subscriber) {
+        self.id = ObjectIdentifier(subscriber)
+        self.subscriber = subscriber
     }
     
-    func callAsFunction() {
-        changeCallback()
+    func valueDidChange() {
+        subscriber.valueDidChange()
+    }
+    
+    static func == (lhs: KeyedSubscriber, rhs: KeyedSubscriber) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
 
-extension Subscriber: RecoilCancelable {
-    func cancel() {
-        self.cancelCallback?(self)
-    }
-}
+public struct Subscription {
+    private let unsubscribeFn: () -> Void
 
-extension Subscriber: Equatable {
-    static func == (lhs: Subscriber, rhs: Subscriber) -> Bool {
-        lhs.id == rhs.id
+    /// Initialize a new RecoilStoreSubscription.
+    /// - Parameter unsubscribe: The closure that will be executed when unsubscribing.
+    init(unsubscribe: @escaping () -> Void) {
+        self.unsubscribeFn = unsubscribe
+    }
+
+    /// Unsubscribe from the store.
+    func unsubscribe() {
+        self.unsubscribeFn()
     }
 }
