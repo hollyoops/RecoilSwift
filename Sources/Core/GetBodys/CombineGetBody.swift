@@ -2,13 +2,10 @@
 import Combine
 #endif
 
-@available(iOS 13.0, *)
 public typealias CombineGetFunc<T: Equatable, E: Error> = (Getter) throws -> AnyPublisher<T, E>
 
-@available(iOS 13.0, *)
 public typealias CombineGetBodyFunc<T: Equatable, E: Error> = () throws -> AnyPublisher<T, E>
 
-@available(iOS 13, *)
 class CombineGetBody<T: Equatable, Failure: Error>: AsyncEvaluator {
     typealias Body = CombineGetBodyFunc<T, Failure>
 

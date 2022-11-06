@@ -41,7 +41,6 @@ public struct AsyncAtom<T: Equatable>: RecoilAsyncValue {
       self.get = CombineGetBody(get)
   }
   
-  @available(iOS 13.0, *)
   public init(key: String = "AsyncAtom-\(UUID())", get: @escaping AsyncGetBodyFunc<T>) {
       self.key = key
       self.get = AsyncGetBody(get)
