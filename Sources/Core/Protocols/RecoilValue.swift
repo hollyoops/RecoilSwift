@@ -12,9 +12,11 @@ public protocol RecoilValue<T>: RecoilIdentifiable {
     func data(from: some RecoilLoadable<T>) throws -> DataType
 }
 
-public protocol RecoilSyncReadable: RecoilValue { }
+public protocol RecoilSyncValue: RecoilValue {
+    func data(from: some RecoilLoadable<T>) throws -> T
+}
 
-extension RecoilSyncReadable {
+extension RecoilSyncValue {
     public func data(from loadable: some RecoilLoadable<T>) throws -> T {
         if loadable.status == .initiated {
             loadable.load()
@@ -28,9 +30,9 @@ extension RecoilSyncReadable {
     }
 }
 
-public protocol RecoilAsyncReadable: RecoilValue { }
+public protocol RecoilAsyncValue: RecoilValue { }
 
-extension RecoilAsyncReadable {
+extension RecoilAsyncValue {
     public func data(from loadable: some RecoilLoadable<T>) -> T? {
         return loadable.data
     }

@@ -1,7 +1,9 @@
 public protocol RecoilWriteable {
-    associatedtype DataType: Equatable
+    associatedtype T: Equatable
     
-    func update(with value: DataType)
+    func update(with value: T)
 }
 
-public typealias RecoilState = RecoilValue & RecoilWriteable
+public typealias RecoilState = RecoilSyncValue & RecoilWriteable
+
+public typealias RecoilAsyncState = RecoilAsyncValue & RecoilWriteable

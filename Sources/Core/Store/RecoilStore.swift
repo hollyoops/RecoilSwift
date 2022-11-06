@@ -1,6 +1,6 @@
 import Foundation
 
-protocol Store {
+protocol Store: AnyObject {
     func subscribe(for nodeKey: String, subscriber: Subscriber) -> Subscription
 }
 

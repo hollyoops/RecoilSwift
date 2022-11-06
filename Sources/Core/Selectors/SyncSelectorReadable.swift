@@ -1,5 +1,5 @@
-public protocol SyncSelectorReadable: RecoilSyncReadable {
+public protocol SyncSelectorReadable: RecoilSyncValue {
 //    var get: GetBody<T> { get }
 }
 
-public protocol AsyncSelectorReadable: RecoilAsyncReadable { }
+public protocol AsyncSelectorReadable: RecoilAsyncValue { }

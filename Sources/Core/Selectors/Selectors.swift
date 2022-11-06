@@ -65,7 +65,7 @@ public struct MutableSelector<T: Equatable>: SyncSelectorReadable {
 }
 
 extension MutableSelector: RecoilWriteable {
-    public func update(with value: DataType) {
+    public func update(with value: T) {
         let context = MutableContext(
             get: Getter(key),
             set: Setter(key))
@@ -97,7 +97,7 @@ public struct AsyncSelector<T: Equatable>: AsyncSelectorReadable {
 
 // TODO: Not support yet
 //@available(iOS 13.0, *)
-//public struct MutableAsyncSelector<T: Equatable, E: Error>: RecoilAsyncReadable {
+//public struct MutableAsyncSelector<T: Equatable, E: Error>: RecoilAsyncValue {
 //    public let key: String
 //    public let get: AsyncGet
 //    public let set: SetBody<T?>
