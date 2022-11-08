@@ -14,8 +14,7 @@ import Combine
 public final class Atom<T: Equatable>: RecoilSyncValue {
   public typealias T = T
   public typealias E = Never
-  public typealias DataType = T
-    
+  
   public let key: String
   public private(set) var get: any Evaluator<T>
   

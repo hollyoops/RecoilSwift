@@ -51,7 +51,6 @@ public struct Selector<T: Equatable>: SyncSelectorReadable {
 public struct MutableSelector<T: Equatable>: SyncSelectorReadable {
     public typealias T = T
     public typealias E = Never
-    public typealias DataType = T
     
     public let key: String
     public let get: any Evaluator<T>

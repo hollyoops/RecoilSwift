@@ -5,11 +5,7 @@ public protocol RecoilIdentifiable {
 public protocol RecoilValue<T>: RecoilIdentifiable {
     associatedtype T: Equatable
   
-    associatedtype DataType: Equatable = T
-  
     var get: any Evaluator<T> { get }
-    
-    func data(from: some RecoilLoadable<T>) throws -> DataType
 }
 
 public protocol RecoilSyncValue: RecoilValue {
@@ -33,7 +29,11 @@ extension RecoilSyncValue {
 public protocol RecoilAsyncValue: RecoilValue { }
 
 extension RecoilAsyncValue {
-    public func data(from loadable: some RecoilLoadable<T>) -> T? {
+    public func data(from loadable: some RecoilLoadable<T>) throws -> T? {
+        if loadable.status == .initiated {
+            loadable.load()
+        }
+        
         return loadable.data
     }
 }

@@ -8,22 +8,20 @@ public struct Getter {
     }
     
     public func callAsFunction<T: RecoilSyncValue>(_ recoilValue: T) -> T.T {
-        guard let loadable = store.safeGetLoadable(for: recoilValue) as? LoadBox<T.T> else {
-            fatalError("Can not convert loadable to loadbox.")
+        let loadable = getLoadbox(recoilValue)
+        do {
+           return try recoilValue.data(from: loadable)
+        } catch {
+            fatalError(error.localizedDescription)
         }
-        
-        if let host = contextKey {
-            store.makeConnect(key: host, upstream: recoilValue.key)
-        }
-        
-        if loadable.status == .initiated {
-          loadable.load()
-        }
-      
-        return try! recoilValue.data(from: loadable) 
     }
     
     public func callAsFunction<T: RecoilAsyncValue>(_ recoilValue: T) -> T.T? {
+        let loadable = getLoadbox(recoilValue)
+        return try? recoilValue.data(from: loadable)
+    }
+    
+    private func getLoadbox<T: RecoilValue>(_ recoilValue: T) -> LoadBox<T.T> {
         guard let loadable = store.safeGetLoadable(for: recoilValue) as? LoadBox<T.T> else {
             fatalError("Can not convert loadable to loadbox.")
         }
@@ -35,8 +33,8 @@ public struct Getter {
         if loadable.status == .initiated {
           loadable.load()
         }
-      
-        return recoilValue.data(from: loadable)
+        
+        return loadable
     }
 }
 
