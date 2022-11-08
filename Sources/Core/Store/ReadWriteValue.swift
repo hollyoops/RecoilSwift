@@ -1,19 +1,19 @@
 public struct Getter {
     private let contextKey: String?
+    private let store: Store
     
-    init(_ cotext: String? = nil) {
-        self.contextKey = cotext
+    init(_ context: String? = nil, store: Store = RecoilStore.shared) {
+        self.contextKey = context
+        self.store = store
     }
     
     public func callAsFunction<T: RecoilSyncValue>(_ recoilValue: T) -> T.T {
-        let storeRef = RecoilStore.shared
-        
-        guard let loadable = storeRef.safeGetLoadable(for: recoilValue) as? LoadBox<T.T> else {
+        guard let loadable = store.safeGetLoadable(for: recoilValue) as? LoadBox<T.T> else {
             fatalError("Can not convert loadable to loadbox.")
         }
         
         if let host = contextKey {
-            storeRef.makeConnect(key: host, upstream: recoilValue.key)
+            store.makeConnect(key: host, upstream: recoilValue.key)
         }
         
         if loadable.status == .initiated {
@@ -24,14 +24,12 @@ public struct Getter {
     }
     
     public func callAsFunction<T: RecoilAsyncValue>(_ recoilValue: T) -> T.T? {
-        let storeRef = RecoilStore.shared
-        
-        guard let loadable = storeRef.safeGetLoadable(for: recoilValue) as? LoadBox<T.T> else {
+        guard let loadable = store.safeGetLoadable(for: recoilValue) as? LoadBox<T.T> else {
             fatalError("Can not convert loadable to loadbox.")
         }
         
         if let host = contextKey {
-            storeRef.makeConnect(key: host, upstream: recoilValue.key)
+            store.makeConnect(key: host, upstream: recoilValue.key)
         }
         
         if loadable.status == .initiated {
@@ -44,23 +42,21 @@ public struct Getter {
 
 public struct Setter {
     private let contextKey: String?
+    private let store: Store
     
-    init(_ context: String? = nil) {
+    init(_ context: String? = nil, store: Store = RecoilStore.shared) {
+        self.store = store
         self.contextKey = context
     }
     
     public func callAsFunction<T: RecoilState>(_ recoilValue: T, _ newValue: T.T) -> Void {
-        let storeRef = RecoilStore.shared
-        
-        _ = storeRef.safeGetLoadable(for: recoilValue)
+        _ = store.safeGetLoadable(for: recoilValue)
         
         recoilValue.update(with: newValue)
     }
     
     public func callAsFunction<T: RecoilAsyncState>(_ recoilValue: T, _ newValue: T.T) -> Void {
-        let storeRef = RecoilStore.shared
-        
-        _ = storeRef.safeGetLoadable(for: recoilValue)
+        _ = store.safeGetLoadable(for: recoilValue)
         
         recoilValue.update(with: newValue)
     }

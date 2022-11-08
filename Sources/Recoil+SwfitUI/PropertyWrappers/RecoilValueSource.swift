@@ -37,3 +37,15 @@ public struct RecoilStateSource<Node: RecoilState>: DynamicProperty {
     }
 }
 
+@propertyWrapper
+public struct RecoilLoadableSource<Node: RecoilValue>: DynamicProperty {
+    private var context: ScopedRecoilContext
+    private var node: Node
+    public let wrappedValue: LoadableContent<Node.T>
+    
+    public init(_ node: Node, context: ScopedRecoilContext) {
+        self.node = node
+        self.context = context
+        self.wrappedValue = context.useRecoilValueLoadable(node)
+    }
+}

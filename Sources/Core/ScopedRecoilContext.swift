@@ -20,22 +20,22 @@ public class ScopedRecoilContext {
     
     public func useRecoilValue<Value: RecoilSyncValue>(_ valueNode: Value) -> Value.T {
         subscribeChange(for: valueNode)
-        return Getter(valueNode.key)(valueNode)
+        return Getter(valueNode.key, store: self.unsafeStore)(valueNode)
     }
     
     public func useRecoilValue<Value: RecoilAsyncValue>(_ valueNode: Value) -> Value.T? {
         subscribeChange(for: valueNode)
-        return Getter(valueNode.key)(valueNode)
+        return Getter(valueNode.key, store: self.unsafeStore)(valueNode)
     }
     
     public func useRecoilState<Value: RecoilState>(_ stateNode: Value) -> BindableValue<Value.T> {
         subscribeChange(for: stateNode)
         return BindableValue(
               get: {
-                  Getter(stateNode.key)(stateNode)
+                  Getter(stateNode.key, store: self.unsafeStore)(stateNode)
               },
               set: { newState in
-                  Setter(stateNode.key)(stateNode, newState)
+                  Setter(stateNode.key, store: self.unsafeStore)(stateNode, newState)
               }
           )
     }
@@ -44,13 +44,26 @@ public class ScopedRecoilContext {
         subscribeChange(for: stateNode)
         return BindableValue(
               get: {
-                  Getter(stateNode.key)(stateNode)
+                  Getter(stateNode.key, store: self.unsafeStore)(stateNode)
               },
               set: { newState in
                   guard let newState else { return }
-                  Setter(stateNode.key)(stateNode, newState)
+                  Setter(stateNode.key, store: self.unsafeStore)(stateNode, newState)
               }
           )
+    }
+    
+    public func useRecoilValueLoadable<Value: RecoilValue>(_ valueNode: Value) -> LoadableContent<Value.T> {
+        subscribeChange(for: valueNode)
+        return LoadableContent(node: valueNode, store: unsafeStore)
+    }
+    
+    private var unsafeStore: Store {
+        guard let store else {
+            fatalError("Should have store! pls make sure the add RecoilRoot in your root of view")
+        }
+        
+        return store
     }
     
     private func subscribeChange<Value: RecoilValue>(for node: Value) {

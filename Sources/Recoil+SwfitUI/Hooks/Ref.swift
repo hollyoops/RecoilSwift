@@ -1,43 +1,21 @@
 internal final class Ref<Value: RecoilValue> {
-    var value: Value
+    private(set) var value: Value
+    private(set) var isDisposed = false
     
-    var isDisposed = false
-    
-    private var subscription: Subscription?
-    private var viewUpdator: (() -> Void)?
+    internal let storeSubs = ScopedSubscriptions()
+    private(set) var ctx: ScopedRecoilContext?
     
     init(initialState: Value) {
         value = initialState
     }
     
-    func update(newValue: Value, viewUpdator: @escaping () -> Void) {
+    func update(newValue: Value,
+                context: ScopedRecoilContext) {
         self.value = newValue
-        self.viewUpdator = viewUpdator
-   
-        // TODO: get rid of the store refer, should pass it from environment
-        let storeRef = RecoilStore.shared
-        self.subscription = storeRef.subscribe(for: newValue.key, subscriber: self)
-        
-        let loadable = storeRef.safeGetLoadable(for: newValue)
-        if loadable.status == .initiated {
-          loadable.load()
-        }
+        self.ctx = context
     }
     
     func dispose() {
         isDisposed = true
-        cancelTasks()
-        // TODO: Remove dynamic recoil value in store?
-    }
-    
-    private func cancelTasks() {
-        subscription?.unsubscribe()
-        subscription = nil
-    }
-}
-
-extension Ref: Subscriber {
-    func valueDidChange() {
-        self.viewUpdator?()
     }
 }

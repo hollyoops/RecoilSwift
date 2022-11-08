@@ -2,6 +2,18 @@ import Foundation
 
 protocol Store: AnyObject {
     func subscribe(for nodeKey: String, subscriber: Subscriber) -> Subscription
+    
+    func safeGetLoadable<T: RecoilValue>(for value: T) -> any RecoilLoadable
+    
+    func getLoadable(for key: String) -> (any RecoilLoadable)?
+    
+    func getLoadingStatus(for key: String) -> Bool
+    
+    func getErrors(for key: String) -> [Error]
+    
+    func getData<T>(for key: String, dataType: T.Type) -> T?
+    
+    func makeConnect(key: String, upstream upKey: String)
 }
 
 internal final class RecoilStore: Store {

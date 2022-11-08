@@ -57,10 +57,27 @@ extension RecoilHook {
         Ref(initialState: initialValue)
     }
     
-    func updateState(coordinator: Coordinator) {
-        let updateView = coordinator.updateView
+    func makeScopeContext(coordinator: Coordinator) -> ScopedRecoilContext {
+        ScopedRecoilContext(store: coordinator.environment.store,
+                            subscriptions: coordinator.state.storeSubs,
+                            refresher: AnyViewRefreher(viewUpdator: coordinator.updateView))
+    }
+    
+    func getStoredContext(coordinator: Coordinator) -> ScopedRecoilContext {
         let refState = coordinator.state
-        refState.update(newValue: initialValue, viewUpdator: updateView)
+        let ctx = refState.ctx ?? makeScopeContext(coordinator: coordinator)
+        
+        if refState.ctx == nil {
+            refState.update(newValue: initialValue, context: ctx)
+        }
+
+        return ctx
+    }
+    
+    func updateState(coordinator: Coordinator) {
+        let refState = coordinator.state
+        refState.update(newValue: initialValue,
+                        context: makeScopeContext(coordinator: coordinator))
     }
 
     func dispose(state: Ref<T>) {
@@ -73,7 +90,8 @@ private struct RecoilValueHook<T: RecoilSyncValue>: RecoilHook {
     var updateStrategy: HookUpdateStrategy?
 
     func value(coordinator: Coordinator) -> T.T {
-        Getter()(initialValue)
+        let ctx = getStoredContext(coordinator: coordinator)
+        return ctx.useRecoilValue(initialValue)
     }
 }
 
@@ -82,10 +100,10 @@ private struct RecoilStateHook<T: RecoilState>: RecoilHook {
     var updateStrategy: HookUpdateStrategy?
     
     func value(coordinator: Coordinator) -> Binding<T.T> {
-        Binding(
-            get: {
-                Getter()(initialValue)
-            },
+        let ctx = getStoredContext(coordinator: coordinator)
+        let bindableValue = ctx.useRecoilState(initialValue)
+        return Binding(
+            get: bindableValue.get,
             set: { newState in
                 assertMainThread()
 
@@ -93,7 +111,7 @@ private struct RecoilStateHook<T: RecoilState>: RecoilHook {
                     return
                 }
 
-                coordinator.state.value.update(with: newState)
+                bindableValue.set(newState)
             }
         )
     }
