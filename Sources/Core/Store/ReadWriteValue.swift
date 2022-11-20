@@ -9,16 +9,27 @@ public struct Getter {
     
     public func callAsFunction<T: RecoilSyncNode>(_ recoilValue: T) -> T.T {
         let loadable = getLoadbox(recoilValue)
-        do {
-           return try recoilValue.data(from: loadable)
-        } catch {
+        
+        if loadable.status == .initiated {
+            loadable.load()
+        }
+        
+        guard let data = loadable.data else {
+            let error = loadable.error ?? RecoilError.unknown
             fatalError(error.localizedDescription)
         }
+        
+        return data
     }
     
     public func callAsFunction<T: RecoilAsyncNode>(_ recoilValue: T) -> T.T? {
         let loadable = getLoadbox(recoilValue)
-        return try? recoilValue.data(from: loadable)
+        
+        if loadable.status == .initiated {
+            loadable.load()
+        }
+        
+        return loadable.data
     }
     
     private func getLoadbox<T: RecoilNode>(_ recoilValue: T) -> LoadBox<T.T> {
@@ -47,13 +58,13 @@ public struct Setter {
         self.contextKey = context
     }
     
-    public func callAsFunction<T: RecoilMutableNode>(_ recoilValue: T, _ newValue: T.T) -> Void {
+    public func callAsFunction<T: RecoilMutableSyncNode>(_ recoilValue: T, _ newValue: T.T) -> Void {
         _ = store.safeGetLoadable(for: recoilValue)
         
         recoilValue.update(with: newValue)
     }
     
-    public func callAsFunction<T: RecoilAsyncMutableNode>(_ recoilValue: T, _ newValue: T.T) -> Void {
+    public func callAsFunction<T: RecoilMutableAsyncNode>(_ recoilValue: T, _ newValue: T.T) -> Void {
         _ = store.safeGetLoadable(for: recoilValue)
         
         recoilValue.update(with: newValue)

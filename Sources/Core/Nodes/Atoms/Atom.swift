@@ -11,7 +11,7 @@ import Combine
 /// You can retrive value with ``Recoil hooks``,
 /// eg: ``useRecoilState(allBookState)``
 
-public final class Atom<T: Equatable>: RecoilSyncNode {
+public final class Atom<T: Equatable>: SyncAtomNode {
   public typealias T = T
   public typealias E = Never
   
@@ -31,7 +31,7 @@ extension Atom: Writeable {
   }
 }
 
-public struct AsyncAtom<T: Equatable>: RecoilAsyncNode {
+public struct AsyncAtom<T: Equatable>: AsyncAtomNode {
   public let key: String
   public let get: any Evaluator<T>
   

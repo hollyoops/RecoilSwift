@@ -16,7 +16,7 @@ public struct RecoilValue<Node: RecoilSyncNode>: DynamicProperty {
 }
 
 @propertyWrapper
-public struct RecoilState<Node: RecoilMutableNode>: DynamicProperty {
+public struct RecoilState<Node: RecoilMutableSyncNode>: DynamicProperty {
     private var context: ScopedRecoilContext
     private var node: Node
     

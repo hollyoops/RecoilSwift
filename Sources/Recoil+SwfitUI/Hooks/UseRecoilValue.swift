@@ -29,7 +29,7 @@ public func useRecoilValue<Value: RecoilSyncNode>(_ initialState: Value) -> Valu
 ///   - initialState: a writeable recoil state wrapper which with a `recoil state` and `user-defined parameters`
 /// - Returns: return a ``Binding`` value that wrapped in recoil state.
 /// if the state is async state, it return will `'Binding<value?>'`, otherwise it return `'Binding<value>'`
-public func useRecoilState<P: Equatable, Return: RecoilMutableNode>(_ value: ParametricRecoilValue<P, Return>) -> Binding<Return.T> {
+public func useRecoilState<P: Equatable, Return: RecoilMutableSyncNode>(_ value: ParametricRecoilValue<P, Return>) -> Binding<Return.T> {
     let hook = RecoilStateHook(initialValue: value.recoilValue,
                                updateStrategy: .preserved(by: value.param))
     
@@ -41,7 +41,7 @@ public func useRecoilState<P: Equatable, Return: RecoilMutableNode>(_ value: Par
 ///   - initialState: a writeable recoil state(`atom` or writeable `selector`)
 /// - Returns: return a ``Binding`` value that wrapped in recoil state.
 /// if the state is async state, it return will `'Binding<value?>'`, otherwise it return `'Binding<value>'`
-public func useRecoilState<Value: RecoilMutableNode> (_ initialState: Value) -> Binding<Value.T> {
+public func useRecoilState<Value: RecoilMutableSyncNode> (_ initialState: Value) -> Binding<Value.T> {
   let hook = RecoilStateHook(initialValue: initialState,
                              updateStrategy: .preserved(by: initialState.key))
   return useHook(hook)
@@ -95,7 +95,7 @@ private struct RecoilValueHook<T: RecoilSyncNode>: RecoilHook {
     }
 }
 
-private struct RecoilStateHook<T: RecoilMutableNode>: RecoilHook {
+private struct RecoilStateHook<T: RecoilMutableSyncNode>: RecoilHook {
     var initialValue: T
     var updateStrategy: HookUpdateStrategy?
     

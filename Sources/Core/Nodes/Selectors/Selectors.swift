@@ -20,7 +20,7 @@ public typealias SetBody<T> = (MutableContext, T) -> Void
 ///    return books
 ///}
 ///```
-public struct Selector<T: Equatable>: SyncSelectorReadable {
+public struct Selector<T: Equatable>: SyncSelectorNode {
     public typealias T = T
     public typealias E = Never
     
@@ -48,7 +48,7 @@ public struct Selector<T: Equatable>: SyncSelectorReadable {
 ///      }
 ///)
 ///```
-public struct MutableSelector<T: Equatable>: SyncSelectorReadable {
+public struct MutableSelector<T: Equatable>: SyncSelectorNode {
     public typealias T = T
     public typealias E = Never
     
@@ -79,7 +79,7 @@ extension MutableSelector: Writeable {
 /// ``Selector`` and ``AsyncSelector`` can not allow you pass a user-defined argument, if you want to pass a
 /// customable parameters. please refer to ``selectorFamily``
 
-public struct AsyncSelector<T: Equatable>: AsyncSelectorReadable {
+public struct AsyncSelector<T: Equatable>: AsyncSelectorNode {
     public let key: String
     public let get: any Evaluator<T>
 

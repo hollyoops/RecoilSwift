@@ -28,7 +28,7 @@ public class ScopedRecoilContext {
         return Getter(valueNode.key, store: self.unsafeStore)(valueNode)
     }
     
-    public func useRecoilState<Value: RecoilMutableNode>(_ stateNode: Value) -> BindableValue<Value.T> {
+    public func useRecoilState<Value: RecoilMutableSyncNode>(_ stateNode: Value) -> BindableValue<Value.T> {
         subscribeChange(for: stateNode)
         return BindableValue(
               get: {
@@ -40,7 +40,7 @@ public class ScopedRecoilContext {
           )
     }
     
-    public func useRecoilState<Value: RecoilAsyncMutableNode>(_ stateNode: Value) -> BindableValue<Value.T?> {
+    public func useRecoilState<Value: RecoilMutableAsyncNode>(_ stateNode: Value) -> BindableValue<Value.T?> {
         subscribeChange(for: stateNode)
         return BindableValue(
               get: {
