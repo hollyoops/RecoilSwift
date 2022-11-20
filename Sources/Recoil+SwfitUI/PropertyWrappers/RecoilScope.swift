@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 internal final class ViewRefresher: ObservableObject, ViewRefreshable {
     func refresh() {
@@ -11,15 +12,25 @@ internal final class ViewRefresher: ObservableObject, ViewRefreshable {
 
 internal final class ScopedSubscriptions {
     private var subscriptions: [String: Subscription] = [:]
+    
+    /// TODO: This is leagcy design to remove it later
+    private var cancellables: Set<AnyCancellable> = []
 
     deinit {
         subscriptions.values.forEach { $0.unsubscribe() }
         subscriptions = [:]
+        
+        cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
     }
 
     subscript(key: String) -> Subscription? {
         get { return subscriptions[key] }
         set { subscriptions[key] = newValue }
+    }
+    
+    func store(_ cancelable: AnyCancellable) {
+        cancellables.insert(cancelable)
     }
 }
 

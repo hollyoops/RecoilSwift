@@ -4,8 +4,8 @@ import Combine
 import Hooks
 
 public struct RecoilCallbackContext {
-    public let get = Getter()
-    public let set = Setter()
+    public let get: Getter
+    public let set: Setter
     public var store: (AnyCancellable) -> Void
 }
 
@@ -39,64 +39,20 @@ public func useRecoilCallback<P1, P2, R>(_ fn: @escaping Callback2<P1, P2, R>) -
     return useHook(hook)
 }
 
-private struct RecoilCallbackHook<T>: Hook {
-    var callback: CallbackRef<T>.ContextCallback
+typealias ContextCallback<T> = (RecoilCallbackContext) -> T
+
+private struct RecoilCallbackHook<T>: RecoilHook {
+    var initialValue: ContextCallback<T>
     var updateStrategy: HookUpdateStrategy?
     
-    func makeState() -> CallbackRef<T> {
-        CallbackRef(callback: callback)
-    }
-    
-    func updateState(coordinator: Coordinator) {
-        let refState = coordinator.state
-        refState.update(newValue: callback)
-    }
-
-    func dispose(state: CallbackRef<T>) {
-        state.dispose()
+    init(callback: @escaping ContextCallback<T>, updateStrategy: HookUpdateStrategy? = nil) {
+        self.initialValue = callback
+        self.updateStrategy = updateStrategy
     }
 
     func value(coordinator: Coordinator) -> T {
-        let ref = coordinator.state
-        let callback = ref.makeCallback()
-        let context = RecoilCallbackContext(store: ref.store)
-        return callback(context)
-    }
-}
-
-private final class CallbackRef<Value> {
-    typealias ContextCallback = (RecoilCallbackContext) -> Value
-    
-    private var callback: ContextCallback
-    private var cancellables: Set<AnyCancellable> = []
-    
-    init(callback: @escaping ContextCallback) {
-        self.callback = callback
-    }
-    
-    func makeCallback() -> ContextCallback {
-        return { [unowned self] context in
-            self.cancel()
-            return self.callback(context)
-        }
-    }
-    
-    func store(_ cancelable: AnyCancellable) {
-        cancellables.insert(cancelable)
-    }
-    
-    func update(newValue: @escaping ContextCallback) {
-        cancel()
-        callback = newValue
-    }
-    
-    func cancel() {
-        cancellables.forEach { $0.cancel() }
-        cancellables.removeAll()
-    }
-    
-    func dispose() {
-        cancel()
+        let ctx = getStoredContext(coordinator: coordinator)
+        return ctx.useRecoilCallback(initialValue)()
     }
 }
 

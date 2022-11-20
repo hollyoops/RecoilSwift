@@ -48,7 +48,7 @@ public func useRecoilState<Value: RecoilState> (_ initialState: Value) -> Bindin
 }
 
 protocol RecoilHook: Hook where State == Ref<T> {
-    associatedtype T: RecoilValue
+    associatedtype T
     var initialValue: T { get }
 }
 
