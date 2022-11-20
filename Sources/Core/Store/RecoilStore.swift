@@ -3,7 +3,7 @@ import Foundation
 protocol Store: AnyObject {
     func subscribe(for nodeKey: String, subscriber: Subscriber) -> Subscription
     
-    func safeGetLoadable<T: RecoilValue>(for value: T) -> any RecoilLoadable
+    func safeGetLoadable<T: RecoilNode>(for value: T) -> any RecoilLoadable
     
     func getLoadable(for key: String) -> (any RecoilLoadable)?
     
@@ -23,7 +23,7 @@ internal final class RecoilStore: Store {
     private let checker = DFSCircularChecker()
     static let shared = RecoilStore()
     
-    func safeGetLoadable<T: RecoilValue>(for value: T) -> any RecoilLoadable {
+    func safeGetLoadable<T: RecoilNode>(for value: T) -> any RecoilLoadable {
         getLoadable(for: value.key) ?? register(value: value)
     }
     
@@ -104,7 +104,7 @@ internal final class RecoilStore: Store {
         }
     }
     
-    func update<Recoil: RecoilValue>(recoilValue: Recoil, newValue: Recoil.T?) {
+    func update<Recoil: RecoilNode>(recoilValue: Recoil, newValue: Recoil.T?) {
         guard let loadBox = getLoadbox(for: recoilValue) else {
             debugPrint("covert to loadbox failed, only loadbox supported for Now")
             return
@@ -132,7 +132,7 @@ internal final class RecoilStore: Store {
     }
     
     @discardableResult
-    private func register<T: RecoilValue>(value: T) -> any RecoilLoadable {
+    private func register<T: RecoilNode>(value: T) -> any RecoilLoadable {
         //        check(value: value)
         let key = value.key
         let box = makeLoadBox(from: value)
@@ -140,7 +140,7 @@ internal final class RecoilStore: Store {
         return box
     }
     
-    private func makeLoadBox<T: RecoilValue>(from value: T) -> any RecoilLoadable {
+    private func makeLoadBox<T: RecoilNode>(from value: T) -> any RecoilLoadable {
         let loadable = LoadBox<T.T>(anyGetBody: value.get)
         
         _ = loadable.observe { [weak self] in
@@ -175,7 +175,7 @@ extension Dictionary {
 }
 
 private extension RecoilStore {
-    private func getLoadbox<T: RecoilValue>(for value: T) -> LoadBox<T.T>? {
+    private func getLoadbox<T: RecoilNode>(for value: T) -> LoadBox<T.T>? {
         safeGetLoadable(for: value) as? LoadBox<T.T>
     }
 }

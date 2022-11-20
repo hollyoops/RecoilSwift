@@ -18,17 +18,17 @@ public class ScopedRecoilContext {
         self.store = store
     }
     
-    public func useRecoilValue<Value: RecoilSyncValue>(_ valueNode: Value) -> Value.T {
+    public func useRecoilValue<Value: RecoilSyncNode>(_ valueNode: Value) -> Value.T {
         subscribeChange(for: valueNode)
         return Getter(valueNode.key, store: self.unsafeStore)(valueNode)
     }
     
-    public func useRecoilValue<Value: RecoilAsyncValue>(_ valueNode: Value) -> Value.T? {
+    public func useRecoilValue<Value: RecoilAsyncNode>(_ valueNode: Value) -> Value.T? {
         subscribeChange(for: valueNode)
         return Getter(valueNode.key, store: self.unsafeStore)(valueNode)
     }
     
-    public func useRecoilState<Value: RecoilState>(_ stateNode: Value) -> BindableValue<Value.T> {
+    public func useRecoilState<Value: RecoilMutableNode>(_ stateNode: Value) -> BindableValue<Value.T> {
         subscribeChange(for: stateNode)
         return BindableValue(
               get: {
@@ -40,7 +40,7 @@ public class ScopedRecoilContext {
           )
     }
     
-    public func useRecoilState<Value: RecoilAsyncState>(_ stateNode: Value) -> BindableValue<Value.T?> {
+    public func useRecoilState<Value: RecoilAsyncMutableNode>(_ stateNode: Value) -> BindableValue<Value.T?> {
         subscribeChange(for: stateNode)
         return BindableValue(
               get: {
@@ -57,7 +57,7 @@ public class ScopedRecoilContext {
         curryFirst(fn)(callbackStoreAccessor)
     }
     
-    public func useRecoilValueLoadable<Value: RecoilValue>(_ valueNode: Value) -> LoadableContent<Value.T> {
+    public func useRecoilValueLoadable<Value: RecoilNode>(_ valueNode: Value) -> LoadableContent<Value.T> {
         subscribeChange(for: valueNode)
         return LoadableContent(node: valueNode, store: unsafeStore)
     }
@@ -78,7 +78,7 @@ public class ScopedRecoilContext {
         return store
     }
     
-    private func subscribeChange<Value: RecoilValue>(for node: Value) {
+    private func subscribeChange<Value: RecoilNode>(for node: Value) {
         guard let store else { return }
         let sub = store.subscribe(for: node.key, subscriber: self)
         subscriptions[node.key] = sub

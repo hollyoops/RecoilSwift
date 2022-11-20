@@ -2,12 +2,12 @@
 import Combine
 #endif
 
-public struct ParametricRecoilValue<P, T: RecoilValue> {
+public struct ParametricRecoilValue<P, T: RecoilNode> {
     let recoilValue: T
     let param: P
 }
 
-public typealias FamilyFunc<P, T: RecoilValue> = (P) -> ParametricRecoilValue<P, T>
+public typealias FamilyFunc<P, T: RecoilNode> = (P) -> ParametricRecoilValue<P, T>
 
 public typealias ParametricGetBody<P, T> = (P, Getter) -> T
 

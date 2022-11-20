@@ -6,7 +6,7 @@ public struct LoadableContent<DataType> {
     public let key: String
     private let store: Store
     
-    init<T: RecoilValue>(node: T, store: Store) {
+    init<T: RecoilNode>(node: T, store: Store) {
         self.store = store
         self.key = node.key
         self.initNode(node)
@@ -57,7 +57,7 @@ public struct LoadableContent<DataType> {
         store.getLoadable(for: key)?.load()
     }
     
-    private func initNode<T: RecoilValue>(_ recoilValue: T) {
+    private func initNode<T: RecoilNode>(_ recoilValue: T) {
         guard
             loadingStatus == .initiated,
             let loadable = store.safeGetLoadable(for: recoilValue) as? LoadBox<T.T> else {
@@ -71,7 +71,7 @@ public struct LoadableContent<DataType> {
 /// - Parameters:
 ///   - value: A selector wrapper which with user-defined parameters
 /// - Returns: return a loadable object that contains loading informations
-public func useRecoilValueLoadable<P: Equatable, Return: RecoilValue>(_ value: ParametricRecoilValue<P, Return>) -> LoadableContent<Return.T> {
+public func useRecoilValueLoadable<P: Equatable, Return: RecoilNode>(_ value: ParametricRecoilValue<P, Return>) -> LoadableContent<Return.T> {
     let hook = RecoilLoadableValueHook(initialValue: value.recoilValue,
                                        updateStrategy: .preserved(by: value.param))
     
@@ -82,11 +82,11 @@ public func useRecoilValueLoadable<P: Equatable, Return: RecoilValue>(_ value: P
 /// - Parameters:
 ///   - value: A selector
 /// - Returns: return a loadable object that contains loading informations
-public func useRecoilValueLoadable<Value: RecoilValue>(_ value: Value) -> LoadableContent<Value.T> {
+public func useRecoilValueLoadable<Value: RecoilNode>(_ value: Value) -> LoadableContent<Value.T> {
     useHook(RecoilLoadableValueHook(initialValue: value))
 }
 
-private struct RecoilLoadableValueHook<T: RecoilValue>: RecoilHook {
+private struct RecoilLoadableValueHook<T: RecoilNode>: RecoilHook {
     var initialValue: T
     var updateStrategy: HookUpdateStrategy?
     

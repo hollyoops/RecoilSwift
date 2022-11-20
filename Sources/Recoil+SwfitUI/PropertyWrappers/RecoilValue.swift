@@ -1,7 +1,7 @@
 import SwiftUI
 
 @propertyWrapper
-public struct RecoilValueSource<Node: RecoilSyncValue>: DynamicProperty {
+public struct RecoilValue<Node: RecoilSyncNode>: DynamicProperty {
     private var context: ScopedRecoilContext
     private var node: Node
     
@@ -16,7 +16,7 @@ public struct RecoilValueSource<Node: RecoilSyncValue>: DynamicProperty {
 }
 
 @propertyWrapper
-public struct RecoilStateSource<Node: RecoilState>: DynamicProperty {
+public struct RecoilState<Node: RecoilMutableNode>: DynamicProperty {
     private var context: ScopedRecoilContext
     private var node: Node
     
@@ -38,7 +38,7 @@ public struct RecoilStateSource<Node: RecoilState>: DynamicProperty {
 }
 
 @propertyWrapper
-public struct RecoilLoadableSource<Node: RecoilValue>: DynamicProperty {
+public struct RecoilValueLoadable<Node: RecoilNode>: DynamicProperty {
     private var context: ScopedRecoilContext
     private var node: Node
     public let wrappedValue: LoadableContent<Node.T>

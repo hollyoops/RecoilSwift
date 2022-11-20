@@ -63,7 +63,7 @@ public struct MutableSelector<T: Equatable>: SyncSelectorReadable {
     }
 }
 
-extension MutableSelector: RecoilWriteable {
+extension MutableSelector: Writeable {
     public func update(with value: T) {
         let context = MutableContext(
             get: Getter(key),

@@ -1,18 +1,16 @@
-public protocol RecoilIdentifiable {
-    var key: String { get }
-}
-
-public protocol RecoilValue<T>: RecoilIdentifiable {
+public protocol RecoilNode<T> {
     associatedtype T: Equatable
   
     var get: any Evaluator<T> { get }
+    
+    var key: String { get }
 }
 
-public protocol RecoilSyncValue: RecoilValue {
+public protocol RecoilSyncNode: RecoilNode {
     func data(from: some RecoilLoadable<T>) throws -> T
 }
 
-extension RecoilSyncValue {
+extension RecoilSyncNode {
     public func data(from loadable: some RecoilLoadable<T>) throws -> T {
         if loadable.status == .initiated {
             loadable.load()
@@ -26,9 +24,9 @@ extension RecoilSyncValue {
     }
 }
 
-public protocol RecoilAsyncValue: RecoilValue { }
+public protocol RecoilAsyncNode: RecoilNode { }
 
-extension RecoilAsyncValue {
+extension RecoilAsyncNode {
     public func data(from loadable: some RecoilLoadable<T>) throws -> T? {
         if loadable.status == .initiated {
             loadable.load()
