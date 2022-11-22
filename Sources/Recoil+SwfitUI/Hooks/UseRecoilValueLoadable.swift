@@ -28,14 +28,6 @@ public struct LoadableContent<DataType> {
         store.getLoadingStatus(for: key)
     }
     
-    public var loadingStatus: LoadingStatus {
-        guard let loadable = store.getLoadable(for: key) else {
-            return .initiated
-        }
-        
-        return  loadable.status
-    }
-    
     public var hasError: Bool {
         !errors.isEmpty
     }
@@ -59,8 +51,8 @@ public struct LoadableContent<DataType> {
     
     private func initNode<T: RecoilNode>(_ recoilValue: T) {
         guard
-            loadingStatus == .initiated,
-            let loadable = store.safeGetLoadable(for: recoilValue) as? LoadBox<T.T> else {
+            let loadable = store.safeGetLoadable(for: recoilValue) as? LoadBox<T.T>,
+            loadable.status == .initiated else {
             return
         }
         loadable.load()

@@ -41,7 +41,7 @@ internal final class RecoilStore: Store {
             return false
         }
         
-        if loadable.status == .loading {
+        if loadable.isLoading {
             return true
         }
         
@@ -109,7 +109,8 @@ internal final class RecoilStore: Store {
             debugPrint("covert to loadbox failed, only loadbox supported for Now")
             return
         }
-        loadBox.data = newValue
+        
+        loadBox.status = .solved(newValue)
     }
     
     func subscribe(for nodeKey: String, subscriber: Subscriber) -> Subscription {

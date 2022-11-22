@@ -1,8 +1,24 @@
 class LoadBox<T: Equatable>: RecoilLoadable {
     private var shouldNotify = false
-    public var data: T? {
+    public var data: T? {        
+        guard case let .solved(value) = status else {
+            return nil
+        }
+
+        return value
+    }
+    
+    public var error: Error? {
+        guard case let .error(err) = status else {
+            return nil
+        }
+
+        return err
+    }
+    
+    public var status = LoadingStatus<T>.initiated {
         willSet {
-            if data != newValue {
+            if status != newValue {
                 shouldNotify = true
             }
         }
@@ -13,8 +29,6 @@ class LoadBox<T: Equatable>: RecoilLoadable {
             }
         }
     }
-    public var error: Error?
-    public var status = LoadingStatus.initiated
     
     private var task: Task<Void, Error>?
     private let evaluator: any Evaluator<T>
@@ -23,17 +37,13 @@ class LoadBox<T: Equatable>: RecoilLoadable {
     public var isAsynchronous: Bool {
        evaluator is any AsyncEvaluator
     }
-  
-    public var isLoading: Bool {
-        status == .loading
-    }
     
     init(anyGetBody: some Evaluator<T>) {
         self.evaluator = anyGetBody
     }
     
     public func load() {
-        if status == .loading {
+        if isLoading {
             self.cancel()
         }
         
@@ -89,7 +99,6 @@ class LoadBox<T: Equatable>: RecoilLoadable {
             }
         }
         
-        self.status = .loading
         let ret = evaluate()
         switch ret {
         case .success(let val): self.fullFill(val)
@@ -118,26 +127,13 @@ extension LoadBox: RecoilObservable {
 
 extension LoadBox {
     private func fullFill(_ value: T) {
-        self.error = nil
-        self.data = value
-        self.status = .solved
+        self.status = .solved(value)
     }
 
     private func reject(_ error: Error) {
-        self.error = error
-        self.status = .error
-
-        if isAsynchronous {
-            self.data = nil
-        }
+        self.status = .error(error)
+        
         // TODO: Compare error only trigger when error changed
         valueDidChanged?()
-    }
-}
-
-extension LoadBox: Equatable {
-    public static func ==(lhs: LoadBox<T>, rhs: LoadBox<T>) -> Bool {
-        lhs.status == rhs.status &&
-        lhs.data == rhs.data
     }
 }

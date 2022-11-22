@@ -23,7 +23,6 @@ public extension RecoilAsyncNode {
     }
 }
 
-
 public protocol Writeable {
     associatedtype T: Equatable
     
