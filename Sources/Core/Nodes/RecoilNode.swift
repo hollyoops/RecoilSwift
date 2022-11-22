@@ -4,11 +4,25 @@ public protocol RecoilNode<T> {
     var get: any Evaluator<T> { get }
     
     var key: String { get }
+    
+    func makeLoadable() -> any RecoilLoadable
 }
 
 public protocol RecoilSyncNode: RecoilNode { }
 
+public extension RecoilSyncNode {
+    func makeLoadable() -> any RecoilLoadable {
+        return LoadBox<T>(anyGetBody: self.get)
+    }
+}
+
 public protocol RecoilAsyncNode: RecoilNode { }
+public extension RecoilAsyncNode {
+    func makeLoadable() -> any RecoilLoadable {
+        return LoadBox<T>(anyGetBody: self.get)
+    }
+}
+
 
 public protocol Writeable {
     associatedtype T: Equatable

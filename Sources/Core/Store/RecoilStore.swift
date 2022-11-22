@@ -37,11 +37,11 @@ internal final class RecoilStore: Store {
     }
     
     func getLoadingStatus(for key: String) -> Bool {
-        guard let loadbox = getLoadable(for: key) else {
+        guard let loadable = getLoadable(for: key) else {
             return false
         }
         
-        if loadbox.status == .loading {
+        if loadable.status == .loading {
             return true
         }
         
@@ -60,11 +60,11 @@ internal final class RecoilStore: Store {
         var errors = [Error]()
         
         func doGetError(key: String) {
-            guard let loadbox = getLoadable(for: key) else {
+            guard let loadable = getLoadable(for: key) else {
                 return
             }
             
-            if let e = loadbox.error {
+            if let e = loadable.error {
                 errors.append(e)
             }
             
@@ -104,7 +104,7 @@ internal final class RecoilStore: Store {
         }
     }
     
-    func update<Recoil: RecoilNode>(recoilValue: Recoil, newValue: Recoil.T?) {
+    func update<Recoil: RecoilNode>(recoilValue: Recoil, newValue: Recoil.T) {
         guard let loadBox = getLoadbox(for: recoilValue) else {
             debugPrint("covert to loadbox failed, only loadbox supported for Now")
             return
@@ -135,19 +135,12 @@ internal final class RecoilStore: Store {
     private func register<T: RecoilNode>(value: T) -> any RecoilLoadable {
         //        check(value: value)
         let key = value.key
-        let box = makeLoadBox(from: value)
-        states[key] = box
-        return box
-    }
-    
-    private func makeLoadBox<T: RecoilNode>(from value: T) -> any RecoilLoadable {
-        let loadable = LoadBox<T.T>(anyGetBody: value.get)
-        
-        _ = loadable.observe { [weak self] in
+        let box = value.makeLoadable()
+        _ = box.observe { [weak self] in
             self?.nodeValueChanged(key: value.key)
         }
-        
-        return loadable
+        states[key] = box
+        return box
     }
     
     private func notifyChanged(forKey key: String) {
