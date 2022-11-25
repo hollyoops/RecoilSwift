@@ -52,7 +52,7 @@ public struct LoadableContent<DataType> {
     private func initNode<T: RecoilNode>(_ recoilValue: T) {
         guard
             let loadable = store.safeGetLoadable(for: recoilValue) as? LoadBox<T.T>,
-            loadable.status == .initiated else {
+            loadable.status == .invalid else {
             return
         }
         loadable.load()

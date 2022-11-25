@@ -16,7 +16,7 @@ class LoadBox<T: Equatable>: RecoilLoadable {
         return err
     }
     
-    public var status = NodeStatus<T>.initiated {
+    public var status = NodeStatus<T>.invalid {
         willSet {
             if status != newValue {
                 shouldNotify = true

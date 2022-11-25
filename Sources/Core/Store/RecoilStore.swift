@@ -3,7 +3,7 @@ import Foundation
 protocol Store: AnyObject {
     func subscribe(for nodeKey: String, subscriber: Subscriber) -> Subscription
     
-    func safeGetLoadable<T: RecoilNode>(for value: T) -> BaseLoadable
+    func safeGetLoadable<T: RecoilNode>(for node: T) -> BaseLoadable
     
     func getLoadable(for key: String) -> BaseLoadable?
     
@@ -23,8 +23,8 @@ internal final class RecoilStore: Store {
     private let checker = DFSCircularChecker()
     static let shared = RecoilStore()
     
-    func safeGetLoadable<T: RecoilNode>(for value: T) -> BaseLoadable {
-        getLoadable(for: value.key) ?? register(value: value)
+    func safeGetLoadable<T: RecoilNode>(for node: T) -> BaseLoadable {
+        getLoadable(for: node.key) ?? register(node)
     }
     
     func getLoadable(for key: String) -> BaseLoadable? {
@@ -104,8 +104,8 @@ internal final class RecoilStore: Store {
         }
     }
     
-    func update<Recoil: RecoilNode>(recoilValue: Recoil, newValue: Recoil.T) {
-        guard let loadBox = getLoadbox(for: recoilValue) else {
+    func update<Recoil: RecoilNode>(node: Recoil, newValue: Recoil.T) {
+        guard let loadBox = getLoadbox(for: node) else {
             debugPrint("covert to loadbox failed, only loadbox supported for Now")
             return
         }
@@ -133,12 +133,12 @@ internal final class RecoilStore: Store {
     }
     
     @discardableResult
-    private func register<T: RecoilNode>(value: T) -> BaseLoadable {
-        let key = value.key
-        let box = value.makeLoadable()
+    private func register<T: RecoilNode>(_ node: T) -> BaseLoadable {
+        let key = node.key
+        let box = node.makeLoadable()
         _ = box.observeValueChange { [weak self] newValue in
             guard let val = newValue as? NodeStatus<T.T> else { return }
-            self?.nodeValueChanged(node: value, value: val)
+            self?.nodeValueChanged(node: node, value: val)
         }
         states[key] = box
         return box

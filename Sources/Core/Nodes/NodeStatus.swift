@@ -1,14 +1,14 @@
 import Foundation
 
 public enum NodeStatus<T: Equatable>: Equatable {
-    case initiated
+    case invalid
     case loading
     case solved(T)
     case error(Error)
     
     public static func == (lhs: NodeStatus<T>, rhs: NodeStatus<T>) -> Bool {
         switch (lhs, rhs) {
-        case (.initiated, .initiated):
+        case (.invalid, .invalid):
             return true
         case (.loading, .loading):
             return true

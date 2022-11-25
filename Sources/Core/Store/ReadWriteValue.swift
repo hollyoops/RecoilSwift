@@ -10,7 +10,7 @@ public struct Getter {
     public func callAsFunction<T: RecoilSyncNode>(_ recoilValue: T) -> T.T {
         let loadable = getLoadbox(recoilValue)
         
-        if loadable.isInitiated {
+        if loadable.isInvalid {
             loadable.load()
         }
         
@@ -25,7 +25,7 @@ public struct Getter {
     public func callAsFunction<T: RecoilAsyncNode>(_ recoilValue: T) -> T.T? {
         let loadable = getLoadbox(recoilValue)
         
-        if loadable.isInitiated {
+        if loadable.isInvalid {
             loadable.load()
         }
         
@@ -41,7 +41,7 @@ public struct Getter {
             store.makeConnect(key: host, upstream: recoilValue.key)
         }
         
-        if loadable.isInitiated {
+        if loadable.isInvalid {
           loadable.load()
         }
         

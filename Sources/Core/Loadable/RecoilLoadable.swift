@@ -3,7 +3,7 @@ public protocol BaseLoadable: AnyValueChangeObservable {
     
     var isLoading: Bool { get }
     
-    var isInitiated: Bool { get }
+    var isInvalid: Bool { get }
     
     var anyData: Any? { get }
     
@@ -28,8 +28,8 @@ extension RecoilLoadable {
         return false
     }
     
-    public var isInitiated: Bool {
-        if case .initiated = status { return true }
+    public var isInvalid: Bool {
+        if case .invalid = status { return true }
         return false
     }
     
