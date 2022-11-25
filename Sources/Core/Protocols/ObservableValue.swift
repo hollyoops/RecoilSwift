@@ -2,6 +2,6 @@ public protocol RecoilCancelable {
   func cancel()
 }
 
-public protocol RecoilObservable {
-    func observe(_ change: @escaping () -> Void) -> Subscription
+public protocol AnyValueChangeObservable {
+    func observeValueChange(_ change: @escaping (Any) -> Void) -> Subscription
 }

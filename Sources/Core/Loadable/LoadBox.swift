@@ -1,4 +1,4 @@
-class LoadBox<T: Equatable>: RecoilLoadable {
+class LoadBox<T: Equatable>: RecoilLoadable {    
     private var shouldNotify = false
     public var data: T? {        
         guard case let .solved(value) = status else {
@@ -16,7 +16,7 @@ class LoadBox<T: Equatable>: RecoilLoadable {
         return err
     }
     
-    public var status = LoadingStatus<T>.initiated {
+    public var status = NodeStatus<T>.initiated {
         willSet {
             if status != newValue {
                 shouldNotify = true
@@ -24,7 +24,7 @@ class LoadBox<T: Equatable>: RecoilLoadable {
         }
         didSet {
             if shouldNotify {
-                valueDidChanged?()
+                valueDidChanged?(status)
                 shouldNotify = false
             }
         }
@@ -32,7 +32,7 @@ class LoadBox<T: Equatable>: RecoilLoadable {
     
     private var task: Task<Void, Error>?
     private let evaluator: any Evaluator<T>
-    private var valueDidChanged: (() -> Void)?
+    private var valueDidChanged: ((NodeStatus<T>) -> Void)?
 
     public var isAsynchronous: Bool {
        evaluator is any AsyncEvaluator
@@ -111,12 +111,12 @@ class LoadBox<T: Equatable>: RecoilLoadable {
         
         t.cancel()
         self.task = nil
-        valueDidChanged?()
+        valueDidChanged?(status)
     }
 }
 
-extension LoadBox: RecoilObservable {
-    public func observe(_ change: @escaping () -> Void) -> Subscription {
+extension LoadBox {
+    public func observeStatusChange(_ change: @escaping (NodeStatus<T>) -> Void) -> Subscription {
         self.valueDidChanged = change
 
         return Subscription { [weak self] in
@@ -134,6 +134,6 @@ extension LoadBox {
         self.status = .error(error)
         
         // TODO: Compare error only trigger when error changed
-        valueDidChanged?()
+        valueDidChanged?(status)
     }
 }

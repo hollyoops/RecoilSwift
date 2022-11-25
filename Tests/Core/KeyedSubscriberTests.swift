@@ -8,7 +8,7 @@ class KeyedSubscriberTests: XCTestCase {
     class DummySubscriber: Subscriber {
         var valueDidChangeCalled = false
 
-        func valueDidChange() {
+        func valueDidChange<Node: RecoilNode>(node: Node, newValue: NodeStatus<Node.T>) {
             valueDidChangeCalled = true
         }
     }
@@ -42,7 +42,7 @@ class KeyedSubscriberTests: XCTestCase {
         let subscriber = DummySubscriber()
         let keyedSubscriber = KeyedSubscriber(subscriber: subscriber)
 
-        keyedSubscriber.valueDidChange()
+        keyedSubscriber.valueDidChange(node: atom { 10 }, newValue: .solved(12))
 
         XCTAssertTrue(subscriber.valueDidChangeCalled)
     }

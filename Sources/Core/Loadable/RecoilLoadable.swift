@@ -1,43 +1,25 @@
-import Foundation
-
-public enum LoadingStatus<T: Equatable>: Equatable {
-    case initiated
-    case loading
-    case solved(T)
-    case error(Error)
-    
-    public static func == (lhs: LoadingStatus<T>, rhs: LoadingStatus<T>) -> Bool {
-        switch (lhs, rhs) {
-        case (.initiated, .initiated):
-            return true
-        case (.loading, .loading):
-            return true
-        case let (.solved(value1), .solved(value2)):
-            return value1 == value2
-        case let (.error(error1), .error(error2)):
-            let nsError1 = error1 as NSError
-            let nsError2 = error2 as NSError
-            return nsError1.domain == nsError2.domain && nsError1.code == nsError2.code
-        default:
-            return false
-        }
-    }
-}
-
-public protocol RecoilLoadable<Value>: RecoilObservable {
-    associatedtype Value: Equatable
-    
-    var status: LoadingStatus<Value> { get }
-    
+public protocol BaseLoadable: AnyValueChangeObservable {
     var isAsynchronous: Bool { get }
     
     var isLoading: Bool { get }
     
+    var isInitiated: Bool { get }
+    
+    var anyData: Any? { get }
+    
+    var error: Error? { get }
+    
     func load()
+}
+
+public protocol RecoilLoadable<Value>: BaseLoadable {
+    associatedtype Value: Equatable
+    
+    var status: NodeStatus<Value> { get }
     
     var data: Value? { get }
     
-    var error: Error? { get }
+    func observeStatusChange(_ change: @escaping (NodeStatus<Value>) -> Void) -> Subscription
 }
 
 extension RecoilLoadable {
@@ -49,5 +31,11 @@ extension RecoilLoadable {
     public var isInitiated: Bool {
         if case .initiated = status { return true }
         return false
+    }
+    
+    public var anyData: Any? { data }
+    
+    func observeValueChange(_ change: @escaping (Any) -> Void) -> Subscription {
+        observeStatusChange { change($0) }
     }
 }

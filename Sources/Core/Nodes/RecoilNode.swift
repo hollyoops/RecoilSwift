@@ -5,20 +5,20 @@ public protocol RecoilNode<T> {
     
     var key: String { get }
     
-    func makeLoadable() -> any RecoilLoadable
+    func makeLoadable() -> BaseLoadable
 }
 
 public protocol RecoilSyncNode: RecoilNode { }
 
 public extension RecoilSyncNode {
-    func makeLoadable() -> any RecoilLoadable {
+    func makeLoadable() -> BaseLoadable {
         return LoadBox<T>(anyGetBody: self.get)
     }
 }
 
 public protocol RecoilAsyncNode: RecoilNode { }
 public extension RecoilAsyncNode {
-    func makeLoadable() -> any RecoilLoadable {
+    func makeLoadable() -> BaseLoadable {
         return LoadBox<T>(anyGetBody: self.get)
     }
 }

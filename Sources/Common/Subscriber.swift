@@ -1,6 +1,6 @@
 /// A class that represents the subscription returned by the store when subscribing.
 protocol Subscriber: AnyObject {
-    func valueDidChange()
+    func valueDidChange<Node: RecoilNode>(node: Node, newValue: NodeStatus<Node.T>)
 }
 
 class KeyedSubscriber: Hashable, Subscriber {
@@ -12,8 +12,8 @@ class KeyedSubscriber: Hashable, Subscriber {
         self.subscriber = subscriber
     }
     
-    func valueDidChange() {
-        subscriber.valueDidChange()
+    func valueDidChange<Node: RecoilNode>(node: Node, newValue: NodeStatus<Node.T>) {
+        subscriber.valueDidChange(node: node, newValue: newValue)
     }
     
     static func == (lhs: KeyedSubscriber, rhs: KeyedSubscriber) -> Bool {

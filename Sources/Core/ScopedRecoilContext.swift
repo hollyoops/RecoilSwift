@@ -90,10 +90,8 @@ public class ScopedRecoilContext {
 }
 
 extension ScopedRecoilContext: Subscriber {
-    func valueDidChange() {
-        // TODO: improve performance
-        // 1. if we can passback the changed value from.
-        // 2. We can have cache. only refresh when value is change
+    func valueDidChange<Node: RecoilNode>(node: Node, newValue: NodeStatus<Node.T>) {
+        // TODO: improve performance We can have cache. only refresh when value is change
         refresh()
     }
 }

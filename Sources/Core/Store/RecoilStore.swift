@@ -3,9 +3,9 @@ import Foundation
 protocol Store: AnyObject {
     func subscribe(for nodeKey: String, subscriber: Subscriber) -> Subscription
     
-    func safeGetLoadable<T: RecoilNode>(for value: T) -> any RecoilLoadable
+    func safeGetLoadable<T: RecoilNode>(for value: T) -> BaseLoadable
     
-    func getLoadable(for key: String) -> (any RecoilLoadable)?
+    func getLoadable(for key: String) -> BaseLoadable?
     
     func getLoadingStatus(for key: String) -> Bool
     
@@ -17,23 +17,23 @@ protocol Store: AnyObject {
 }
 
 internal final class RecoilStore: Store {
-    private var states: [String: any RecoilLoadable] = [:]
+    private var states: [String: BaseLoadable] = [:]
     private var subscriberMap: [String: Set<KeyedSubscriber>] = [:]
     private let graph = Graph()
     private let checker = DFSCircularChecker()
     static let shared = RecoilStore()
     
-    func safeGetLoadable<T: RecoilNode>(for value: T) -> any RecoilLoadable {
+    func safeGetLoadable<T: RecoilNode>(for value: T) -> BaseLoadable {
         getLoadable(for: value.key) ?? register(value: value)
     }
     
-    func getLoadable(for key: String) -> (any RecoilLoadable)? {
+    func getLoadable(for key: String) -> BaseLoadable? {
         states[key]
     }
     
     func getData<T>(for key: String, dataType: T.Type) -> T? {
         let load = getLoadable(for: key)
-        return load?.data as? T
+        return load?.anyData as? T
     }
     
     func getLoadingStatus(for key: String) -> Bool {
@@ -133,32 +133,32 @@ internal final class RecoilStore: Store {
     }
     
     @discardableResult
-    private func register<T: RecoilNode>(value: T) -> any RecoilLoadable {
-        //        check(value: value)
+    private func register<T: RecoilNode>(value: T) -> BaseLoadable {
         let key = value.key
         let box = value.makeLoadable()
-        _ = box.observe { [weak self] in
-            self?.nodeValueChanged(key: value.key)
+        _ = box.observeValueChange { [weak self] newValue in
+            guard let val = newValue as? NodeStatus<T.T> else { return }
+            self?.nodeValueChanged(node: value, value: val)
         }
         states[key] = box
         return box
     }
     
-    private func notifyChanged(forKey key: String) {
-        guard let subscribers = subscriberMap[key] else {
+    private func notifyChanged<Node: RecoilNode>(node: Node, value: NodeStatus<Node.T>) {
+        guard let subscribers = subscriberMap[node.key] else {
             return
         }
-        subscribers.forEach { $0.valueDidChange() }
+        subscribers.forEach { $0.valueDidChange(node: node, newValue: value) }
     }
     
-    private func nodeValueChanged(key: String) {
-        let downstreams = graph.getNode(for: key)?.downstream ?? []
+    private func nodeValueChanged<Node: RecoilNode>(node: Node, value: NodeStatus<Node.T>) {
+        let downstreams = graph.getNode(for: node.key)?.downstream ?? []
         
         for item in downstreams {
             states[item]?.load()
         }
         
-        notifyChanged(forKey: key)
+        notifyChanged(node: node, value: value)
     }
 }
 
