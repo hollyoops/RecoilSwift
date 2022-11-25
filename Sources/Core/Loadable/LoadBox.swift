@@ -14,7 +14,6 @@ class LoadBox<T: Equatable>: RecoilLoadable {
         }
     }
     
-    private var task: Task<Void, Error>?
     private let evaluator: any Evaluator<T>
     private var valueDidChanged: ((NodeStatus<T>) -> Void)?
 
@@ -55,15 +54,18 @@ class LoadBox<T: Equatable>: RecoilLoadable {
             }
         }
         
-        self.status = .loading
-        self.task = Task { @MainActor in
+        let task = Task { @MainActor in
             do {
                 let value = try await evaluate()
                 self.fullFill(value)
+                return value
             } catch {
                 self.reject(error)
+                throw error
             }
         }
+        
+        self.status = .loading(task)
     }
     
     private func loadSync() {
@@ -91,11 +93,7 @@ class LoadBox<T: Equatable>: RecoilLoadable {
     }
 
     func cancel() {
-        guard let t = self.task else { return }
-        
-        t.cancel()
-        self.task = nil
-        valueDidChanged?(status)
+        self.status.task?.cancel()
     }
 }
 

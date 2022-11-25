@@ -2,7 +2,7 @@ import Foundation
 
 public enum NodeStatus<T: Equatable>: Equatable {
     case invalid
-    case loading
+    case loading(Task<T, Error>)
     case solved(T)
     case error(Error)
     
@@ -41,6 +41,14 @@ extension NodeStatus {
         }
         
         return value
+    }
+    
+    public var task: Task<T, Error>? {
+        guard case let .loading(task) = self else {
+            return nil
+        }
+        
+        return task
     }
     
     public var error: Error? {
