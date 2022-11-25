@@ -2,9 +2,9 @@ public protocol BaseLoadable: AnyValueChangeObservable {
     var isAsynchronous: Bool { get }
     
     var isLoading: Bool { get }
-    
+
     var isInvalid: Bool { get }
-    
+
     var anyData: Any? { get }
     
     var error: Error? { get }
@@ -24,13 +24,19 @@ public protocol RecoilLoadable<Value>: BaseLoadable {
 
 extension RecoilLoadable {
     public var isLoading: Bool {
-        if case .loading = status { return true }
-        return false
+        status.isLoading
     }
-    
+
     public var isInvalid: Bool {
-        if case .invalid = status { return true }
-        return false
+        status.isInvalid
+    }
+
+    public var data: Value? {
+        status.data
+    }
+
+    public var error: Error? {
+        status.error
     }
     
     public var anyData: Any? { data }

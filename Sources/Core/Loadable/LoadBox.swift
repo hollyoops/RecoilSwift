@@ -1,21 +1,5 @@
 class LoadBox<T: Equatable>: RecoilLoadable {    
     private var shouldNotify = false
-    public var data: T? {        
-        guard case let .solved(value) = status else {
-            return nil
-        }
-
-        return value
-    }
-    
-    public var error: Error? {
-        guard case let .error(err) = status else {
-            return nil
-        }
-
-        return err
-    }
-    
     public var status = NodeStatus<T>.invalid {
         willSet {
             if status != newValue {
@@ -43,7 +27,7 @@ class LoadBox<T: Equatable>: RecoilLoadable {
     }
     
     public func load() {
-        if isLoading {
+        if status.isLoading {
             self.cancel()
         }
         

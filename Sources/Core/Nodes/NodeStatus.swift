@@ -23,3 +23,31 @@ public enum NodeStatus<T: Equatable>: Equatable {
         }
     }
 }
+
+extension NodeStatus {
+    public var isLoading: Bool {
+        if case .loading = self { return true }
+        return false
+    }
+    
+    public var isInvalid: Bool {
+        if case .invalid = self { return true }
+        return false
+    }
+    
+    public var data: T? {
+        guard case let .solved(value) = self else {
+            return nil
+        }
+        
+        return value
+    }
+    
+    public var error: Error? {
+        guard case let .error(err) = self else {
+            return nil
+        }
+        
+        return err
+    }
+}
