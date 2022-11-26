@@ -10,44 +10,56 @@ import Combine
 /// ```
 /// You can retrive value with ``Recoil hooks``,
 /// eg: ``useRecoilState(allBookState)``
+///
 
-public final class Atom<T: Equatable>: SyncAtomNode {
-  public typealias T = T
-  public typealias E = Never
-  
-  public let key: String
-  public private(set) var get: any Evaluator<T>
-  
-  public init(key: String = "Atom-\(UUID())", _ value: T) {
-    self.key = key
-    self.get = SyncGetBody({ value })
-  }
+public typealias CombineGetAtomFunc<T: Equatable, E: Error> = () throws -> AnyPublisher<T, E>
+
+public typealias AsyncGetAtomFunc<T: Equatable> = () async throws -> T
+
+public struct Atom<T: Equatable>: SyncAtomNode {
+    public typealias T = T
+    public typealias E = Never
+    
+    public let key: String
+    public let get: (Getter) throws -> T
+    
+    public init(key: String = "Atom-\(UUID())", _ value: T) {
+        self.key = key
+        self.get = { _ in value }
+    }
 }
 
 extension Atom: Writeable {
-  public func update(with value: T) {
-    self.get = SyncGetBody({ value })
-    RecoilStore.shared.update(node: self, newValue: value)
-  }
+    public func update(context: MutableContext, newValue: T) {
+        guard let loadbox = context.loadable as? SyncLoadBox<T> else {
+            return
+        }
+        
+        loadbox.status = .solved(newValue)
+    }
 }
 
 public struct AsyncAtom<T: Equatable>: AsyncAtomNode {
-  public let key: String
-  public let get: any Evaluator<T>
-  
-  public init<E: Error>(key: String = "AsyncAtom-\(UUID())", get: @escaping CombineGetBodyFunc<T, E>) {
-      self.key = key
-      self.get = CombineGetBody(get)
-  }
-  
-  public init(key: String = "AsyncAtom-\(UUID())", get: @escaping AsyncGetBodyFunc<T>) {
-      self.key = key
-      self.get = AsyncGetBody(get)
-  }
+    public let key: String
+    public var get: (Getter) async throws -> T
+    
+    public init<E: Error>(key: String = "AsyncAtom-\(UUID())", get: @escaping CombineGetAtomFunc<T, E>) {
+        self.key = key
+        self.get = { _ in try await get().async() }
+    }
+    
+    public init(key: String = "AsyncAtom-\(UUID())", get: @escaping AsyncGetAtomFunc<T>) {
+        self.key = key
+        self.get = { _ in try await get() }
+    }
 }
 
 extension AsyncAtom: Writeable {
-  public func update(with value: T) {
-    RecoilStore.shared.update(node: self, newValue: value)
-  }
+    public func update(context: MutableContext, newValue: T) {
+        guard let loadbox = context.loadable as? AsyncLoadBox<T> else {
+            return
+        }
+        
+        loadbox.status = .solved(newValue)
+    }
 }

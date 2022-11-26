@@ -7,6 +7,12 @@ import Combine
 // MARK: - Sync Selector
 public typealias SetBody<T> = (MutableContext, T) -> Void
 
+public typealias CombineGetFunc<T: Equatable, E: Error> = (Getter) throws -> AnyPublisher<T, E>
+
+public typealias SyncGetFunc<T> = (Getter) throws -> T
+
+public typealias AsyncGetFunc<T: Equatable> = (Getter) async throws -> T
+
 ///A ``selector`` is a pure function that accepts atoms or other sync selectors as input. When these upstream atoms or sync selectors are updated, the selector function will be re-evaluated. Components can subscribe to selectors just like atoms, and will then be re-rendered when the selectors change.
 
 /// **Selectors** are used to calculate derived data that is based on state. This lets us avoid redundant state because a minimal set of state is stored in atoms, while everything else is efficiently computed as a function of that minimal state.
@@ -25,11 +31,11 @@ public struct Selector<T: Equatable>: SyncSelectorNode {
     public typealias E = Never
     
     public let key: String
-    public let get: any Evaluator<T>
+    public var get: (Getter) throws -> T
     
     init(key: String = "R-Sel-\(UUID())", body: @escaping SyncGetFunc<T>) {
         self.key = key
-        self.get = SyncGetBody({ try body(Getter(key)) })
+        self.get = body
     }
 }
 
@@ -53,22 +59,19 @@ public struct MutableSelector<T: Equatable>: SyncSelectorNode {
     public typealias E = Never
     
     public let key: String
-    public let get: any Evaluator<T>
+    public var get: (Getter) throws -> T
     public let set: SetBody<T>
 
     public init(key: String = "WR-Sel-\(UUID())", get: @escaping SyncGetFunc<T>, set: @escaping SetBody<T>) {
         self.key = key
-        self.get = SyncGetBody({ try get(Getter(key)) })
+        self.get = get
         self.set = set
     }
 }
 
 extension MutableSelector: Writeable {
-    public func update(with value: T) {
-        let context = MutableContext(
-            get: Getter(key),
-            set: Setter(key))
-        set(context, value)
+    public func update(context: MutableContext, newValue: T) {
+        set(context, newValue)
     }
 }
 
@@ -81,16 +84,16 @@ extension MutableSelector: Writeable {
 
 public struct AsyncSelector<T: Equatable>: AsyncSelectorNode {
     public let key: String
-    public let get: any Evaluator<T>
+    public var get: (Getter) async throws -> T
 
     public init<E: Error>(key: String = "R-AsyncSel-\(UUID())", get: @escaping CombineGetFunc<T, E>) {
         self.key = key
-        self.get = CombineGetBody<T, E>( { try get(Getter(key)) })
+        self.get = { try await get($0).async() }
     }
     
     public init(key: String = "R-AsyncSel-\(UUID())", get: @escaping AsyncGetFunc<T>) {
         self.key = key
-        self.get = AsyncGetBody<T>({ try await get(Getter(key))})
+        self.get = get
     }
 }
 

@@ -1,6 +1,4 @@
 public protocol BaseLoadable: AnyValueChangeObservable {
-    var isAsynchronous: Bool { get }
-    
     var isLoading: Bool { get }
 
     var isInvalid: Bool { get }

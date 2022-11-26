@@ -24,6 +24,7 @@ public class ScopedRecoilContext {
     }
     
     public func useRecoilValue<Value: RecoilAsyncNode>(_ valueNode: Value) -> Value.T? {
+     
         subscribeChange(for: valueNode)
         return Getter(valueNode.key, store: self.unsafeStore)(valueNode)
     }
@@ -59,6 +60,10 @@ public class ScopedRecoilContext {
     
     public func useRecoilValueLoadable<Value: RecoilNode>(_ valueNode: Value) -> LoadableContent<Value.T> {
         subscribeChange(for: valueNode)
+//        let loadble = store?.safeGetLoadable(for: valueNode)
+//        if loadble == .invalid {
+//            loadble.compute(/*excutatble_info*/)
+//        }
         return LoadableContent(node: valueNode, store: unsafeStore)
     }
     

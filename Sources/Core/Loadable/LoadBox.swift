@@ -1,121 +1,88 @@
-class LoadBox<T: Equatable>: RecoilLoadable {    
-    private var shouldNotify = false
-    public var status = NodeStatus<T>.invalid {
-        willSet {
-            if status != newValue {
-                shouldNotify = true
-            }
-        }
-        didSet {
-            if shouldNotify {
-                valueDidChanged?(status)
-                shouldNotify = false
-            }
-        }
-    }
-    
-    private let evaluator: any Evaluator<T>
-    private var valueDidChanged: ((NodeStatus<T>) -> Void)?
+typealias StatusChangedCallback<T: Equatable> = (NodeStatus<T>) -> Void
 
-    public var isAsynchronous: Bool {
-       evaluator is any AsyncEvaluator
+internal class SyncLoadBox<T: Equatable>: RecoilLoadable {
+    private(set) var onStatusChange: StatusChangedCallback<T>?
+    let key: String
+    let computeBody: (Getter) throws -> T
+    
+    init<Node: RecoilSyncNode>(node: Node) where Node.T == T {
+        self.key = node.key
+        computeBody = node.get
     }
     
-    init(anyGetBody: some Evaluator<T>) {
-        self.evaluator = anyGetBody
+    var status: NodeStatus<T> = .invalid {
+        didSet { onStatusChange?(status) }
     }
-    
-    public func load() {
-        if status.isLoading {
-            self.cancel()
+
+    func compute(_ ctx: Getter) throws -> T {
+        do {
+            let value = try self.computeBody(ctx)
+            self.status = .solved(value)
+            return value
+        } catch {
+            self.status = .error(error)
+            throw error
         }
-        
-        isAsynchronous ? loadAsync() : loadSync()
     }
     
-    private func loadAsync () {
-        @Sendable func evaluate() async throws -> T {
-            if #available(iOS 16.0.0, *) {
-                guard let evaluator = evaluator as? (any AsyncEvaluator<T>) else {
-                    throw EvaluatorError.convertToAsyncFailed
-                }
-                
-                return try await evaluator.evaluate()
-            } else {
-                guard let evaluator = evaluator as? (any AsyncEvaluator) else {
-                    throw EvaluatorError.convertToAsyncFailed
-                }
-                
-                guard let val = try await evaluator.evaluate() as? T else {
-                    throw EvaluatorError.convertToAsyncFailed
-                }
-                
-                return val
-            }
+    func load() {
+        _ = try? compute(Getter(key))
+    }
+    
+    func observeStatusChange(_ change: @escaping (NodeStatus<T>) -> Void) -> Subscription {
+        onStatusChange = change
+        return Subscription { [weak self] in
+            self?.onStatusChange = nil
         }
-        
-        let task = Task { @MainActor in
+    }
+}
+
+internal class AsyncLoadBox<T: Equatable>: RecoilLoadable {
+    let key: String
+    var onStatusChange: StatusChangedCallback<T>?
+    let computeBody: (Getter) async throws -> T
+    
+    init<Node: RecoilAsyncNode>(node: Node) where Node.T == T {
+        self.key = node.key
+        self.computeBody = node.get
+    }
+    
+    var status: NodeStatus<T> = .invalid {
+        didSet { onStatusChange?(status) }
+    }
+    
+    func compute(_ ctx: Getter) -> Task<T, Error> {
+        if case let .loading(task) = self.status {
+            return task
+        }
+       
+        let task = Task {
             do {
-                let value = try await evaluate()
-                self.fullFill(value)
-                return value
+                let val = try await computeBody(ctx)
+                self.status = .solved(val)
+                return val
             } catch {
-                self.reject(error)
+                self.status = .error(error)
                 throw error
             }
         }
-        
         self.status = .loading(task)
+        
+        return task
     }
     
-    private func loadSync() {
-        func evaluate() -> Result<T, Error> {
-            guard let evaluator = evaluator as? (any SyncEvaluator) else {
-                return .failure(EvaluatorError.convertToSyncFailed)
-            }
-            
-            do {
-                guard let value = try evaluator.evaluate() as? T else {
-                    throw EvaluatorError.convertToAsyncFailed
-                }
-                
-                return .success(value)
-            } catch {
-                return .failure(error)
-            }
-        }
-        
-        let ret = evaluate()
-        switch ret {
-        case .success(let val): self.fullFill(val)
-        case .failure(let err): self.reject(err)
-        }
-    }
-
-    func cancel() {
-        self.status.task?.cancel()
-    }
-}
-
-extension LoadBox {
-    public func observeStatusChange(_ change: @escaping (NodeStatus<T>) -> Void) -> Subscription {
-        self.valueDidChanged = change
-
+    func observeStatusChange(_ change: @escaping (NodeStatus<T>) -> Void) -> Subscription {
+        onStatusChange = change
         return Subscription { [weak self] in
-            self?.valueDidChanged = nil
+            self?.onStatusChange = nil
         }
     }
-}
-
-extension LoadBox {
-    private func fullFill(_ value: T) {
-        self.status = .solved(value)
+    
+    func cancel() {
+        status.task?.cancel()
     }
-
-    private func reject(_ error: Error) {
-        self.status = .error(error)
-        
-        // TODO: Compare error only trigger when error changed
-        valueDidChanged?(status)
+    
+    func load() {
+        _ = compute(Getter(key))
     }
 }

@@ -2,7 +2,7 @@ import Hooks
 import Foundation
 
 /// A loadable object that contains loading informations
-public struct LoadableContent<DataType> {
+public struct LoadableContent<DataType: Equatable> {
     public let key: String
     private let store: Store
     
@@ -17,7 +17,7 @@ public struct LoadableContent<DataType> {
             return false
         }
         
-        return loadable.isAsynchronous
+        return loadable is AsyncLoadBox<DataType>
     }
     
     public var data: DataType? {
@@ -50,12 +50,10 @@ public struct LoadableContent<DataType> {
     }
     
     private func initNode<T: RecoilNode>(_ recoilValue: T) {
-        guard
-            let loadable = store.safeGetLoadable(for: recoilValue) as? LoadBox<T.T>,
-            loadable.status == .invalid else {
-            return
+        let loadable = store.safeGetLoadable(for: recoilValue)
+        if loadable.isInvalid {
+            loadable.load()
         }
-        loadable.load()
     }
 }
 

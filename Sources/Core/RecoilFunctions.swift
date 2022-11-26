@@ -21,7 +21,7 @@ public func atom<T: Equatable>(_ fn: () -> T) -> Atom<T> {
 ///  - fn: A closure that provide init value for the atom
 /// - Returns: A writeable RecoilState object.
 
-public func atom<T: Equatable, E: Error>(_ fn: @escaping CombineGetBodyFunc<T, E>) -> AsyncAtom<T> {
+public func atom<T: Equatable, E: Error>(_ fn: @escaping CombineGetAtomFunc<T, E>) -> AsyncAtom<T> {
     AsyncAtom(get: fn)
 }
 
@@ -30,7 +30,7 @@ public func atom<T: Equatable, E: Error>(_ fn: @escaping CombineGetBodyFunc<T, E
 ///  - fn: A closure that provide init value for the atom
 /// - Returns: A writeable RecoilState object.
 
-public func atom<T: Equatable>(_ fn: @escaping AsyncGetBodyFunc<T>) -> AsyncAtom<T> {
+public func atom<T: Equatable>(_ fn: @escaping AsyncGetAtomFunc<T>) -> AsyncAtom<T> {
     AsyncAtom(get: fn)
 }
 

@@ -4,7 +4,9 @@ import Combine
 
 struct AppEntryView: View {
     var body: some View {
-        MainTabView()
+        RecoilRoot {
+            MainTabView()
+        }
     }
 }
 

@@ -103,16 +103,7 @@ internal final class RecoilStore: Store {
             graph.addEdge(key: upKey, downstream: key)
         }
     }
-    
-    func update<Recoil: RecoilNode>(node: Recoil, newValue: Recoil.T) {
-        guard let loadBox = getLoadbox(for: node) else {
-            debugPrint("covert to loadbox failed, only loadbox supported for Now")
-            return
-        }
         
-        loadBox.status = .solved(newValue)
-    }
-    
     func subscribe(for nodeKey: String, subscriber: Subscriber) -> Subscription {
         let keyedSubscriber = KeyedSubscriber(subscriber: subscriber)
         
@@ -165,11 +156,5 @@ internal final class RecoilStore: Store {
 extension Dictionary {
     func has(_ key: Self.Key) -> Bool {
         self[key] != nil
-    }
-}
-
-private extension RecoilStore {
-    private func getLoadbox<T: RecoilNode>(for value: T) -> LoadBox<T.T>? {
-        safeGetLoadable(for: value) as? LoadBox<T.T>
     }
 }
