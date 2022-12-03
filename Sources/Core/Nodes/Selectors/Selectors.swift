@@ -7,11 +7,49 @@ import Combine
 // MARK: - Sync Selector
 public typealias SetBody<T> = (MutableContext, T) -> Void
 
-public typealias CombineGetFunc<T: Equatable, E: Error> = (Getter) throws -> AnyPublisher<T, E>
+public typealias CombineGet<T: Equatable, E: Error> = (Getter) throws -> AnyPublisher<T, E>
 
-public typealias SyncGetFunc<T> = (Getter) throws -> T
+public typealias SyncGet<T> = (Getter) throws -> T
 
-public typealias AsyncGetFunc<T: Equatable> = (Getter) async throws -> T
+public typealias AsyncGet<T: Equatable> = (Getter) async throws -> T
+
+
+/// A Selector represent a derived state in Recoil. If only a get function is provided, the selector is read-only and returns a ``Readonly Selector``
+/// - Parameters:
+///  - getBody: A synchronous function that evaluates the value for the derived state.
+/// - Returns: A synchronous readonly selector.
+public func selector<T: Equatable>(_ getBody: @escaping SyncGet<T>) -> Selector<T> {
+    Selector(body: getBody)
+}
+
+/// A Selector represent a derived state in Recoil. If only a get function is provided, the selector is read-only and returns a ``Readonly Selector``
+/// - Parameters:
+///  - getBody:  A asynchronous function that evaluates the value for the derived state. It return ``AnyPublisher`` object.
+/// - Returns: A asynchronous readonly selector with combine.
+
+public func selector<T: Equatable, E: Error>(_ getBody: @escaping CombineGet<T, E>) -> AsyncSelector<T> {
+    AsyncSelector(get: getBody)
+}
+
+/// A Selector represent a derived state in Recoil. If only a get function is provided, the selector is read-only and returns a ``Readonly Selector``
+/// - Parameters:
+///  - getBody:  A async function that evaluates the value for the derived state.
+/// - Returns: A asynchronous readonly selector with ``async/await``.
+
+public func selector<T: Equatable>(_ getBody: @escaping AsyncGet<T>) -> AsyncSelector<T> {
+    AsyncSelector(get: getBody)
+}
+
+/// A Selector represent a derived state in Recoil. If the get and set function are provided, the selector is writeable
+/// - Parameters:
+///  - get: A synchronous function that evaluates the value for the derived state.
+///  - set: A synchronous function that can store a value to Recoil object
+/// - Returns: A asynchronous readonly selector with ``async/await``.
+public func selector<T: Equatable>(get getBody: @escaping SyncGet<T>, set setBody: @escaping SetBody<T>) -> MutableSelector<T> {
+    MutableSelector(get: getBody, set: setBody)
+}
+
+
 
 ///A ``selector`` is a pure function that accepts atoms or other sync selectors as input. When these upstream atoms or sync selectors are updated, the selector function will be re-evaluated. Components can subscribe to selectors just like atoms, and will then be re-rendered when the selectors change.
 
@@ -33,7 +71,7 @@ public struct Selector<T: Equatable>: SyncSelectorNode {
     public let key: String
     public var get: (Getter) throws -> T
     
-    init(key: String = "R-Sel-\(UUID())", body: @escaping SyncGetFunc<T>) {
+    init(key: String = "R-Sel-\(UUID())", body: @escaping SyncGet<T>) {
         self.key = key
         self.get = body
     }
@@ -62,7 +100,7 @@ public struct MutableSelector<T: Equatable>: SyncSelectorNode {
     public var get: (Getter) throws -> T
     public let set: SetBody<T>
 
-    public init(key: String = "WR-Sel-\(UUID())", get: @escaping SyncGetFunc<T>, set: @escaping SetBody<T>) {
+    public init(key: String = "WR-Sel-\(UUID())", get: @escaping SyncGet<T>, set: @escaping SetBody<T>) {
         self.key = key
         self.get = get
         self.set = set
@@ -86,12 +124,12 @@ public struct AsyncSelector<T: Equatable>: AsyncSelectorNode {
     public let key: String
     public var get: (Getter) async throws -> T
 
-    public init<E: Error>(key: String = "R-AsyncSel-\(UUID())", get: @escaping CombineGetFunc<T, E>) {
+    public init<E: Error>(key: String = "R-AsyncSel-\(UUID())", get: @escaping CombineGet<T, E>) {
         self.key = key
         self.get = { try await get($0).async() }
     }
     
-    public init(key: String = "R-AsyncSel-\(UUID())", get: @escaping AsyncGetFunc<T>) {
+    public init(key: String = "R-AsyncSel-\(UUID())", get: @escaping AsyncGet<T>) {
         self.key = key
         self.get = get
     }

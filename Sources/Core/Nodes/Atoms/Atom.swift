@@ -12,16 +12,52 @@ import Combine
 /// eg: ``useRecoilState(allBookState)``
 ///
 
-public typealias CombineGetAtomFunc<T: Equatable, E: Error> = () throws -> AnyPublisher<T, E>
+public typealias AtomCombineGet<T: Equatable, E: Error> = () throws -> AnyPublisher<T, E>
 
-public typealias AsyncGetAtomFunc<T: Equatable> = () async throws -> T
+public typealias AtomAsyncGet<T: Equatable> = () async throws -> T
+
+//MARK: - Atoms
+
+/// An atom represents state in Recoil. The ``atom()`` function returns a writeable ``RecoilState`` object.
+/// - Parameters:
+///  - value: The initial value of the atom
+/// - Returns: A writeable RecoilState object.
+public func atom<T: Equatable>(_ value: T) -> Atom<T> {
+    Atom(value)
+}
+
+/// An atom represents state in Recoil. The ``atom()`` function returns a writeable ``RecoilState`` object.
+/// - Parameters:
+///  - fn: A closure that provide init value for the atom
+/// - Returns: A writeable RecoilState object.
+public func atom<T: Equatable>(_ fn: @escaping () throws -> T) -> Atom<T> {
+    Atom(get: fn)
+}
+
+/// An atom represents state in Recoil. The ``atom()`` function returns a writeable ``RecoilState`` object.
+/// - Parameters:
+///  - fn: A closure that provide init value for the atom
+/// - Returns: A writeable RecoilState object.
+
+public func atom<T: Equatable, E: Error>(_ fn: @escaping AtomCombineGet<T, E>) -> AsyncAtom<T> {
+    AsyncAtom(get: fn)
+}
+
+/// An atom represents state in Recoil. The ``atom()`` function returns a writeable ``RecoilState`` object.
+/// - Parameters:
+///  - fn: A closure that provide init value for the atom
+/// - Returns: A writeable RecoilState object.
+
+public func atom<T: Equatable>(_ fn: @escaping AtomAsyncGet<T>) -> AsyncAtom<T> {
+    AsyncAtom(get: fn)
+}
 
 public struct Atom<T: Equatable>: SyncAtomNode {
     public typealias T = T
     public typealias E = Never
     
     public let key: String
-    public let get: (Getter) throws -> T
+    public let get: SyncGet<T>
     
     public init(key: String = "Atom-\(UUID())", _ value: T) {
         self.key = key
@@ -46,14 +82,14 @@ extension Atom: Writeable {
 
 public struct AsyncAtom<T: Equatable>: AsyncAtomNode {
     public let key: String
-    public var get: (Getter) async throws -> T
+    public var get: AsyncGet<T>
     
-    public init<E: Error>(key: String = "AsyncAtom-\(UUID())", get: @escaping CombineGetAtomFunc<T, E>) {
+    public init<E: Error>(key: String = "AsyncAtom-\(UUID())", get: @escaping AtomCombineGet<T, E>) {
         self.key = key
         self.get = { _ in try await get().async() }
     }
     
-    public init(key: String = "AsyncAtom-\(UUID())", get: @escaping AsyncGetAtomFunc<T>) {
+    public init(key: String = "AsyncAtom-\(UUID())", get: @escaping AtomAsyncGet<T>) {
         self.key = key
         self.get = { _ in try await get() }
     }
