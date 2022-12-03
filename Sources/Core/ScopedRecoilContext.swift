@@ -54,8 +54,8 @@ public class ScopedRecoilContext {
           )
     }
     
-    public func useRecoilCallback<T>(_ fn: @escaping Callback<T>) -> () -> T {
-        curryFirst(fn)(callbackStoreAccessor)
+    public func useRecoilCallback<T>(_ fn: @escaping Callback<T>) -> T {
+        fn(callbackStoreAccessor)
     }
     
     public func useRecoilValueLoadable<Value: RecoilNode>(_ valueNode: Value) -> LoadableContent<Value.T> {

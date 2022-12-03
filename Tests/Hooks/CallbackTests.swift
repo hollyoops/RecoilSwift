@@ -56,9 +56,10 @@ final class CallbackTests: XCTestCase {
       context.set(numberState, num * num)
     }
   }
-  
+    
+  var getter: Getter!
   override func setUp() {
-    RecoilStore.shared.reset()
+    getter = Getter(nil, store: RecoilStore.shared)
     TestModule.numberState = atom { 2 }
   }
 }
@@ -73,7 +74,7 @@ extension CallbackTests {
     let value = tester.value(10)
     
     XCTAssertEqual(value, 12)
-    XCTAssertEqual(Getter()(TestModule.numberState), 12)
+    XCTAssertEqual(getter(TestModule.numberState), 12)
   }
   
   func testSyncAddThenMultipleCallback() {
@@ -84,7 +85,7 @@ extension CallbackTests {
     let value = tester.value(10, 5)
     
     XCTAssertEqual(value, 60)
-    XCTAssertEqual(Getter()(TestModule.numberState), 60)
+    XCTAssertEqual(getter(TestModule.numberState), 60)
   }
   
   func testSyncDoubleCallback() {
@@ -95,7 +96,7 @@ extension CallbackTests {
     tester.value()
     tester.value()
     
-    XCTAssertEqual(Getter()(TestModule.numberState), 16)
+    XCTAssertEqual(getter(TestModule.numberState), 16)
   }
 }
 
@@ -107,10 +108,10 @@ extension CallbackTests {
     }
     
     tester.value()
-    XCTAssertEqual(Getter()(TestModule.numberState), 2)
+    XCTAssertEqual(getter(TestModule.numberState), 2)
     
     wait(timeInSeconds: 0.5)
     
-    XCTAssertEqual(Getter()(TestModule.numberState), 1002)
+    XCTAssertEqual(getter(TestModule.numberState), 1002)
   }
 }

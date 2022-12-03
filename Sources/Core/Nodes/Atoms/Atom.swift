@@ -27,6 +27,11 @@ public struct Atom<T: Equatable>: SyncAtomNode {
         self.key = key
         self.get = { _ in value }
     }
+    
+    public init(key: String = "Atom-\(UUID())", get: @escaping () throws -> T) {
+        self.key = key
+        self.get = { _ in try get() }
+    }
 }
 
 extension Atom: Writeable {

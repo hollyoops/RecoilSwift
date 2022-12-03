@@ -25,8 +25,8 @@ internal class SyncLoadBox<T: Equatable>: RecoilLoadable {
         }
     }
     
-    func load() {
-        _ = try? compute(Getter(key))
+    func load(_ ctx: Getter) {
+        _ = try? compute(ctx)
     }
     
     func observeStatusChange(_ change: @escaping (NodeStatus<T>) -> Void) -> Subscription {
@@ -82,7 +82,7 @@ internal class AsyncLoadBox<T: Equatable>: RecoilLoadable {
         status.task?.cancel()
     }
     
-    func load() {
-        _ = compute(Getter(key))
+    func load(_ ctx: Getter) {
+        _ = compute(ctx)
     }
 }

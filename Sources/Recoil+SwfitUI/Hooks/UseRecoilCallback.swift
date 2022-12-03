@@ -52,7 +52,7 @@ private struct RecoilCallbackHook<T>: RecoilHook {
 
     func value(coordinator: Coordinator) -> T {
         let ctx = getStoredContext(coordinator: coordinator)
-        return ctx.useRecoilCallback(initialValue)()
+        return ctx.useRecoilCallback(initialValue)
     }
 }
 

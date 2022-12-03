@@ -23,8 +23,10 @@ final class SelectorReadWriteTests: XCTestCase {
     )
   }
   
+  var getter: Getter!
   override func setUp() {
     RecoilStore.shared.reset()
+    getter = Getter(nil, store: RecoilStore.shared)
     TestModule.namesState = atom { ["", "Ella", "Chris", "", "Paul"] }
   }
 }
@@ -48,7 +50,7 @@ extension SelectorReadWriteTests {
     
     tester.value.wrappedValue = 30
     
-    XCTAssertEqual(Getter()(TestModule.tempFahrenheitState), 86)
+    XCTAssertEqual(getter(TestModule.tempFahrenheitState), 86)
     XCTAssertEqual(tester.value.wrappedValue, 30)
   }
 }

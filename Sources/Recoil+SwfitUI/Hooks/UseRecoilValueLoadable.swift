@@ -46,13 +46,13 @@ public struct LoadableContent<DataType: Equatable> {
     }
     
     public func load() {
-        store.getLoadable(for: key)?.load()
+        store.getLoadable(for: key)?.load(Getter(key, store: store))
     }
     
     private func initNode<T: RecoilNode>(_ recoilValue: T) {
         let loadable = store.safeGetLoadable(for: recoilValue)
         if loadable.isInvalid {
-            loadable.load()
+            loadable.load(Getter(key, store: store))
         }
     }
 }

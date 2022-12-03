@@ -2,7 +2,7 @@ public struct Getter {
     private let contextKey: String?
     private let store: Store
     
-    init(_ context: String? = nil, store: Store = RecoilStore.shared) {
+    internal init(_ context: String? = nil, store: Store) {
         self.contextKey = context
         self.store = store
     }
@@ -15,7 +15,7 @@ public struct Getter {
         }
         
         if loadable.isInvalid {
-            loadable.load()
+            loadable.load(Getter(contextKey, store: store))
         }
         
         guard let data = loadable.anyData as? Node.T else {
@@ -34,7 +34,7 @@ public struct Getter {
         }
         
         if loadable.isInvalid {
-            loadable.load()
+            loadable.load(Getter(contextKey, store: store))
         }
         
         return loadable.anyData as? Node.T
@@ -68,3 +68,34 @@ public struct MutableContext {
     let set: Setter
     let loadable: BaseLoadable
 }
+
+//internal struct StoreAccessorManage<Node: RecoilNode> {
+//    private let store: Store
+//    
+//    private let node: Node
+//    
+//    init(store: Store, node: Node) {
+//        self.store = store
+//        self.node = node
+//    }
+//    
+//    var get: Getter {
+//        Getter(store: store)
+//    }
+//    
+//    var reader: Getter {
+//        Getter(store: store)
+//    }
+//    
+//    var writer: Setter {
+//        Setter(store: store)
+//    }
+//    
+//    var readAndWrite: MutableContext {
+//        MutableContext(
+//            get: Getter(node.key, store: store),
+//            set: Setter(node.key, store: store),
+//            loadable: loadable
+//        )
+//    }
+//}

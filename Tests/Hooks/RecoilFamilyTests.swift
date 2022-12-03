@@ -8,7 +8,7 @@ final class RecoilFamilyTests: XCTestCase {
   struct TestModule  {
     static var myNumberState = atom { 2 }
     
-    static var threeTimesNumberState = atomFamily { (multiplier: Int, get: Getter) -> Int in
+    static var threeTimesNumberState = atomFamily { (multiplier: Int) -> Int in
       3 * multiplier;
     }
     
@@ -16,7 +16,7 @@ final class RecoilFamilyTests: XCTestCase {
       get(myNumberState) * multiplier;
     }
     
-    static let getBookByType = atomFamily { (type: String, get: Getter) -> AnyPublisher<[String], Error> in
+    static let getBookByType = atomFamily { (type: String) -> AnyPublisher<[String], Error> in
       MockAPI.makeCombine(
         result: .success(["\(type)-Book1", "\(type)-Book2"]),
         delay: TestConfig.mock_async_wait_seconds
