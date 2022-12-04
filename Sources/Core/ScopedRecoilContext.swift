@@ -18,25 +18,31 @@ public class ScopedRecoilContext {
         self.store = store
     }
     
+    private var setter: Setter {
+        Setter(store: self.unsafeStore)
+    }
+    
+    private var getter: Getter {
+        Getter(store: self.unsafeStore)
+    }
+    
     public func useRecoilValue<Value: RecoilSyncNode>(_ valueNode: Value) -> Value.T {
         subscribeChange(for: valueNode)
-        return Getter(valueNode.key, store: self.unsafeStore)(valueNode)
+        return getter(valueNode)
     }
     
     public func useRecoilValue<Value: RecoilAsyncNode>(_ valueNode: Value) -> Value.T? {
-     
-        subscribeChange(for: valueNode)
-        return Getter(valueNode.key, store: self.unsafeStore)(valueNode)
+        useRecoilValueLoadable(valueNode).data
     }
     
     public func useRecoilState<Value: RecoilMutableSyncNode>(_ stateNode: Value) -> BindableValue<Value.T> {
         subscribeChange(for: stateNode)
         return BindableValue(
               get: {
-                  Getter(stateNode.key, store: self.unsafeStore)(stateNode)
+                  self.getter(stateNode)
               },
               set: { newState in
-                  Setter(stateNode.key, store: self.unsafeStore)(stateNode, newState)
+                  self.setter(stateNode, newState)
               }
           )
     }
@@ -45,11 +51,11 @@ public class ScopedRecoilContext {
         subscribeChange(for: stateNode)
         return BindableValue(
               get: {
-                  Getter(stateNode.key, store: self.unsafeStore)(stateNode)
+                  self.getter(stateNode)
               },
               set: { newState in
                   guard let newState else { return }
-                  Setter(stateNode.key, store: self.unsafeStore)(stateNode, newState)
+                  self.setter(stateNode, newState)
               }
           )
     }
@@ -69,8 +75,8 @@ public class ScopedRecoilContext {
     
     private var callbackStoreAccessor: RecoilCallbackContext {
         RecoilCallbackContext(
-            get: Getter(nil, store: self.unsafeStore),
-            set: Setter(nil, store: self.unsafeStore),
+            get: Getter(store: self.unsafeStore),
+            set: Setter(store: self.unsafeStore),
             store: subscriptions.store
         )
     }
