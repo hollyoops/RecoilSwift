@@ -146,7 +146,7 @@ internal final class RecoilStore: Store {
         let downstreams = graph.getNode(for: node.key)?.downstream ?? []
         
         for item in downstreams {
-            let getter = NodeAccessor(store: self).getter(contextKey: item)
+            let getter = NodeAccessor(store: self).getter(upstreamKey: item)
             states[item]?.load(getter)
         }
         

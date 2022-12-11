@@ -46,7 +46,7 @@ public struct LoadableContent<DataType: Equatable> {
     }
     
     public func load() {
-        let getter = NodeAccessor(store: store).getter(contextKey: key)
+        let getter = NodeAccessor(store: store).getter(upstreamKey: key)
         store.getLoadable(for: key)?.load(getter)
     }
     
