@@ -46,18 +46,12 @@ public struct LoadableContent<DataType: Equatable> {
     }
     
     public func load() {
-        store.getLoadable(for: key)?.load(self.getter)
-    }
-    
-    private var getter: Getter {
-        Getter(store: store, context: key)
+        let getter = NodeAccessor(store: store).getter(contextKey: key)
+        store.getLoadable(for: key)?.load(getter)
     }
     
     private func initNode<T: RecoilNode>(_ recoilValue: T) {
-        let loadable = store.safeGetLoadable(for: recoilValue)
-        if loadable.isInvalid {
-            loadable.load(self.getter)
-        }
+        NodeAccessor(store: store).loadNodeIfNeeded(recoilValue)
     }
 }
 

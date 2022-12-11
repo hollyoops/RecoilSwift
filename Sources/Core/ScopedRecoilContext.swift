@@ -18,17 +18,13 @@ public class ScopedRecoilContext {
         self.store = store
     }
     
-    private var setter: Setter {
-        Setter(store: self.unsafeStore)
-    }
-    
-    private var getter: Getter {
-        Getter(store: self.unsafeStore)
+    private var nodeAccessor: NodeAccessor {
+        NodeAccessor(store: self.unsafeStore)
     }
     
     public func useRecoilValue<Value: RecoilSyncNode>(_ valueNode: Value) -> Value.T {
         subscribeChange(for: valueNode)
-        return getter(valueNode)
+        return nodeAccessor.get(valueNode)
     }
     
     public func useRecoilValue<Value: RecoilAsyncNode>(_ valueNode: Value) -> Value.T? {
@@ -39,10 +35,10 @@ public class ScopedRecoilContext {
         subscribeChange(for: stateNode)
         return BindableValue(
               get: {
-                  self.getter(stateNode)
+                  self.nodeAccessor.get(stateNode)
               },
               set: { newState in
-                  self.setter(stateNode, newState)
+                  self.nodeAccessor.set(stateNode, newState)
               }
           )
     }
@@ -51,17 +47,22 @@ public class ScopedRecoilContext {
         subscribeChange(for: stateNode)
         return BindableValue(
               get: {
-                  self.getter(stateNode)
+                  self.nodeAccessor.get(stateNode)
               },
               set: { newState in
                   guard let newState else { return }
-                  self.setter(stateNode, newState)
+                  self.nodeAccessor.set(stateNode, newState)
               }
           )
     }
     
     public func useRecoilCallback<T>(_ fn: @escaping Callback<T>) -> T {
-        fn(callbackStoreAccessor)
+        let context = RecoilCallbackContext(
+            get: nodeAccessor.getter(),
+            set: nodeAccessor.setter(),
+            store: subscriptions.store
+        )
+        return fn(context)
     }
     
     public func useRecoilValueLoadable<Value: RecoilNode>(_ valueNode: Value) -> LoadableContent<Value.T> {
@@ -71,14 +72,6 @@ public class ScopedRecoilContext {
 //            loadble.compute(/*excutatble_info*/)
 //        }
         return LoadableContent(node: valueNode, store: unsafeStore)
-    }
-    
-    private var callbackStoreAccessor: RecoilCallbackContext {
-        RecoilCallbackContext(
-            get: Getter(store: self.unsafeStore),
-            set: Setter(store: self.unsafeStore),
-            store: subscriptions.store
-        )
     }
     
     private var unsafeStore: Store {

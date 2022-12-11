@@ -1,21 +1,71 @@
 public struct Getter {
+    private let nodeAccessor: NodeAccessor
     private let contextKey: String?
-    private let store: Store
-    
-    internal init(store: Store, context: String? = nil) {
-        self.contextKey = context
-        self.store = store
+
+    fileprivate init( nodeAccessor: NodeAccessor, contextKey: String? = nil) {
+        self.contextKey = contextKey
+        self.nodeAccessor = nodeAccessor
     }
     
     public func callAsFunction<Node: RecoilSyncNode>(_ node: Node) -> Node.T {
-        let loadable = store.safeGetLoadable(for: node)
-        
         if let host = contextKey {
-            store.makeConnect(key: host, upstream: node.key)
+            _ = nodeAccessor.store.safeGetLoadable(for: node)
+            nodeAccessor.store.makeConnect(key: host, upstream: node.key)
         }
         
+        return nodeAccessor.get(node)
+    }
+    
+    public func callAsFunction<Node: RecoilAsyncNode>(_ node: Node) -> Node.T? {
+        if let host = contextKey {
+            _ = nodeAccessor.store.safeGetLoadable(for: node)
+            nodeAccessor.store.makeConnect(key: host, upstream: node.key)
+        }
+        
+        return nodeAccessor.get(node)
+    }
+}
+
+public struct Setter {
+    private let nodeAccessor: NodeAccessor
+    private let contextKey: String?
+    
+    fileprivate init( nodeAccessor: NodeAccessor, contextKey: String? = nil) {
+        self.contextKey = contextKey
+        self.nodeAccessor = nodeAccessor
+    }
+    
+    public func callAsFunction<T: RecoilNode & Writeable>(_ node: T, _ newValue: T.T) -> Void {
+        nodeAccessor.set(node, newValue)
+    }
+}
+
+public struct MutableContext {
+    let get: Getter
+    let set: Setter
+    let loadable: BaseLoadable
+}
+
+internal struct NodeAccessor {
+    fileprivate let store: Store
+
+    internal init(store: Store) {
+        self.store = store
+    }
+
+    internal func getter(contextKey: String? = nil) -> Getter {
+        Getter(nodeAccessor: self, contextKey: contextKey)
+    }
+
+    internal func setter(contextKey: String? = nil) -> Setter {
+        Setter(nodeAccessor: self, contextKey: contextKey)
+    }
+    
+    public func get<Node: RecoilSyncNode>(_ node: Node) -> Node.T {
+        let loadable = store.safeGetLoadable(for: node)
+        
         if loadable.isInvalid {
-            loadable.load(Getter(store: store, context: node.key))
+            loadable.load(getter(contextKey: node.key))
         }
         
         guard let data = loadable.anyData as? Node.T else {
@@ -26,75 +76,35 @@ public struct Getter {
         return data
     }
     
-    public func callAsFunction<Node: RecoilAsyncNode>(_ node: Node) -> Node.T? {
+    public func get<Node: RecoilAsyncNode>(_ node: Node) -> Node.T? {
         let loadable = store.safeGetLoadable(for: node)
         
-        if let host = contextKey {
-            store.makeConnect(key: host, upstream: node.key)
-        }
-        
         if loadable.isInvalid {
-            loadable.load(Getter(store: store, context: node.key))
+            loadable.load(getter(contextKey: node.key))
         }
         
         return loadable.anyData as? Node.T
     }
-}
-
-public struct Setter {
-    private let contextKey: String?
-    private let store: Store
     
-    internal init(store: Store, context: String? = nil) {
-        self.store = store
-        self.contextKey = context
-    }
-    
-    public func callAsFunction<T: RecoilNode & Writeable>(_ node: T, _ newValue: T.T) -> Void {
-        let loadable = store.safeGetLoadable(for: node)
-        
+    public func set<T: RecoilNode & Writeable>(_ node: T, _ newValue: T.T) -> Void {
         let ctx = MutableContext(
-            get: Getter(store: store, context: node.key),
-            set: Setter(store: store, context: node.key),
-            loadable: loadable
+            get: getter(contextKey: node.key),
+            set: setter(contextKey: node.key),
+            loadable: store.safeGetLoadable(for: node)
         )
         
         node.update(context: ctx, newValue: newValue)
     }
+    
+    internal func loadNodeIfNeeded<T: RecoilNode>(_ node: T) {
+        let loadable = store.safeGetLoadable(for: node)
+        if loadable.isInvalid {
+            loadable.load(getter(contextKey: node.key))
+        }
+    }
+    
+    internal func load<T: RecoilNode>(_ node: T) {
+        let loadable = store.safeGetLoadable(for: node)
+        loadable.load(getter(contextKey: node.key))
+    }
 }
-
-public struct MutableContext {
-    let get: Getter
-    let set: Setter
-    let loadable: BaseLoadable
-}
-
-//internal struct NodeAccessor<Node: RecoilNode> {
-//    private let store: Store
-//    private let node: Node
-//
-//    init(store: Store, node: Node) {
-//        self.store = store
-//        self.node = node
-//    }
-//
-//    var get: Getter {
-//        Getter(store: store)
-//    }
-//
-//    var reader: Getter {
-//        Getter(store: store)
-//    }
-//
-//    var writer: Setter {
-//        Setter(store: store)
-//    }
-//
-//    var readAndWrite: MutableContext {
-//        MutableContext(
-//            get: Getter(node.key, store: store),
-//            set: Setter(node.key, store: store),
-//            loadable: loadable
-//        )
-//    }
-//}
