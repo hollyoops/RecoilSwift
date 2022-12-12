@@ -45,9 +45,8 @@ public struct LoadableContent<DataType: Equatable> {
         }
     }
     
-    public func load() {
-        let getter = NodeAccessor(store: store).getter(upstreamKey: key)
-        store.getLoadable(for: key)?.load(getter)
+    public func refresh() {
+        NodeAccessor(store: store).refresh(for: key)
     }
     
     private func initNode<T: RecoilNode>(_ recoilValue: T) {

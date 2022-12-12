@@ -7,7 +7,7 @@ public protocol BaseLoadable: AnyValueChangeObservable {
     
     var error: Error? { get }
     
-    func load(_ ctx: Getter)
+    func refresh(_ ctx: Getter)
 }
 
 public protocol RecoilLoadable<Value>: BaseLoadable {

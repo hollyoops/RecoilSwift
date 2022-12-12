@@ -25,7 +25,7 @@ internal class SyncLoadBox<T: Equatable>: RecoilLoadable {
         }
     }
     
-    func load(_ ctx: Getter) {
+    func refresh(_ ctx: Getter) {
         _ = try? compute(ctx)
     }
     
@@ -82,7 +82,7 @@ internal class AsyncLoadBox<T: Equatable>: RecoilLoadable {
         status.task?.cancel()
     }
     
-    func load(_ ctx: Getter) {
+    func refresh(_ ctx: Getter) {
         _ = compute(ctx)
     }
 }
