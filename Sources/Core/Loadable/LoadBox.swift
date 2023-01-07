@@ -7,7 +7,7 @@ internal class SyncLoadBox<T: Equatable>: RecoilLoadable {
     
     init<Node: RecoilSyncNode>(node: Node) where Node.T == T {
         self.key = node.key
-        computeBody = node.get
+        computeBody = { try node.compute($0) }
     }
     
     var status: NodeStatus<T> = .invalid {
@@ -44,7 +44,7 @@ internal class AsyncLoadBox<T: Equatable>: RecoilLoadable {
     
     init<Node: RecoilAsyncNode>(node: Node) where Node.T == T {
         self.key = node.key
-        self.computeBody = node.get
+        self.computeBody = { try await node.compute($0) }
     }
     
     var status: NodeStatus<T> = .invalid {

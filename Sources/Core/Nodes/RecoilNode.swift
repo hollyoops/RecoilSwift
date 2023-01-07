@@ -7,7 +7,9 @@ public protocol RecoilNode<T> {
 }
 
 public protocol RecoilSyncNode: RecoilNode {
-    var get: (Getter) throws -> T { get }
+//    var get: (Getter) throws -> T { get }
+    
+    func compute(_ accessor: Getter) throws -> T
 }
 
 public extension RecoilSyncNode {
@@ -16,8 +18,12 @@ public extension RecoilSyncNode {
     }
 }
 
+public extension RecoilSyncNode where Self: SyncAtomNode {
+  
+}
+
 public protocol RecoilAsyncNode: RecoilNode {
-    var get: (Getter) async throws -> T { get }
+    func compute(_ accessor: Getter) async throws -> T
 }
 
 public extension RecoilAsyncNode {

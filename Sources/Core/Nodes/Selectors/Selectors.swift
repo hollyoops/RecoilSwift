@@ -69,11 +69,15 @@ public struct Selector<T: Equatable>: SyncSelectorNode {
     public typealias E = Never
     
     public let key: String
-    public var get: (Getter) throws -> T
+    public let get: (Getter) throws -> T
     
     init(key: String = "R-Sel-\(UUID())", body: @escaping SyncGet<T>) {
         self.key = key
         self.get = body
+    }
+    
+    public func compute(_ accessor: Getter) throws -> T {
+        try get(accessor)
     }
 }
 
@@ -97,13 +101,17 @@ public struct MutableSelector<T: Equatable>: SyncSelectorNode {
     public typealias E = Never
     
     public let key: String
-    public var get: (Getter) throws -> T
+    public let get: (Getter) throws -> T
     public let set: SetBody<T>
 
     public init(key: String = "WR-Sel-\(UUID())", get: @escaping SyncGet<T>, set: @escaping SetBody<T>) {
         self.key = key
         self.get = get
         self.set = set
+    }
+    
+    public func compute(_ accessor: Getter) throws -> T {
+        try get(accessor)
     }
 }
 
@@ -122,7 +130,7 @@ extension MutableSelector: Writeable {
 
 public struct AsyncSelector<T: Equatable>: AsyncSelectorNode {
     public let key: String
-    public var get: (Getter) async throws -> T
+    public let get: (Getter) async throws -> T
 
     public init<E: Error>(key: String = "R-AsyncSel-\(UUID())", get: @escaping CombineGet<T, E>) {
         self.key = key
@@ -132,6 +140,10 @@ public struct AsyncSelector<T: Equatable>: AsyncSelectorNode {
     public init(key: String = "R-AsyncSel-\(UUID())", get: @escaping AsyncGet<T>) {
         self.key = key
         self.get = get
+    }
+    
+    public func compute(_ accessor: Getter) async throws -> T {
+        try await get(accessor)
     }
 }
 

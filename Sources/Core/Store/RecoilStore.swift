@@ -129,7 +129,7 @@ internal final class RecoilStore: Store {
         let box = node.makeLoadable()
         _ = box.observeValueChange { [weak self] newValue in
             guard let val = newValue as? NodeStatus<T.T> else { return }
-            self?.nodeValueChanged(node: node, value: val)
+                self?.nodeValueChanged(node: node, value: val)
         }
         states[key] = box
         return box
@@ -149,7 +149,9 @@ internal final class RecoilStore: Store {
             NodeAccessor(store: self).refresh(for: item)
         }
         
-        notifyChanged(node: node, value: value)
+        DispatchQueue.main.async {
+            self.notifyChanged(node: node, value: value)
+        }
     }
 }
 

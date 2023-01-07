@@ -11,12 +11,12 @@
         }
       },
       {
-        "package": "Hooks",
+        "package": "swiftui-hooks",
         "repositoryURL": "https://github.com/hollyoops/SwiftUI-Hooks",
         "state": {
           "branch": null,
-          "revision": "9fb4367ad9655d14746a993207daf8cfc05c6428",
-          "version": "0.0.3"
+          "revision": "052c358884b31e46e3a1268de5d00fddb2beaf45",
+          "version": "0.0.4"
         }
       }
     ]

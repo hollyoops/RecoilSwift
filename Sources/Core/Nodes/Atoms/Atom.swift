@@ -52,55 +52,43 @@ public func atom<T: Equatable>(_ fn: @escaping AtomAsyncGet<T>) -> AsyncAtom<T> 
     AsyncAtom(get: fn)
 }
 
-public struct Atom<T: Equatable>: SyncAtomNode {
+public struct Atom<T: Equatable>: SyncAtomNode, Writeable {
     public typealias T = T
     public typealias E = Never
     
     public let key: String
-    public let get: SyncGet<T>
+    public let get: () throws -> T
     
     public init(key: String = "Atom-\(UUID())", _ value: T) {
         self.key = key
-        self.get = { _ in value }
+        self.get = { value }
     }
     
     public init(key: String = "Atom-\(UUID())", get: @escaping () throws -> T) {
         self.key = key
-        self.get = { _ in try get() }
+        self.get = get
+    }
+    
+    public func compute() throws -> T {
+        try get()
     }
 }
 
-extension Atom: Writeable {
-    public func update(context: MutableContext, newValue: T) {
-        guard let loadbox = context.loadable as? SyncLoadBox<T> else {
-            return
-        }
-        
-        loadbox.status = .solved(newValue)
-    }
-}
-
-public struct AsyncAtom<T: Equatable>: AsyncAtomNode {
+public struct AsyncAtom<T: Equatable>: AsyncAtomNode, Writeable {
     public let key: String
-    public var get: AsyncGet<T>
+    public var get: () async throws -> T
     
     public init<E: Error>(key: String = "AsyncAtom-\(UUID())", get: @escaping AtomCombineGet<T, E>) {
         self.key = key
-        self.get = { _ in try await get().async() }
+        self.get = { try await get().async() }
     }
     
     public init(key: String = "AsyncAtom-\(UUID())", get: @escaping AtomAsyncGet<T>) {
         self.key = key
-        self.get = { _ in try await get() }
+        self.get = { try await get() }
     }
-}
-
-extension AsyncAtom: Writeable {
-    public func update(context: MutableContext, newValue: T) {
-        guard let loadbox = context.loadable as? AsyncLoadBox<T> else {
-            return
-        }
-        
-        loadbox.status = .solved(newValue)
+    
+    public func compute() async throws -> T {
+        try await get()
     }
 }
