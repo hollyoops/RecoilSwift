@@ -1,8 +1,12 @@
+import Combine
+
 /// Represents a scoped context for Recoil values, allowing binding and updates.
 public class ScopedRecoilContext {
     internal let viewRefresher: ViewRefreshable
+    internal let stateNotifier = PassthroughSubject<(String, Any), Error>()
     private weak var store: Store?
     private let subscriptions: ScopedSubscriptions
+    private var nodeCaches: [String: Any] = [:]
     
     /// Initializes a new `ScopedRecoilContext`.
     ///
@@ -91,11 +95,26 @@ public class ScopedRecoilContext {
     func refresh() {
         viewRefresher.refresh()
     }
+    
+    func clearCaches() {
+        nodeCaches = [:]
+    }
 }
 
 extension ScopedRecoilContext: Subscriber {
     func valueDidChange<Node: RecoilNode>(node: Node, newValue: NodeStatus<Node.T>) {
-        // TODO: improve performance We can have cache. only refresh when value is change
+        // Only refresh when value is change
+        if let value = peekCache(for: node),
+           value == newValue {
+            return
+        }
+        
+        nodeCaches[node.key] = newValue
         refresh()
+        stateNotifier.send((node.key, newValue))
+    }
+    
+    internal func peekCache<Node: RecoilNode>(for node: Node) -> NodeStatus<Node.T>? {
+        nodeCaches[node.key] as? NodeStatus<Node.T>
     }
 }
