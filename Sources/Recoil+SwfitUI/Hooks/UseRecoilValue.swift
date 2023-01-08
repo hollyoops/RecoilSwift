@@ -60,6 +60,7 @@ extension RecoilHook {
     func makeScopeContext(coordinator: Coordinator) -> ScopedRecoilContext {
         ScopedRecoilContext(store: coordinator.environment.store,
                             subscriptions: coordinator.state.storeSubs,
+                            caches: coordinator.state.caches,
                             refresher: AnyViewRefreher(viewUpdator: coordinator.updateView))
     }
     

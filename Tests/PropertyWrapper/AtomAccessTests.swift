@@ -19,9 +19,13 @@ final class AtomAccessTests: XCTestCase {
 //        TestModule.remoteDataSourceError = makeAsyncAtom(error: MyError.param, type: [String].self)
     }
     
-    func test_should_atom_value_when_useRecoilValue_given_stringAtom() {
-        let currentValue = scope.useRecoilValue(TestModule.stringAtom)
-        XCTAssertEqual(currentValue, "rawValue")
+    func test_should_atom_value_when_useRecoilValue_given_stringAtom() async {
+        let view = ViewRenderHelper { ctx, sut in
+            let value = ctx.useRecoilValue(TestModule.stringAtom)
+            sut.expect(value).equalTo("rawValue")
+        }
+        
+        await view.waitForRender()
     }
     
     func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() {
@@ -34,19 +38,17 @@ final class AtomAccessTests: XCTestCase {
         XCTAssertEqual(newValue, "newValue")
     }
     
-//    func test_should_refreshView_when_useRecoilState_given_after_stateChange() async throws {
-//        let expectation = XCTestExpectation(description: "should refresh when value changed")
-//        var value = scope.useRecoilState(TestModule.stringAtom)
-//        
-//        XCTAssertEqual(_scope.viewRefreshCount, 0)
-//        
-//        value.wrappedValue = "newValue"
-//        
-//        try await scope.waitForViewRefresh()
-//        
-////        wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
-//        XCTAssertEqual(_scope.viewRefreshCount, 1)
-//    }
+    func test_should_refreshView_when_useRecoilState_given_after_stateChange() async throws {
+        var value = scope.useRecoilState(TestModule.stringAtom)
+        
+        XCTAssertEqual(_scope.viewRefreshCount, 0)
+        
+        try await _scope.waitNextStateChange {
+            value.wrappedValue = "newValue"
+        }
+        
+        XCTAssertEqual(_scope.viewRefreshCount, 1)
+    }
     
     func test_should_refreshView_when_useRecoilLoadable_given_after_stateChange() {
         let value = scope.useRecoilValueLoadable(TestModule.stringAtom)

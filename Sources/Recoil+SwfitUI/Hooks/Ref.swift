@@ -3,6 +3,7 @@ internal final class Ref<Value> {
     private(set) var isDisposed = false
     
     internal let storeSubs = ScopedSubscriptions()
+    internal let caches = ScopedNodeCaches()
     private(set) var ctx: ScopedRecoilContext?
     
     init(initialState: Value) {

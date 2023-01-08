@@ -10,6 +10,27 @@ internal final class ViewRefresher: ObservableObject, ViewRefreshable {
     }
 }
 
+internal final class ScopedNodeCaches {
+    private var nodeCaches: [String: Any] = [:]
+
+    subscript(key: String) -> Any? {
+        get { return nodeCaches[key] }
+        set { nodeCaches[key] = newValue }
+    }
+    
+    func peek<Node: RecoilNode>(for node: Node) -> NodeStatus<Node.T>? {
+        nodeCaches[node.key] as? NodeStatus<Node.T>
+    }
+    
+    func save<Node: RecoilNode>(_ node: Node, value: NodeStatus<Node.T>) {
+        nodeCaches[node.key] = value
+    }
+    
+    func clear() {
+        nodeCaches = [:]
+    }
+}
+
 internal final class ScopedSubscriptions {
     private var subscriptions: [String: Subscription] = [:]
     
@@ -42,12 +63,14 @@ public struct RecoilScope: DynamicProperty {
     
     @StateObject private var viewRefersher: ViewRefresher = ViewRefresher()
     private let storeSubs = ScopedSubscriptions()
+    private let caches = ScopedNodeCaches()
 
     public init() { }
 
     public var wrappedValue: ScopedRecoilContext {
         ScopedRecoilContext(store: store,
                             subscriptions: storeSubs,
+                            caches: caches,
                             refresher: viewRefersher)
     }
     
@@ -62,12 +85,14 @@ public struct RecoilScopeLeagcy: DynamicProperty {
     @Environment(\.store) private var store
     @ObservedObject private var viewRefersher: ViewRefresher = ViewRefresher()
     private let storeSubs = ScopedSubscriptions()
+    private let caches = ScopedNodeCaches()
 
     public init() { }
 
     public var wrappedValue: ScopedRecoilContext {
         ScopedRecoilContext(store: store,
                             subscriptions: storeSubs,
+                            caches: caches,
                             refresher: viewRefersher)
     }
 

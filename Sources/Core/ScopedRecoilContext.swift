@@ -2,24 +2,22 @@ import Combine
 
 /// Represents a scoped context for Recoil values, allowing binding and updates.
 public class ScopedRecoilContext {
-    internal let viewRefresher: ViewRefreshable
-    internal let stateNotifier = PassthroughSubject<(String, Any), Error>()
     private weak var store: Store?
     private let subscriptions: ScopedSubscriptions
-    private var nodeCaches: [String: Any] = [:]
-    
-    /// Initializes a new `ScopedRecoilContext`.
-    ///
-    /// - Parameters:
-    ///   - store: An weak `Store` ref to use for Recoil state management.
-    ///   - subscriptions: An container store all the Subscriptions for this scope
-    ///   - refresher: An optional `ViewRefreshable` instance to handle view updates.
-    internal init(store: Store,
-                  subscriptions: ScopedSubscriptions,
-                  refresher: ViewRefreshable) {
+    private let caches: ScopedNodeCaches
+    private let viewRefresher: ViewRefreshable
+    private let onValueChange: (((String, Any)) -> Void)?
+ 
+    init(store: Store,
+         subscriptions: ScopedSubscriptions,
+         caches: ScopedNodeCaches,
+         refresher: ViewRefreshable,
+         onValueChange: (((String, Any)) -> Void)? = nil) {
         self.viewRefresher = refresher
-        self.subscriptions = subscriptions
         self.store = store
+        self.subscriptions = subscriptions
+        self.caches = caches
+        self.onValueChange = onValueChange
     }
     
     private var nodeAccessor: NodeAccessor {
@@ -95,26 +93,18 @@ public class ScopedRecoilContext {
     func refresh() {
         viewRefresher.refresh()
     }
-    
-    func clearCaches() {
-        nodeCaches = [:]
-    }
 }
 
 extension ScopedRecoilContext: Subscriber {
     func valueDidChange<Node: RecoilNode>(node: Node, newValue: NodeStatus<Node.T>) {
         // Only refresh when value is change
-        if let value = peekCache(for: node),
+        if let value = caches.peek(for: node),
            value == newValue {
             return
         }
         
-        nodeCaches[node.key] = newValue
+        caches[node.key] = newValue
+        onValueChange?((node.key, newValue))
         refresh()
-        stateNotifier.send((node.key, newValue))
-    }
-    
-    internal func peekCache<Node: RecoilNode>(for node: Node) -> NodeStatus<Node.T>? {
-        nodeCaches[node.key] as? NodeStatus<Node.T>
     }
 }
