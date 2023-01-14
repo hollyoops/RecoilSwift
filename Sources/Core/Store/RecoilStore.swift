@@ -114,6 +114,22 @@ internal final class RecoilStore: Store {
         return Subscription { [weak self] in
             self?.subscriberMap[nodeKey]?.remove(keyedSubscriber)
             // TODO: try to release
+            self?.releaseNode(nodeKey)
+        }
+    }
+    
+    private func releaseNode(_ nodeKey: String) {
+        // check should remove or not
+        let isNilOrEmpty = self.subscriberMap[nodeKey]?.isEmpty ?? true
+        guard isNilOrEmpty else { return }
+  
+        let deps = self.graph.dependencies(key: nodeKey)
+        
+        self.graph.removeNode(key: nodeKey)
+        self.states.removeValue(forKey: nodeKey)
+
+        for dep in deps {
+            releaseNode(dep)
         }
     }
     
@@ -129,7 +145,7 @@ internal final class RecoilStore: Store {
         let box = node.makeLoadable()
         _ = box.observeValueChange { [weak self] newValue in
             guard let val = newValue as? NodeStatus<T.T> else { return }
-                self?.nodeValueChanged(node: node, value: val)
+            self?.nodeValueChanged(node: node, value: val)
         }
         states[key] = box
         return box
