@@ -11,9 +11,9 @@ internal final class ViewRefresher: ObservableObject, ViewRefreshable {
 }
 
 internal final class ScopedNodeCaches {
-    private var nodeCaches: [String: Any] = [:]
+    private var nodeCaches: [NodeKey: Any] = [:]
 
-    subscript(key: String) -> Any? {
+    subscript(key: NodeKey) -> Any? {
         get { return nodeCaches[key] }
         set { nodeCaches[key] = newValue }
     }
@@ -32,7 +32,7 @@ internal final class ScopedNodeCaches {
 }
 
 internal final class ScopedSubscriptions {
-    private var subscriptions: [String: Subscription] = [:]
+    private var subscriptions: [NodeKey: Subscription] = [:]
     
     /// TODO: This is leagcy design to remove it later
     private var cancellables: Set<AnyCancellable> = []
@@ -45,7 +45,7 @@ internal final class ScopedSubscriptions {
         cancellables.removeAll()
     }
 
-    subscript(key: String) -> Subscription? {
+    subscript(key: NodeKey) -> Subscription? {
         get { return subscriptions[key] }
         set { subscriptions[key] = newValue }
     }

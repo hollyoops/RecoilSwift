@@ -11,7 +11,7 @@ final class DFSCircularCheckerTests: XCTestCase {
   }
 }
 
-// MARK: - No circular
+ // MARK: - No circular
 extension DFSCircularCheckerTests {
   func testCanAddWhenGraphIsEmpty() {
     let graph = Graph()

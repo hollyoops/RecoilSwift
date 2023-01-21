@@ -1,14 +1,18 @@
 public protocol RecoilNode<T> {
     associatedtype T: Equatable
 
-    var key: String { get }
+    var key: NodeKey { get }
     
     func makeLoadable() -> BaseLoadable
 }
 
+extension RecoilNode {
+    var key: NodeKey {
+        NodeKey(self)
+    }
+}
+
 public protocol RecoilSyncNode: RecoilNode {
-//    var get: (Getter) throws -> T { get }
-    
     func compute(_ accessor: Getter) throws -> T
 }
 
@@ -16,10 +20,6 @@ public extension RecoilSyncNode {
     func makeLoadable() -> BaseLoadable {
         return SyncLoadBox<T>(node: self)
     }
-}
-
-public extension RecoilSyncNode where Self: SyncAtomNode {
-  
 }
 
 public protocol RecoilAsyncNode: RecoilNode {

@@ -6,13 +6,13 @@ public class ScopedRecoilContext {
     private let subscriptions: ScopedSubscriptions
     private let caches: ScopedNodeCaches
     private let viewRefresher: ViewRefreshable
-    private let onValueChange: (((String, Any)) -> Void)?
+    private let onValueChange: (((NodeKey, Any)) -> Void)?
  
     init(store: Store,
          subscriptions: ScopedSubscriptions,
          caches: ScopedNodeCaches,
          refresher: ViewRefreshable,
-         onValueChange: (((String, Any)) -> Void)? = nil) {
+         onValueChange: (((NodeKey, Any)) -> Void)? = nil) {
         self.viewRefresher = refresher
         self.store = store
         self.subscriptions = subscriptions

@@ -10,7 +10,7 @@ final class GraphTests: XCTestCase {
   }
 }
 
-// MARK: - AddEdge
+ // MARK: - AddEdge
 extension GraphTests {
   func testAddEdgeWhenGraphIsEmpty() {
     let graph = Graph()
@@ -18,8 +18,8 @@ extension GraphTests {
     
     XCTAssertNotNil(graph.getNode(for: "A"))
     XCTAssertNotNil(graph.getNode(for: "B"))
-    XCTAssertEqual(graph.getNode(for: "A")?.downstream.contains("B"), true)
-    XCTAssertEqual(graph.getNode(for: "B")?.upstream.contains("A"), true)
+    XCTAssertEqual(graph.getNode(for: "A")?.downstreamContains("B"), true)
+    XCTAssertEqual(graph.getNode(for: "B")?.upstreamContains("A"), true)
   }
   
   func testAddEdgeWhenTargetNodeExist() {
@@ -30,8 +30,8 @@ extension GraphTests {
     
     XCTAssertNotNil(graph.getNode(for: "A"))
     XCTAssertNotNil(graph.getNode(for: "B"))
-    XCTAssertEqual(graph.getNode(for: "A")?.downstream.contains("B"), true)
-    XCTAssertEqual(graph.getNode(for: "B")?.upstream.contains("A"), true)
+    XCTAssertEqual(graph.getNode(for: "A")?.downstreamContains("B"), true)
+    XCTAssertEqual(graph.getNode(for: "B")?.upstreamContains("A"), true)
   }
   
   func testShouldMakeCorrectEdgeWhen_C_NotExsit() {
@@ -41,8 +41,8 @@ extension GraphTests {
     
     XCTAssertNotNil(graph.getNode(for: "A"))
     XCTAssertNotNil(graph.getNode(for: "C"))
-    XCTAssertEqual(graph.getNode(for: "A")?.downstream.contains("C"), true)
-    XCTAssertEqual(graph.getNode(for: "C")?.upstream.contains("A"), true)
+    XCTAssertEqual(graph.getNode(for: "A")?.downstreamContains("C"), true)
+    XCTAssertEqual(graph.getNode(for: "C")?.upstreamContains("A"), true)
   }
   
   func testShouldMakeCorrectEdgeWhen_C_Exsit() {
@@ -53,8 +53,8 @@ extension GraphTests {
     
     XCTAssertNotNil(graph.getNode(for: "A"))
     XCTAssertNotNil(graph.getNode(for: "C"))
-    XCTAssertEqual(graph.getNode(for: "A")?.downstream.contains("C"), true)
-    XCTAssertEqual(graph.getNode(for: "C")?.upstream.contains("A"), true)
+    XCTAssertEqual(graph.getNode(for: "A")?.downstreamContains("C"), true)
+    XCTAssertEqual(graph.getNode(for: "C")?.upstreamContains("A"), true)
   }
 }
 

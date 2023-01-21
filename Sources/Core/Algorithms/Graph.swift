@@ -1,13 +1,13 @@
 @resultBuilder
 struct GraphNodeBuilder {
-    static func buildBlock(_ children: String...) -> Set<String> {
-        Set<String>(children)
+    static func buildBlock(_ children: NodeKey...) -> Set<NodeKey> {
+        Set<NodeKey>(children)
     }
 }
 
 @resultBuilder
 struct GraphBuilder {
-    static func buildBlock(_ children: Graph.Node...) -> [String: Graph.Node] {
+    static func buildBlock(_ children: Graph.Node...) -> [NodeKey: Graph.Node] {
         children.reduce(into: [:]) { map, node in
             map[node.key] = node
         }
@@ -17,36 +17,36 @@ struct GraphBuilder {
 typealias GraphNode = Graph.Node
 
 internal class Graph {
-    private var nodes: [String: Node]
+    private var nodes: [NodeKey: Node]
     
     struct Node {
-        let key: String
-        private(set) var downstream: Set<String>
-        private(set) var upstream: Set<String> = []
+        let key: NodeKey
+        private(set) var downstream: Set<NodeKey>
+        private(set) var upstream: Set<NodeKey> = []
         
-        init(_ key: String, downstream: Set<String> = []) {
+        init(_ key: NodeKey, downstream: Set<NodeKey> = []) {
             self.key = key
             self.downstream = downstream
         }
         
-        init(_ key: String, @GraphNodeBuilder _ builder: () -> Set<String>) {
+        init(_ key: NodeKey, @GraphNodeBuilder _ builder: () -> Set<NodeKey>) {
             self.key = key
             self.downstream = builder()
         }
         
-        mutating func add(downstream key: String) {
+        mutating func add(downstream key: NodeKey) {
             downstream.insert(key)
         }
         
-        mutating func add(upstream key: String) {
+        mutating func add(upstream key: NodeKey) {
             upstream.insert(key)
         }
         
-        mutating func remove(downstream key: String) {
+        mutating func remove(downstream key: NodeKey) {
             downstream.remove(key)
         }
         
-        mutating func remove(upstream key: String) {
+        mutating func remove(upstream key: NodeKey) {
             upstream.insert(key)
         }
     }
@@ -55,12 +55,12 @@ internal class Graph {
         nodes = [:]
     }
     
-    init(@GraphBuilder _ builder: () -> [String: Node]) {
+    init(@GraphBuilder _ builder: () -> [NodeKey: Node]) {
         nodes = builder()
         fixUpstreams()
     }
     
-    func addEdge(key: String, downstream downKey: String) {
+    func addEdge(key: NodeKey, downstream downKey: NodeKey) {
         if !nodes.has(downKey) {
             nodes[downKey] = Node(downKey)
         }
@@ -79,7 +79,7 @@ internal class Graph {
         nodes[downKey] = downNode
     }
     
-    func removeNode(key: String) {
+    func removeNode(key: NodeKey) {
         guard let node = nodes[key] else { return  }
         nodes.removeValue(forKey: key)
         
@@ -92,25 +92,25 @@ internal class Graph {
         }
     }
     
-    func dependencies(key: String) -> Set<String> {
+    func dependencies(key: NodeKey) -> Set<NodeKey> {
         guard let n = nodes[key] else { return [] }
         
-        return  Set<String>(n.upstream)
+        return Set<NodeKey>(n.upstream)
     }
     
-    private func removeEdge(key: String, upstream upKey: String) {
+    private func removeEdge(key: NodeKey, upstream upKey: NodeKey) {
         guard var node = nodes[key] else { return }
         node.remove(upstream: upKey)
         nodes[key] = node
     }
     
-    private func removeEdge(key: String, downstream downKey: String) {
+    private func removeEdge(key: NodeKey, downstream downKey: NodeKey) {
         guard var node = nodes[key] else { return }
         node.remove(downstream: downKey)
         nodes[key] = node
     }
     
-    func isContainEdge(key: String, downstream downKey: String) -> Bool {
+    func isContainEdge(key: NodeKey, downstream downKey: NodeKey) -> Bool {
         guard let node = nodes[key] else {
             return false
         }
@@ -122,7 +122,7 @@ internal class Graph {
         return node.downstream.contains(downKey)
     }
     
-    func getNode(for key: String) -> Node? {
+    func getNode(for key: NodeKey) -> Node? {
         nodes[key]
     }
     

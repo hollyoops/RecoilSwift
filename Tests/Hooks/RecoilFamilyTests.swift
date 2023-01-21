@@ -30,7 +30,7 @@ final class RecoilFamilyTests: XCTestCase {
       )
     }
     
-    static let fetchBookByType = atomFamily { (type: String, get: Getter) async -> [String] in
+    static let fetchBookByType = atomFamily { (type: String) async -> [String] in
       await MockAPI.makeAsync(
         value: ["\(type)-Book1", "\(type)-Book2"],
         delay: TestConfig.mock_async_wait_nanoseconds)

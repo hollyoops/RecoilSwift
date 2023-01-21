@@ -2,7 +2,7 @@ typealias StatusChangedCallback<T: Equatable> = (NodeStatus<T>) -> Void
 
 internal class SyncLoadBox<T: Equatable>: RecoilLoadable {
     private(set) var onStatusChange: StatusChangedCallback<T>?
-    let key: String
+    let key: NodeKey
     let computeBody: (Getter) throws -> T
     
     init<Node: RecoilSyncNode>(node: Node) where Node.T == T {
@@ -38,7 +38,7 @@ internal class SyncLoadBox<T: Equatable>: RecoilLoadable {
 }
 
 internal class AsyncLoadBox<T: Equatable>: RecoilLoadable {
-    let key: String
+    let key: NodeKey
     var onStatusChange: StatusChangedCallback<T>?
     let computeBody: (Getter) async throws -> T
     

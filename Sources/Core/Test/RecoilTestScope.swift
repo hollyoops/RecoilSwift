@@ -9,7 +9,7 @@ public class RecoilTestScope {
     fileprivate let viewRefresher = MockViewRefresher()
     fileprivate let caches = ScopedNodeCaches()
     fileprivate let storeSubs = ScopedSubscriptions()
-    fileprivate let stateNotifier = PassthroughSubject<(String, Any), Error>()
+    fileprivate let stateNotifier = PassthroughSubject<(NodeKey, Any), Error>()
     public let timeout: TimeInterval = 3
     
     public var viewRefreshCount: Int { viewRefresher.refreshCount }
@@ -41,7 +41,7 @@ public class RecoilTestScope {
     public func waitNextStateChange(
         timeout: TimeInterval? = nil,
         task: (() -> Void)? = nil
-    ) async throws -> (String, Any) {
+    ) async throws -> (NodeKey, Any) {
         let nodeChangedPub = stateNotifier.eraseToAnyPublisher()
         let timeout = timeout ?? self.timeout
         

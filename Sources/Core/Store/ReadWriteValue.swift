@@ -1,8 +1,8 @@
 public struct Getter {
     private let nodeAccessor: NodeAccessor
-    private let upstreamNodeKey: String?
+    private let upstreamNodeKey: NodeKey?
 
-    fileprivate init( nodeAccessor: NodeAccessor, upstreamKey: String? = nil) {
+    fileprivate init(nodeAccessor: NodeAccessor, upstreamKey: NodeKey?) {
         self.upstreamNodeKey = upstreamKey
         self.nodeAccessor = nodeAccessor
     }
@@ -28,9 +28,9 @@ public struct Getter {
 
 public struct Setter {
     private let nodeAccessor: NodeAccessor
-    private let upstreamNodeKey: String?
+    private let upstreamNodeKey: NodeKey?
     
-    fileprivate init( nodeAccessor: NodeAccessor, upstreamKey: String? = nil) {
+    fileprivate init(nodeAccessor: NodeAccessor, upstreamKey: NodeKey? = nil) {
         self.upstreamNodeKey = upstreamKey
         self.nodeAccessor = nodeAccessor
     }
@@ -93,11 +93,11 @@ internal struct NodeAccessor {
         node.update(context: ctx, newValue: newValue)
     }
     
-    internal func getter(upstreamKey: String? = nil) -> Getter {
+    internal func getter(upstreamKey: NodeKey? = nil) -> Getter {
         Getter(nodeAccessor: self, upstreamKey: upstreamKey)
     }
 
-    internal func setter(upstreamKey: String? = nil) -> Setter {
+    internal func setter(upstreamKey: NodeKey? = nil) -> Setter {
         Setter(nodeAccessor: self, upstreamKey: upstreamKey)
     }
     
@@ -114,7 +114,7 @@ internal struct NodeAccessor {
         loadable.refresh(getter(upstreamKey: node.key))
     }
     
-    internal func refresh(for key: String) {
+    internal func refresh(for key: NodeKey) {
         store.getLoadable(for: key)?.refresh(getter(upstreamKey: key))
     }
 }

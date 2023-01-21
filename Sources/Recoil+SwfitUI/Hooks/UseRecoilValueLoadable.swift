@@ -3,7 +3,7 @@ import Foundation
 
 /// A loadable object that contains loading informations
 public struct LoadableContent<DataType: Equatable> {
-    public let key: String
+    public let key: NodeKey
     private let store: Store
     
     init<T: RecoilNode>(node: T, store: Store) {

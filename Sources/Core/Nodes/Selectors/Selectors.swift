@@ -18,8 +18,10 @@ public typealias AsyncGet<T: Equatable> = (Getter) async throws -> T
 /// - Parameters:
 ///  - getBody: A synchronous function that evaluates the value for the derived state.
 /// - Returns: A synchronous readonly selector.
-public func selector<T: Equatable>(_ getBody: @escaping SyncGet<T>) -> Selector<T> {
-    Selector(body: getBody)
+public func selector<T: Equatable>(_ getBody: @escaping SyncGet<T>,
+                                   fileID: String = #fileID,
+                                   line: Int = #line) -> Selector<T> {
+    Selector(body: getBody, fileID: fileID, line: line)
 }
 
 /// A Selector represent a derived state in Recoil. If only a get function is provided, the selector is read-only and returns a ``Readonly Selector``
@@ -27,8 +29,10 @@ public func selector<T: Equatable>(_ getBody: @escaping SyncGet<T>) -> Selector<
 ///  - getBody:  A asynchronous function that evaluates the value for the derived state. It return ``AnyPublisher`` object.
 /// - Returns: A asynchronous readonly selector with combine.
 
-public func selector<T: Equatable, E: Error>(_ getBody: @escaping CombineGet<T, E>) -> AsyncSelector<T> {
-    AsyncSelector(get: getBody)
+public func selector<T: Equatable, E: Error>(_ getBody: @escaping CombineGet<T, E>,
+                                             fileID: String = #fileID,
+                                             line: Int = #line) -> AsyncSelector<T> {
+    AsyncSelector(get: getBody, fileID: fileID, line: line)
 }
 
 /// A Selector represent a derived state in Recoil. If only a get function is provided, the selector is read-only and returns a ``Readonly Selector``
@@ -36,8 +40,10 @@ public func selector<T: Equatable, E: Error>(_ getBody: @escaping CombineGet<T, 
 ///  - getBody:  A async function that evaluates the value for the derived state.
 /// - Returns: A asynchronous readonly selector with ``async/await``.
 
-public func selector<T: Equatable>(_ getBody: @escaping AsyncGet<T>) -> AsyncSelector<T> {
-    AsyncSelector(get: getBody)
+public func selector<T: Equatable>(_ getBody: @escaping AsyncGet<T>,
+                                   fileID: String = #fileID,
+                                   line: Int = #line) -> AsyncSelector<T> {
+    AsyncSelector(get: getBody, fileID: fileID, line: line)
 }
 
 /// A Selector represent a derived state in Recoil. If the get and set function are provided, the selector is writeable
@@ -45,8 +51,11 @@ public func selector<T: Equatable>(_ getBody: @escaping AsyncGet<T>) -> AsyncSel
 ///  - get: A synchronous function that evaluates the value for the derived state.
 ///  - set: A synchronous function that can store a value to Recoil object
 /// - Returns: A asynchronous readonly selector with ``async/await``.
-public func selector<T: Equatable>(get getBody: @escaping SyncGet<T>, set setBody: @escaping SetBody<T>) -> MutableSelector<T> {
-    MutableSelector(get: getBody, set: setBody)
+public func selector<T: Equatable>(get getBody: @escaping SyncGet<T>,
+                                   set setBody: @escaping SetBody<T>,
+                                   fileID: String = #fileID,
+                                   line: Int = #line) -> MutableSelector<T> {
+    return MutableSelector(get: getBody, set: setBody, fileID: fileID, line: line)
 }
 
 
@@ -68,12 +77,17 @@ public struct Selector<T: Equatable>: SyncSelectorNode {
     public typealias T = T
     public typealias E = Never
     
-    public let key: String
+    public let key: NodeKey
     public let get: (Getter) throws -> T
     
-    init(key: String = "R-Sel-\(UUID())", body: @escaping SyncGet<T>) {
+    init(key: NodeKey, body: @escaping SyncGet<T>) {
         self.key = key
         self.get = body
+    }
+    
+    init(body: @escaping SyncGet<T>, fileID: String = #fileID, line: Int = #line) {
+        let keyName = sourceLocationKey(Self.self, fileName: fileID, line: line)
+        self.init(key: NodeKey(name: keyName), body: body)
     }
     
     public func compute(_ accessor: Getter) throws -> T {
@@ -100,14 +114,22 @@ public struct MutableSelector<T: Equatable>: SyncSelectorNode {
     public typealias T = T
     public typealias E = Never
     
-    public let key: String
+    public let key: NodeKey
     public let get: (Getter) throws -> T
     public let set: SetBody<T>
 
-    public init(key: String = "WR-Sel-\(UUID())", get: @escaping SyncGet<T>, set: @escaping SetBody<T>) {
+    public init(key: NodeKey, get: @escaping SyncGet<T>, set: @escaping SetBody<T>) {
         self.key = key
         self.get = get
         self.set = set
+    }
+    
+    public init(get: @escaping SyncGet<T>,
+                set: @escaping SetBody<T>,
+                fileID: String = #fileID,
+                line: Int = #line) {
+        let keyName = sourceLocationKey(Self.self, fileName: fileID, line: line)
+        self.init(key: NodeKey(name: keyName), get: get, set: set)
     }
     
     public func compute(_ accessor: Getter) throws -> T {
@@ -129,17 +151,27 @@ extension MutableSelector: Writeable {
 /// customable parameters. please refer to ``selectorFamily``
 
 public struct AsyncSelector<T: Equatable>: AsyncSelectorNode {
-    public let key: String
+    public let key: NodeKey
     public let get: (Getter) async throws -> T
 
-    public init<E: Error>(key: String = "R-AsyncSel-\(UUID())", get: @escaping CombineGet<T, E>) {
+    public init<E: Error>(key: NodeKey, get: @escaping CombineGet<T, E>) {
         self.key = key
         self.get = { try await get($0).async() }
     }
     
-    public init(key: String = "R-AsyncSel-\(UUID())", get: @escaping AsyncGet<T>) {
+    public init(key: NodeKey, get: @escaping AsyncGet<T>) {
         self.key = key
         self.get = get
+    }
+    
+    public init(get: @escaping AsyncGet<T>, fileID: String = #fileID, line: Int = #line) {
+        let keyName = sourceLocationKey(Self.self, fileName: fileID, line: line)
+        self.init(key: NodeKey(name: keyName), get: get)
+    }
+    
+    public init<E: Error>(get: @escaping CombineGet<T, E>, fileID: String = #fileID, line: Int = #line) {
+        let keyName = sourceLocationKey(Self.self, fileName: fileID, line: line)
+        self.init(key: NodeKey(name: keyName), get: get)
     }
     
     public func compute(_ accessor: Getter) async throws -> T {
@@ -150,11 +182,11 @@ public struct AsyncSelector<T: Equatable>: AsyncSelectorNode {
 // TODO: Not support yet
 //
 //public struct MutableAsyncSelector<T: Equatable, E: Error>: RecoilAsyncValue {
-//    public let key: String
+//    public let key: AnyNodeKey
 //    public let get: AsyncGet
 //    public let set: SetBody<T?>
 //
-//    public init(key: String = "WR-AsyncSel-\(UUID())",
+//    public init(key: AnyNodeKey,
 //                get: @escaping CombineGetBody<T, E>,
 //                set: @escaping SetBody<T?>) {
 //        self.key = key

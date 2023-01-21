@@ -22,16 +22,20 @@ public typealias AtomAsyncGet<T: Equatable> = () async throws -> T
 /// - Parameters:
 ///  - value: The initial value of the atom
 /// - Returns: A writeable RecoilState object.
-public func atom<T: Equatable>(_ value: T) -> Atom<T> {
-    Atom(value)
+public func atom<T: Equatable>(_ value: T,
+                               fileID: String = #fileID,
+                               line: Int = #line) -> Atom<T> {
+    Atom(value, fileID: fileID, line: line)
 }
 
 /// An atom represents state in Recoil. The ``atom()`` function returns a writeable ``RecoilState`` object.
 /// - Parameters:
 ///  - fn: A closure that provide init value for the atom
 /// - Returns: A writeable RecoilState object.
-public func atom<T: Equatable>(_ fn: @escaping () throws -> T) -> Atom<T> {
-    Atom(get: fn)
+public func atom<T: Equatable>(_ fn: @escaping () throws -> T,
+                               fileID: String = #fileID,
+                               line: Int = #line) -> Atom<T> {
+    Atom(get: fn, fileID: fileID, line: line)
 }
 
 /// An atom represents state in Recoil. The ``atom()`` function returns a writeable ``RecoilState`` object.
@@ -39,8 +43,10 @@ public func atom<T: Equatable>(_ fn: @escaping () throws -> T) -> Atom<T> {
 ///  - fn: A closure that provide init value for the atom
 /// - Returns: A writeable RecoilState object.
 
-public func atom<T: Equatable, E: Error>(_ fn: @escaping AtomCombineGet<T, E>) -> AsyncAtom<T> {
-    AsyncAtom(get: fn)
+public func atom<T: Equatable, E: Error>(_ fn: @escaping AtomCombineGet<T, E>,
+                                         fileID: String = #fileID,
+                                         line: Int = #line) -> AsyncAtom<T> {
+    AsyncAtom(get: fn, fileID: fileID, line: line)
 }
 
 /// An atom represents state in Recoil. The ``atom()`` function returns a writeable ``RecoilState`` object.
@@ -48,25 +54,37 @@ public func atom<T: Equatable, E: Error>(_ fn: @escaping AtomCombineGet<T, E>) -
 ///  - fn: A closure that provide init value for the atom
 /// - Returns: A writeable RecoilState object.
 
-public func atom<T: Equatable>(_ fn: @escaping AtomAsyncGet<T>) -> AsyncAtom<T> {
-    AsyncAtom(get: fn)
+public func atom<T: Equatable>(_ fn: @escaping AtomAsyncGet<T>,
+                               fileID: String = #fileID,
+                               line: Int = #line) -> AsyncAtom<T> {
+    AsyncAtom(get: fn, fileID: fileID, line: line)
 }
 
 public struct Atom<T: Equatable>: SyncAtomNode, Writeable {
     public typealias T = T
     public typealias E = Never
     
-    public let key: String
+    public let key: NodeKey
     public let get: () throws -> T
     
-    public init(key: String = "Atom-\(UUID())", _ value: T) {
+    public init(key: NodeKey, _ value: T) {
         self.key = key
         self.get = { value }
     }
     
-    public init(key: String = "Atom-\(UUID())", get: @escaping () throws -> T) {
+    public init(key: NodeKey, get: @escaping () throws -> T) {
         self.key = key
         self.get = get
+    }
+    
+    public init(get: @escaping () throws -> T, fileID: String = #fileID, line: Int = #line) {
+        let keyName = sourceLocationKey(Self.self, fileName: fileID, line: line)
+        self.init(key: NodeKey(name: keyName), get: get)
+    }
+    
+    public init(_ value: T, fileID: String = #fileID, line: Int = #line) {
+        let keyName = sourceLocationKey(Self.self, fileName: fileID, line: line)
+        self.init(key: NodeKey(name: keyName), value)
     }
     
     public func compute() throws -> T {
@@ -75,17 +93,27 @@ public struct Atom<T: Equatable>: SyncAtomNode, Writeable {
 }
 
 public struct AsyncAtom<T: Equatable>: AsyncAtomNode, Writeable {
-    public let key: String
+    public let key: NodeKey
     public var get: () async throws -> T
     
-    public init<E: Error>(key: String = "AsyncAtom-\(UUID())", get: @escaping AtomCombineGet<T, E>) {
+    public init<E: Error>(key: NodeKey, get: @escaping AtomCombineGet<T, E>) {
         self.key = key
         self.get = { try await get().async() }
     }
     
-    public init(key: String = "AsyncAtom-\(UUID())", get: @escaping AtomAsyncGet<T>) {
+    public init(key: NodeKey, get: @escaping AtomAsyncGet<T>) {
         self.key = key
         self.get = { try await get() }
+    }
+    
+    public init<E: Error>(get: @escaping AtomCombineGet<T, E>, fileID: String = #fileID, line: Int = #line) {
+        let keyName = sourceLocationKey(Self.self, fileName: fileID, line: line)
+        self.init(key: NodeKey(name: keyName), get: get)
+    }
+    
+    public init(get: @escaping AtomAsyncGet<T>, fileID: String = #fileID, line: Int = #line) {
+        let keyName = sourceLocationKey(Self.self, fileName: fileID, line: line)
+        self.init(key: NodeKey(name: keyName), get: get)
     }
     
     public func compute() async throws -> T {

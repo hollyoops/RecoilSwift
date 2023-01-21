@@ -1,24 +1,24 @@
 import Foundation
 
 protocol Store: AnyObject {
-    func subscribe(for nodeKey: String, subscriber: Subscriber) -> Subscription
+    func subscribe(for nodeKey: NodeKey, subscriber: Subscriber) -> Subscription
     
     func safeGetLoadable<T: RecoilNode>(for node: T) -> BaseLoadable
     
-    func getLoadable(for key: String) -> BaseLoadable?
+    func getLoadable(for key: NodeKey) -> BaseLoadable?
     
-    func getLoadingStatus(for key: String) -> Bool
+    func getLoadingStatus(for key: NodeKey) -> Bool
     
-    func getErrors(for key: String) -> [Error]
+    func getErrors(for key: NodeKey) -> [Error]
     
-    func getData<T>(for key: String, dataType: T.Type) -> T?
+    func getData<T>(for key: NodeKey, dataType: T.Type) -> T?
     
-    func makeConnect(key: String, upstream upKey: String)
+    func makeConnect(key: NodeKey, upstream upKey: NodeKey)
 }
 
 internal final class RecoilStore: Store {
-    private var states: [String: BaseLoadable] = [:]
-    private var subscriberMap: [String: Set<KeyedSubscriber>] = [:]
+    private var states: [NodeKey: BaseLoadable] = [:]
+    private var subscriberMap: [NodeKey: Set<KeyedSubscriber>] = [:]
     private let graph = Graph()
     private let checker = DFSCircularChecker()
     static let shared = RecoilStore()
@@ -27,16 +27,16 @@ internal final class RecoilStore: Store {
         getLoadable(for: node.key) ?? register(node)
     }
     
-    func getLoadable(for key: String) -> BaseLoadable? {
+    func getLoadable(for key: NodeKey) -> BaseLoadable? {
         states[key]
     }
     
-    func getData<T>(for key: String, dataType: T.Type) -> T? {
+    func getData<T>(for key: NodeKey, dataType: T.Type) -> T? {
         let load = getLoadable(for: key)
         return load?.anyData as? T
     }
     
-    func getLoadingStatus(for key: String) -> Bool {
+    func getLoadingStatus(for key: NodeKey) -> Bool {
         guard let loadable = getLoadable(for: key) else {
             return false
         }
@@ -56,10 +56,10 @@ internal final class RecoilStore: Store {
         return false
     }
     
-    func getErrors(for key: String) -> [Error] {
+    func getErrors(for key: NodeKey) -> [Error] {
         var errors = [Error]()
         
-        func doGetError(key: String) {
+        func doGetError(key: NodeKey) {
             guard let loadable = getLoadable(for: key) else {
                 return
             }
@@ -80,7 +80,7 @@ internal final class RecoilStore: Store {
         return errors
     }
     
-    func makeConnect(key: String, upstream upKey: String) {
+    func makeConnect(key: NodeKey, upstream upKey: NodeKey) {
         guard states.has(key), states.has(upKey) else {
             dePrint("Cannot make connect! \(key)")
 #if DEBUG
@@ -104,7 +104,7 @@ internal final class RecoilStore: Store {
         }
     }
         
-    func subscribe(for nodeKey: String, subscriber: Subscriber) -> Subscription {
+    func subscribe(for nodeKey: NodeKey, subscriber: Subscriber) -> Subscription {
         let keyedSubscriber = KeyedSubscriber(subscriber: subscriber)
         
         var subscribers = subscriberMap[nodeKey] ?? []
@@ -118,7 +118,7 @@ internal final class RecoilStore: Store {
         }
     }
     
-    private func releaseNode(_ nodeKey: String) {
+    private func releaseNode(_ nodeKey: NodeKey) {
         // check should remove or not
         let isNilOrEmpty = self.subscriberMap[nodeKey]?.isEmpty ?? true
         guard isNilOrEmpty else { return }
