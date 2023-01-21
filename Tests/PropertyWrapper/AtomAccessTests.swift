@@ -1,5 +1,6 @@
 import XCTest
 
+import RecoilSwiftXCTests
 @testable import RecoilSwift
 
 final class AtomAccessTests: XCTestCase {

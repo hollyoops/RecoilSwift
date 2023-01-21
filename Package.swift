@@ -14,14 +14,19 @@ let package = Package(
         .library(
             name: "RecoilSwift",
             targets: ["RecoilSwift"]),
+
+        .library(
+            name: "RecoilSwiftXCTests",
+            targets: ["RecoilSwiftXCTests"]
+        )
     ],
     
     dependencies: [
-      // Dependencies declare other packages that this package depends on.
-      .package(
-        url: "https://github.com/hollyoops/SwiftUI-Hooks",
-        from: "0.0.3"
-      )
+        // Dependencies declare other packages that this package depends on.
+        .package(
+            url: "https://github.com/hollyoops/SwiftUI-Hooks",
+            from: "0.0.3"
+        )
     ],
     
     targets: [
@@ -30,16 +35,25 @@ let package = Package(
         .target(
             name: "RecoilSwift",
             dependencies: [
-              .product(name: "Hooks", package: "SwiftUI-Hooks")
+                .product(name: "Hooks", package: "SwiftUI-Hooks")
             ],
-            path: "Sources"),
-        
-        .testTarget(
-            name: "RecoilSwiftTests",
+            path: "Sources"
+        ),
+        .target(
+            name: "RecoilSwiftXCTests",
             dependencies: [
                 "RecoilSwift"
             ],
-            path: "Tests"),
+            path: "XCTestHelper"
+        ),
+        .testTarget(
+            name: "RecoilSwiftTests",
+            dependencies: [
+                "RecoilSwift",
+                "RecoilSwiftXCTests"
+            ],
+            path: "Tests"
+        )
     ],
     
     swiftLanguageVersions: [

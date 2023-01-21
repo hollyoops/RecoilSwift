@@ -1,3 +1,5 @@
+import RecoilSwift
+
 public final class MockViewRefresher: ViewRefreshable {
     private(set) var refreshCount: Int = 0
     private let render: (() -> Void)?
@@ -6,7 +8,7 @@ public final class MockViewRefresher: ViewRefreshable {
         self.render = render
     }
     
-    func refresh() {
+    public func refresh() {
         self.refreshCount += 1
         render?()
     }

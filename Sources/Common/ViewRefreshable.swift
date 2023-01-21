@@ -1,6 +1,6 @@
 import Foundation
 
-internal protocol ViewRefreshable: AnyObject {
+public protocol ViewRefreshable: AnyObject {
     func refresh()
 }
 

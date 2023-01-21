@@ -1,6 +1,6 @@
 import Foundation.NSDate // for TimeInterval
 
-struct TimedoutError: Error, Equatable {}
+public struct TimedoutError: Error, Equatable {}
 
 ///
 /// Execute an operation in the current task subject to a timeout.
@@ -11,7 +11,7 @@ struct TimedoutError: Error, Equatable {}
 /// - Returns: Returns the result of `operation` if it completed in time.
 /// - Throws: Throws ``TimedOutError`` if the timeout expires before `operation` completes.
 ///   If `operation` throws an error before the timeout expires, that error is propagated to the caller.
-func withTimeout<T: Sendable>(
+public func withTimeout<T: Sendable>(
     seconds: TimeInterval,
     body: @escaping @Sendable () async throws -> T
 ) async throws -> T {

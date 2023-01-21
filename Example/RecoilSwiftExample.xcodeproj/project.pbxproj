@@ -38,9 +38,21 @@
 		EEBC589627DB4B7400987CD2 /* MoreUsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589527DB4B7400987CD2 /* MoreUsageView.swift */; };
 		EEBC589827DB4B7400987CD2 /* LoadableExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589727DB4B7400987CD2 /* LoadableExampleView.swift */; };
 		EEBC589A27DD0AEE00987CD2 /* RemoteControllView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589927DD0AEE00987CD2 /* RemoteControllView.swift */; };
+		EEE1327A2A04F94100D30527 /* RecoilSwiftExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE132792A04F94100D30527 /* RecoilSwiftExampleTests.swift */; };
+		EEE132812A0503CA00D30527 /* RecoilSwiftXCTests in Frameworks */ = {isa = PBXBuildFile; productRef = EEE132802A0503CA00D30527 /* RecoilSwiftXCTests */; };
 		EEE848AB282ABA1C0021EB32 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE848AA282ABA1B0021EB32 /* MainTabView.swift */; };
 		EEED4FA12822CEE60072D9AC /* FilterOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED4FA02822CEE60072D9AC /* FilterOptionsView.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		EEE1327B2A04F94100D30527 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EE023C6C26AD98A3002EBF0C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EE023C7326AD98A3002EBF0C;
+			remoteInfo = RecoilSwiftExample;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		B770FC6227E06C2C00088B9F /* CartRecoil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartRecoil.swift; sourceTree = "<group>"; };
@@ -75,6 +87,8 @@
 		EEBC589527DB4B7400987CD2 /* MoreUsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreUsageView.swift; sourceTree = "<group>"; };
 		EEBC589727DB4B7400987CD2 /* LoadableExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadableExampleView.swift; sourceTree = "<group>"; };
 		EEBC589927DD0AEE00987CD2 /* RemoteControllView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControllView.swift; sourceTree = "<group>"; };
+		EEE132772A04F94100D30527 /* RecoilSwiftExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecoilSwiftExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEE132792A04F94100D30527 /* RecoilSwiftExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoilSwiftExampleTests.swift; sourceTree = "<group>"; };
 		EEE848AA282ABA1B0021EB32 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		EEED4FA02822CEE60072D9AC /* FilterOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptionsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -86,6 +100,14 @@
 			files = (
 				EE7508EB28235020001D306B /* RecoilSwift in Frameworks */,
 				EE7508E728234F1E001D306B /* ReactiveForm in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EEE132742A04F94100D30527 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EEE132812A0503CA00D30527 /* RecoilSwiftXCTests in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,6 +136,7 @@
 			children = (
 				EE023C7626AD98A3002EBF0C /* RecoilSwiftExample */,
 				EED6FD5826AD996E0076F145 /* Packages */,
+				EEE132782A04F94100D30527 /* RecoilSwiftExampleTests */,
 				EE023C7526AD98A3002EBF0C /* Products */,
 				EE7508E928235020001D306B /* Frameworks */,
 			);
@@ -123,6 +146,7 @@
 			isa = PBXGroup;
 			children = (
 				EE023C7426AD98A3002EBF0C /* RecoilSwiftExample.app */,
+				EEE132772A04F94100D30527 /* RecoilSwiftExampleTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -284,6 +308,14 @@
 			name = Packages;
 			sourceTree = "<group>";
 		};
+		EEE132782A04F94100D30527 /* RecoilSwiftExampleTests */ = {
+			isa = PBXGroup;
+			children = (
+				EEE132792A04F94100D30527 /* RecoilSwiftExampleTests.swift */,
+			);
+			path = RecoilSwiftExampleTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -308,17 +340,42 @@
 			productReference = EE023C7426AD98A3002EBF0C /* RecoilSwiftExample.app */;
 			productType = "com.apple.product-type.application";
 		};
+		EEE132762A04F94100D30527 /* RecoilSwiftExampleTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EEE1327F2A04F94100D30527 /* Build configuration list for PBXNativeTarget "RecoilSwiftExampleTests" */;
+			buildPhases = (
+				EEE132732A04F94100D30527 /* Sources */,
+				EEE132742A04F94100D30527 /* Frameworks */,
+				EEE132752A04F94100D30527 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EEE1327C2A04F94100D30527 /* PBXTargetDependency */,
+			);
+			name = RecoilSwiftExampleTests;
+			packageProductDependencies = (
+				EEE132802A0503CA00D30527 /* RecoilSwiftXCTests */,
+			);
+			productName = RecoilSwiftExampleTests;
+			productReference = EEE132772A04F94100D30527 /* RecoilSwiftExampleTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		EE023C6C26AD98A3002EBF0C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1250;
+				LastSwiftUpdateCheck = 1430;
 				LastUpgradeCheck = 1250;
 				TargetAttributes = {
 					EE023C7326AD98A3002EBF0C = {
 						CreatedOnToolsVersion = 12.5.1;
+					};
+					EEE132762A04F94100D30527 = {
+						CreatedOnToolsVersion = 14.3;
+						TestTargetID = EE023C7326AD98A3002EBF0C;
 					};
 				};
 			};
@@ -339,6 +396,7 @@
 			projectRoot = "";
 			targets = (
 				EE023C7326AD98A3002EBF0C /* RecoilSwiftExample */,
+				EEE132762A04F94100D30527 /* RecoilSwiftExampleTests */,
 			);
 		};
 /* End PBXProject section */
@@ -351,6 +409,13 @@
 				EE023C8426AD98A6002EBF0C /* LaunchScreen.storyboard in Resources */,
 				EE023C8126AD98A6002EBF0C /* Preview Assets.xcassets in Resources */,
 				EE023C7E26AD98A6002EBF0C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EEE132752A04F94100D30527 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,7 +457,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EEE132732A04F94100D30527 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EEE1327A2A04F94100D30527 /* RecoilSwiftExampleTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EEE1327C2A04F94100D30527 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EE023C7326AD98A3002EBF0C /* RecoilSwiftExample */;
+			targetProxy = EEE1327B2A04F94100D30527 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		EE023C8226AD98A6002EBF0C /* LaunchScreen.storyboard */ = {
@@ -562,6 +643,44 @@
 			};
 			name = Release;
 		};
+		EEE1327D2A04F94100D30527 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.holly.RecoilSwiftExampleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RecoilSwiftExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RecoilSwiftExample";
+			};
+			name = Debug;
+		};
+		EEE1327E2A04F94100D30527 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.holly.RecoilSwiftExampleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RecoilSwiftExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/RecoilSwiftExample";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -579,6 +698,15 @@
 			buildConfigurations = (
 				EE023C8926AD98A6002EBF0C /* Debug */,
 				EE023C8A26AD98A6002EBF0C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EEE1327F2A04F94100D30527 /* Build configuration list for PBXNativeTarget "RecoilSwiftExampleTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EEE1327D2A04F94100D30527 /* Debug */,
+				EEE1327E2A04F94100D30527 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -605,6 +733,10 @@
 		EE7508EA28235020001D306B /* RecoilSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RecoilSwift;
+		};
+		EEE132802A0503CA00D30527 /* RecoilSwiftXCTests */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RecoilSwiftXCTests;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

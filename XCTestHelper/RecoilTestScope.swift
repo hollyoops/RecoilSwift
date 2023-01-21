@@ -3,6 +3,8 @@ import SwiftUI
 import Combine
 import XCTest
 
+@testable import RecoilSwift
+
 @propertyWrapper
 public class RecoilTestScope {
     fileprivate var store: Store

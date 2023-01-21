@@ -7,7 +7,7 @@ public class TestSuit {
         self.expectation = expectation
     }
     
-    func expect<T: Equatable>(_ actual: T) -> Expectation<T> {
+    public func expect<T: Equatable>(_ actual: T) -> Expectation<T> {
         return Expectation(testSuit: self, actual: actual)
     }
 }
