@@ -58,6 +58,7 @@ public struct LoadableContent<DataType: Equatable> {
 /// - Parameters:
 ///   - value: A selector wrapper which with user-defined parameters
 /// - Returns: return a loadable object that contains loading informations
+@MainActor
 public func useRecoilValueLoadable<P: Equatable, Return: RecoilNode>(_ value: ParametricRecoilValue<P, Return>) -> LoadableContent<Return.T> {
     let hook = RecoilLoadableValueHook(initialValue: value.recoilValue,
                                        updateStrategy: .preserved(by: value.param))
@@ -69,6 +70,7 @@ public func useRecoilValueLoadable<P: Equatable, Return: RecoilNode>(_ value: Pa
 /// - Parameters:
 ///   - value: A selector
 /// - Returns: return a loadable object that contains loading informations
+@MainActor
 public func useRecoilValueLoadable<Value: RecoilNode>(_ value: Value) -> LoadableContent<Value.T> {
     useHook(RecoilLoadableValueHook(initialValue: value))
 }

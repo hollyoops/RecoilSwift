@@ -14,6 +14,7 @@ public struct RecoilCallbackContext {
 ///   - fn: A function that you want to access the Recoil state
 /// - Returns: return a callback function that can trigger state update after call it
 public typealias Callback<R> = (RecoilCallbackContext) -> R
+@MainActor
 public func useRecoilCallback<Return>(_ fn: @escaping Callback<Return>) -> () -> Return {
     let hook = RecoilCallbackHook(callback: curryFirst(fn))
     return useHook(hook)
@@ -24,6 +25,7 @@ public func useRecoilCallback<Return>(_ fn: @escaping Callback<Return>) -> () ->
 ///   - fn: A function that you want to access the Recoil state with one user-defined parameter
 /// - Returns: return a callback function that can trigger state update after call it
 public typealias Callback1<P, R> = (RecoilCallbackContext, P) -> R
+@MainActor
 public func useRecoilCallback<P, R>(_ fn: @escaping Callback1<P, R>) -> (P) -> R {
     let hook = RecoilCallbackHook(callback: curryFirst(fn))
     return useHook(hook)
@@ -34,6 +36,7 @@ public func useRecoilCallback<P, R>(_ fn: @escaping Callback1<P, R>) -> (P) -> R
 ///   - fn: A function that you want to access the Recoil state with two user-defined parameters
 /// - Returns: return a callback function that can trigger state update after call it
 public typealias Callback2<P1, P2, R> = (RecoilCallbackContext, P1, P2) -> R
+@MainActor
 public func useRecoilCallback<P1, P2, R>(_ fn: @escaping Callback2<P1, P2, R>) -> (P1, P2) -> R {
     let hook = RecoilCallbackHook(callback: curryFirst(fn))
     return useHook(hook)
