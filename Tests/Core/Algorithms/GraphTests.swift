@@ -5,9 +5,9 @@ import XCTest
 @testable import RecoilSwift
 
 final class GraphTests: XCTestCase {
-  override func setUp() {
-    RecoilTest.shared.reset()
-  }
+    @MainActor override func setUp() {
+        RecoilTest.shared.reset()
+    }
 }
 
  // MARK: - AddEdge

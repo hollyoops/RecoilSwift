@@ -10,12 +10,13 @@ final class AtomReadWriteTests: XCTestCase {
     static var remoteDataSourceError: AsyncAtom<[String]>!
   }
   
-  override func setUp() {
-    RecoilTest.shared.reset()
-    TestModule.stringAtom = atom { "rawValue" }
-    TestModule.remoteDataSource = makeAsyncAtom(value: ["Book1", "Book2"])
-    TestModule.remoteDataSourceError = makeAsyncAtom(error: MyError.param, type: [String].self)
-  }
+    @MainActor
+    override func setUp() {
+        RecoilTest.shared.reset()
+        TestModule.stringAtom = atom { "rawValue" }
+        TestModule.remoteDataSource = makeAsyncAtom(value: ["Book1", "Book2"])
+        TestModule.remoteDataSourceError = makeAsyncAtom(error: MyError.param, type: [String].self)
+    }
   
   func testReadOnlyAtom() {
     let tester = HookTester {

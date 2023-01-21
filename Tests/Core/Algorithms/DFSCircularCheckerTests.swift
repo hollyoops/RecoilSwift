@@ -6,7 +6,7 @@ import XCTest
 final class DFSCircularCheckerTests: XCTestCase {
   let checker = DFSCircularChecker()
   
-  override func setUp() {
+    @MainActor override func setUp() {
     RecoilTest.shared.reset()
   }
 }

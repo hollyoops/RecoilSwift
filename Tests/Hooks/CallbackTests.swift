@@ -58,7 +58,7 @@ final class CallbackTests: XCTestCase {
     }
     
     var getter: Getter!
-    override func setUp() {
+    @MainActor override func setUp() {
         getter = RecoilTest.shared.nodeAccessor.getter()
         RecoilTest.shared.reset()
         TestModule.numberState = atom { 2 }

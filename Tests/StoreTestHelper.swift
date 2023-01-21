@@ -5,6 +5,7 @@ struct RecoilTest {
     let store = globalStore
     static let shared = RecoilTest()
     
+    @MainActor
     func reset() {
         self.store.reset()
     }

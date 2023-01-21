@@ -43,9 +43,9 @@ final class RecoilFamilyTests: XCTestCase {
     }
   }
   
-  override func setUp() {
-    RecoilTest.shared.reset()
-  }
+    @MainActor override func setUp() {
+        RecoilTest.shared.reset()
+    }
 }
 
 // MARK: - atoms

@@ -22,19 +22,23 @@ internal final class RecoilStore: Store {
     private let graph = Graph()
     private let checker = DFSCircularChecker()
     
+    @MainActor
     func safeGetLoadable<T: RecoilNode>(for node: T) -> BaseLoadable {
         getLoadable(for: node.key) ?? register(node)
     }
     
+    @MainActor
     func getLoadable(for key: NodeKey) -> BaseLoadable? {
         states[key]
     }
     
+    @MainActor
     func getData<T>(for key: NodeKey, dataType: T.Type) -> T? {
         let load = getLoadable(for: key)
         return load?.anyData as? T
     }
     
+    @MainActor
     func getLoadingStatus(for key: NodeKey) -> Bool {
         guard let loadable = getLoadable(for: key) else {
             return false
@@ -55,6 +59,7 @@ internal final class RecoilStore: Store {
         return false
     }
     
+    @MainActor
     func getErrors(for key: NodeKey) -> [Error] {
         var errors = [Error]()
         
@@ -79,6 +84,7 @@ internal final class RecoilStore: Store {
         return errors
     }
     
+    @MainActor
     func makeConnect(key: NodeKey, upstream upKey: NodeKey) {
         guard states.has(key), states.has(upKey) else {
             dePrint("Cannot make connect! \(key)")
@@ -102,42 +108,48 @@ internal final class RecoilStore: Store {
             graph.addEdge(key: upKey, downstream: key)
         }
     }
-        
+    
+    @MainActor
     func subscribe(for nodeKey: NodeKey, subscriber: Subscriber) -> Subscription {
         let keyedSubscriber = KeyedSubscriber(subscriber: subscriber)
         
         var subscribers = subscriberMap[nodeKey] ?? []
         subscribers.insert(keyedSubscriber)
         subscriberMap[nodeKey] = subscribers
-    
+        
         return Subscription { [weak self] in
-            self?.subscriberMap[nodeKey]?.remove(keyedSubscriber)
-            // TODO: try to release
-            self?.releaseNode(nodeKey)
+            DispatchQueue.main.async {
+                self?.subscriberMap[nodeKey]?.remove(keyedSubscriber)
+                // TODO: try to release
+                self?.releaseNode(nodeKey)
+            }
         }
     }
     
+    @MainActor
     private func releaseNode(_ nodeKey: NodeKey) {
         // check should remove or not
         let isNilOrEmpty = self.subscriberMap[nodeKey]?.isEmpty ?? true
         guard isNilOrEmpty else { return }
-  
+        
         let deps = self.graph.dependencies(key: nodeKey)
         
         self.graph.removeNode(key: nodeKey)
         self.states.removeValue(forKey: nodeKey)
-
+        
         for dep in deps {
             releaseNode(dep)
         }
     }
     
+    @MainActor
     func reset() {
-        states = [:]
-        subscriberMap = [:]
-        graph.reset()
+        self.states = [:]
+        self.subscriberMap = [:]
+        self.graph.reset()
     }
     
+    @MainActor
     @discardableResult
     private func register<T: RecoilNode>(_ node: T) -> BaseLoadable {
         let key = node.key
@@ -150,6 +162,7 @@ internal final class RecoilStore: Store {
         return box
     }
     
+    @MainActor
     private func notifyChanged<Node: RecoilNode>(node: Node, value: NodeStatus<Node.T>) {
         guard let subscribers = subscriberMap[node.key] else {
             return
@@ -157,6 +170,7 @@ internal final class RecoilStore: Store {
         subscribers.forEach { $0.valueDidChange(node: node, newValue: value) }
     }
     
+    @MainActor
     private func nodeValueChanged<Node: RecoilNode>(node: Node, value: NodeStatus<Node.T>) {
         let downstreams = graph.getNode(for: node.key)?.downstream ?? []
         
@@ -164,9 +178,7 @@ internal final class RecoilStore: Store {
             NodeAccessor(store: self).refresh(for: item)
         }
         
-        DispatchQueue.main.async {
-            self.notifyChanged(node: node, value: value)
-        }
+        self.notifyChanged(node: node, value: value)
     }
 }
 
