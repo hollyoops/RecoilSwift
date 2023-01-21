@@ -21,7 +21,6 @@ internal final class RecoilStore: Store {
     private var subscriberMap: [NodeKey: Set<KeyedSubscriber>] = [:]
     private let graph = Graph()
     private let checker = DFSCircularChecker()
-    static let shared = RecoilStore()
     
     func safeGetLoadable<T: RecoilNode>(for node: T) -> BaseLoadable {
         getLoadable(for: node.key) ?? register(node)

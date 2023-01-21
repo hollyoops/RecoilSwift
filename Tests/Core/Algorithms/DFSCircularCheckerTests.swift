@@ -7,7 +7,7 @@ final class DFSCircularCheckerTests: XCTestCase {
   let checker = DFSCircularChecker()
   
   override func setUp() {
-    RecoilStore.shared.reset()
+    RecoilTest.shared.reset()
   }
 }
 

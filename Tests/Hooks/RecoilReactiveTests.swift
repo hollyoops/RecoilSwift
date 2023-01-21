@@ -19,7 +19,7 @@ final class RecoilReactiveTests: XCTestCase {
   }
   
   override func setUp() {
-    RecoilStore.shared.reset()
+    RecoilTest.shared.reset()
     TestModule.stringAtom = atom { "rawValue" }
     TestModule.upstreamSyncState = selector { _ throws -> String in "sync value" }
     TestModule.downstreamSyncState = selector { get throws -> String in

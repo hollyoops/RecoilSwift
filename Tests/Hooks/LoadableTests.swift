@@ -38,7 +38,7 @@ final class LoadableTests: XCTestCase {
   }
   
   override func setUp() {
-    RecoilStore.shared.reset()
+    RecoilTest.shared.reset()
   }
 }
 

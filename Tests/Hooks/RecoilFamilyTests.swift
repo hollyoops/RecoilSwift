@@ -44,7 +44,7 @@ final class RecoilFamilyTests: XCTestCase {
   }
   
   override func setUp() {
-    RecoilStore.shared.reset()
+    RecoilTest.shared.reset()
   }
 }
 

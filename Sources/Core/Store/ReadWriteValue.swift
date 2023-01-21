@@ -101,7 +101,6 @@ internal struct NodeAccessor {
         Setter(nodeAccessor: self, upstreamKey: upstreamKey)
     }
     
-    
     internal func loadNodeIfNeeded<T: RecoilNode>(_ node: T) {
         let loadable = store.safeGetLoadable(for: node)
         if loadable.isInvalid {

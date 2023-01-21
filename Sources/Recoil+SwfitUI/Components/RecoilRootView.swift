@@ -1,5 +1,7 @@
 import SwiftUI
 
+internal let globalStore = RecoilStore()
+
 public struct RecoilRoot<Content: View>: View {
     private let content: Content
 
@@ -11,7 +13,20 @@ public struct RecoilRoot<Content: View>: View {
     public var body: some View {
         content.environment(
             \.store,
-             RecoilStore.shared
+             globalStore
         )
+    }
+}
+
+internal extension EnvironmentValues {
+    var store: Store {
+        get { self[StoreEnvironmentKey.self] }
+        set { self[StoreEnvironmentKey.self] = newValue }
+    }
+}
+
+private struct StoreEnvironmentKey: EnvironmentKey {
+    static var defaultValue: Store {
+        globalStore
     }
 }

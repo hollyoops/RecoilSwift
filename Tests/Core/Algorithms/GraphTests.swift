@@ -6,7 +6,7 @@ import XCTest
 
 final class GraphTests: XCTestCase {
   override func setUp() {
-    RecoilStore.shared.reset()
+    RecoilTest.shared.reset()
   }
 }
 
