@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'RecoilSwift'
-  s.version          = '0.2.1'
+  s.version          = '0.2.2'
   s.summary          = 'RecoilSwift is a next generation state management library'
 
   s.description      = <<-DESC
@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.source_files = 'Sources/**/*.swift'
   s.exclude_files = 'Sources/**/*Tests.swift'
   s.swift_version = '5'
-  s.dependency 'Hooks', '~> 0.0.3'
+  s.dependency 'Hooks', '~> 0.0.4'
   
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'Tests/**/*Tests.Swift', 'Sources/**/*Tests.swift'
