@@ -8,32 +8,29 @@ final class RecoilReactiveTests: XCTestCase {
     typealias Selector = RecoilSwift.Selector
     
     struct TestModule  {
-        static var stringAtom: Atom<String>!
-        static var upstreamSyncState: Selector<String>!
-        static var downstreamSyncState: Selector<String>!
-        
-        static var upstreamErrorState = makeCombineAtom(error: MyError.param, type: String.self)
-        
-        static var upstreamAsyncState: AsyncSelector<String>!
-        static var downstreamAsyncState: AsyncSelector<String>!
-    }
-    
-    @MainActor override func setUp() {
-        RecoilTest.shared.reset()
-        TestModule.stringAtom = atom { "rawValue" }
-        TestModule.upstreamSyncState = selector { _ throws -> String in "sync value" }
-        TestModule.downstreamSyncState = selector { get throws -> String in
+        static let stringAtom = atom { "rawValue" }
+        static let upstreamSyncState = selector { _ throws -> String in "sync value" }
+        static let downstreamSyncState = selector { get throws -> String in
             let string = get(TestModule.upstreamSyncState)
             return string.uppercased()
         }
-        TestModule.upstreamAsyncState = makeAsyncSelector(value: "async value")
-        TestModule.downstreamAsyncState = selector { get throws -> String in
+        
+        static let upstreamErrorState = makeCombineAtom(error: MyError.param, type: String.self)
+        
+        static let upstreamAsyncState = makeAsyncSelector(value: "async value")
+        static let downstreamAsyncState = selector { get throws -> String in
             let string = get(TestModule.upstreamAsyncState) ?? ""
             return string.uppercased()
         }
     }
     
-    func testShouldGetValueFromUpstreamSyncSelector() {
+    @MainActor override func setUp() {
+        RecoilTest.shared.reset()
+    }
+}
+
+extension RecoilReactiveTests {
+    func test_should_get_value_from_upstream_sync_selector() {
         let tester = HookTester {
             useRecoilValue(TestModule.downstreamSyncState)
         }
@@ -41,8 +38,8 @@ final class RecoilReactiveTests: XCTestCase {
         XCTAssertEqual(tester.value, "sync value".uppercased())
     }
     
-    func testShouldGetValueFromUpstreamAsyncSelector() {
-        let expectation = XCTestExpectation(description: "Async value reovled")
+    func test_should_get_value_from_upstream_async_selector() {
+        let expectation = XCTestExpectation(description: "Async value resolved")
         
         let tester = HookTester { () -> LoadableContent<String> in
             let loadable = useRecoilValueLoadable(TestModule.downstreamAsyncState)
@@ -54,12 +51,12 @@ final class RecoilReactiveTests: XCTestCase {
             return loadable
         }
         
-        XCTAssertNil(tester.value.data)
+        XCTAssertTrue(tester.value.data == "")
         
         wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
     }
     
-    func testShouldReturnLoadingWhenUpstream() {
+    func test_should_return_loading_when_upstream_is_loading() {
         let expectation = XCTestExpectation(description: "should return correct loading status")
         
         let tester = HookTester { () -> LoadableContent<String> in
@@ -76,8 +73,8 @@ final class RecoilReactiveTests: XCTestCase {
         wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
     }
     
-    func testShouldReturnErrorWhenOnOfUpstreamIsError() {
-        let expectation = XCTestExpectation(description: "should return correct loading status")
+    func test_should_return_error_when_one_of_upstream_is_error() {
+        let expectation = XCTestExpectation(description: "should return correct error status")
         
         let selectorWithError = Selector { get throws -> String in
             let string = get(TestModule.upstreamErrorState) ?? ""

@@ -6,8 +6,6 @@ import RecoilSwiftXCTests
 final class AtomAccessTests: XCTestCase {
     struct TestModule  {
         static var stringAtom: Atom<String>!
-//        static var remoteDataSource: AsyncAtom<[String]>!
-//        static var remoteDataSourceError: AsyncAtom<[String]>!
     }
     
     @RecoilTestScope var scope
@@ -16,8 +14,6 @@ final class AtomAccessTests: XCTestCase {
         _scope.reset()
         
         TestModule.stringAtom = atom { "rawValue" }
-//        TestModule.remoteDataSource = makeAsyncAtom(value: ["Book1", "Book2"])
-//        TestModule.remoteDataSourceError = makeAsyncAtom(error: MyError.param, type: [String].self)
     }
     
     func test_should_atom_value_when_useRecoilValue_given_stringAtom() async {

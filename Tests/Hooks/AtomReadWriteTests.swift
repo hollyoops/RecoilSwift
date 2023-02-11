@@ -4,37 +4,32 @@ import XCTest
 @testable import RecoilSwift
 
 final class AtomReadWriteTests: XCTestCase {
-  struct TestModule  {
-    static var stringAtom: Atom<String>!
-    static var remoteDataSource: AsyncAtom<[String]>!
-    static var remoteDataSourceError: AsyncAtom<[String]>!
-  }
-  
+    struct TestModule  {
+        static var stringAtom = atom { "rawValue" }
+    }
+    
     @MainActor
     override func setUp() {
         RecoilTest.shared.reset()
-        TestModule.stringAtom = atom { "rawValue" }
-        TestModule.remoteDataSource = makeAsyncAtom(value: ["Book1", "Book2"])
-        TestModule.remoteDataSourceError = makeAsyncAtom(error: MyError.param, type: [String].self)
-    }
-  
-  func testReadOnlyAtom() {
-    let tester = HookTester {
-      useRecoilValue(TestModule.stringAtom)
     }
     
-    XCTAssertEqual(tester.value, "rawValue")
-  }
-  
-  func testReadWriteAtom() {
-    let tester = HookTester {
-      useRecoilState(TestModule.stringAtom)
+    func test_should_return_rawValue_when_read_only_atom_given_stringAtom() {
+        let tester = HookTester {
+            useRecoilValue(TestModule.stringAtom)
+        }
+        
+        XCTAssertEqual(tester.value, "rawValue")
     }
     
-    XCTAssertEqual(tester.value.wrappedValue, "rawValue")
-    
-    tester.value.wrappedValue = "newValue"
-    
-    XCTAssertEqual(tester.value.wrappedValue, "newValue")
-  }
+    func test_should_return_newValue_when_read_write_atom_given_stringAtom_and_newValue() {
+        let tester = HookTester {
+            useRecoilState(TestModule.stringAtom)
+        }
+        
+        XCTAssertEqual(tester.value.wrappedValue, "rawValue")
+        
+        tester.value.wrappedValue = "newValue"
+        
+        XCTAssertEqual(tester.value.wrappedValue, "newValue")
+    }
 }

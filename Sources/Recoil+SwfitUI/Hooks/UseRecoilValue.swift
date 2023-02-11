@@ -9,8 +9,20 @@ import Hooks
 /// - Returns: return a readable inner value that wrapped in recoil state.
 /// if the state is async state, it return will `'value?'`, otherwise it return `'value'`
 @MainActor
-public func useRecoilValue<P: Equatable, Return: RecoilSyncNode>(_ value: ParametricRecoilValue<P, Return>) -> Return.T {
-    let hook = RecoilValueHook(initialValue: value.recoilValue,
+public func useRecoilValue<P: Equatable, Return: RecoilSyncNode>(
+    _ value: ParametricRecoilValue<P, Return>
+) -> Return.T {
+    let hook = RecoilValueHook(node: value.recoilValue,
+                                updateStrategy: .preserved(by: value.param))
+    
+    return useHook(hook)
+}
+
+@MainActor
+public func useRecoilValue<P: Equatable, Return: RecoilAsyncNode>(
+    _ value: ParametricRecoilValue<P, Return>
+) -> Return.T? {
+    let hook = RecoilAsyncValueHook(node: value.recoilValue,
                                 updateStrategy: .preserved(by: value.param))
     
     return useHook(hook)
@@ -23,7 +35,12 @@ public func useRecoilValue<P: Equatable, Return: RecoilSyncNode>(_ value: Parame
 /// if the state is async state, it return will `'value?'`, otherwise it return `'value'`
 @MainActor
 public func useRecoilValue<Value: RecoilSyncNode>(_ initialState: Value) -> Value.T {
-    useHook(RecoilValueHook(initialValue: initialState))
+    useHook(RecoilValueHook(node: initialState))
+}
+
+@MainActor
+public func useRecoilValue<Value: RecoilAsyncNode>(_ initialState: Value) -> Value.T? {
+    useHook(RecoilAsyncValueHook(node: initialState))
 }
 
 /// A hook will subscribe the component to re-render if there are changing in the Recoil state.
@@ -32,8 +49,10 @@ public func useRecoilValue<Value: RecoilSyncNode>(_ initialState: Value) -> Valu
 /// - Returns: return a ``Binding`` value that wrapped in recoil state.
 /// if the state is async state, it return will `'Binding<value?>'`, otherwise it return `'Binding<value>'`
 @MainActor
-public func useRecoilState<P: Equatable, Return: RecoilMutableSyncNode>(_ value: ParametricRecoilValue<P, Return>) -> Binding<Return.T> {
-    let hook = RecoilStateHook(initialValue: value.recoilValue,
+public func useRecoilState<P: Equatable, Return: RecoilMutableSyncNode>(
+    _ value: ParametricRecoilValue<P, Return>
+) -> Binding<Return.T> {
+    let hook = RecoilStateHook(node: value.recoilValue,
                                updateStrategy: .preserved(by: value.param))
     
     return useHook(hook)
@@ -46,17 +65,17 @@ public func useRecoilState<P: Equatable, Return: RecoilMutableSyncNode>(_ value:
 /// if the state is async state, it return will `'Binding<value?>'`, otherwise it return `'Binding<value>'`
 @MainActor
 public func useRecoilState<Value: RecoilMutableSyncNode> (_ initialState: Value) -> Binding<Value.T> {
-  let hook = RecoilStateHook(initialValue: initialState,
+  let hook = RecoilStateHook(node: initialState,
                              updateStrategy: .preserved(by: initialState.key))
   return useHook(hook)
 }
 
-protocol RecoilHook: Hook where State == Ref<T> {
+protocol RecoilHook: Hook {
     associatedtype T
     var initialValue: T { get }
 }
 
-extension RecoilHook {
+extension RecoilHook where State == Ref<T> {
     func makeState() -> Ref<T> {
         Ref(initialState: initialValue)
     }
@@ -90,9 +109,14 @@ extension RecoilHook {
     }
 }
 
-private struct RecoilValueHook<T: RecoilSyncNode>: RecoilHook {
-    var initialValue: T
-    var updateStrategy: HookUpdateStrategy?
+private struct RecoilValueHook<Node: RecoilSyncNode>: RecoilHook {
+    let initialValue: Node
+    let updateStrategy: HookUpdateStrategy?
+    
+    init(node: Node, updateStrategy: HookUpdateStrategy? = nil) {
+        self.initialValue = node
+        self.updateStrategy = updateStrategy
+    }
 
     func value(coordinator: Coordinator) -> T.T {
         let ctx = getStoredContext(coordinator: coordinator)
@@ -100,11 +124,31 @@ private struct RecoilValueHook<T: RecoilSyncNode>: RecoilHook {
     }
 }
 
-private struct RecoilStateHook<T: RecoilMutableSyncNode>: RecoilHook {
-    var initialValue: T
-    var updateStrategy: HookUpdateStrategy?
+private struct RecoilAsyncValueHook<Node: RecoilAsyncNode>: RecoilHook {
+    let initialValue: Node
+    let updateStrategy: HookUpdateStrategy?
     
-    func value(coordinator: Coordinator) -> Binding<T.T> {
+    init(node: Node, updateStrategy: HookUpdateStrategy? = nil) {
+        self.initialValue = node
+        self.updateStrategy = updateStrategy
+    }
+
+    func value(coordinator: Coordinator) -> Node.T? {
+        let ctx = getStoredContext(coordinator: coordinator)
+        return ctx.useRecoilValue(initialValue)
+    }
+}
+
+private struct RecoilStateHook<Node: RecoilMutableSyncNode>: RecoilHook {
+    let initialValue: Node
+    let updateStrategy: HookUpdateStrategy?
+    
+    init(node: Node, updateStrategy: HookUpdateStrategy? = nil) {
+        self.initialValue = node
+        self.updateStrategy = updateStrategy
+    }
+    
+    func value(coordinator: Coordinator) -> Binding<Node.T> {
         let ctx = getStoredContext(coordinator: coordinator)
         let bindableValue = ctx.useRecoilState(initialValue)
         return Binding(
