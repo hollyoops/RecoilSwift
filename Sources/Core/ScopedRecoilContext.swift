@@ -26,7 +26,13 @@ public class ScopedRecoilContext {
     
     public func useRecoilValue<Value: RecoilSyncNode>(_ valueNode: Value) -> Value.T {
         subscribeChange(for: valueNode)
-        return nodeAccessor.get(valueNode)
+        do {
+            return try nodeAccessor.get(valueNode)
+        } catch {
+            // TODO:
+            print(error)
+            fatalError(error.localizedDescription)
+        }
     }
     
     public func useRecoilValue<Value: RecoilAsyncNode>(_ valueNode: Value) -> Value.T? {
@@ -37,7 +43,7 @@ public class ScopedRecoilContext {
         subscribeChange(for: stateNode)
         return BindableValue(
               get: {
-                  self.nodeAccessor.get(stateNode)
+                  try! self.nodeAccessor.get(stateNode) // TODO:
               },
               set: { newState in
                   self.nodeAccessor.set(stateNode, newState)
@@ -49,7 +55,7 @@ public class ScopedRecoilContext {
         subscribeChange(for: stateNode)
         return BindableValue(
               get: {
-                  self.nodeAccessor.get(stateNode)
+                  self.nodeAccessor.safeGet(stateNode)
               },
               set: { newState in
                   guard let newState else { return }
@@ -65,6 +71,16 @@ public class ScopedRecoilContext {
             store: subscriptions.store
         )
         return fn(context)
+    }
+    
+    public func useRecoilCallback<T>(_ fn: @escaping AsyncCallback<T>) async throws -> T {
+        let context = RecoilCallbackContext(
+            get: nodeAccessor.getter(),
+            set: nodeAccessor.setter(),
+            store: subscriptions.store
+        )
+        
+        return try await fn(context)
     }
     
     public func useRecoilValueLoadable<Value: RecoilNode>(_ valueNode: Value) -> LoadableContent<Value.T> {

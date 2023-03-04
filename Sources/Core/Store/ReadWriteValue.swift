@@ -13,16 +13,21 @@ public struct Getter {
             nodeAccessor.store.makeConnect(key: host, upstream: node.key)
         }
         
-        return nodeAccessor.get(node)
+        do {
+            return try nodeAccessor.get(node)
+        } catch {
+            print(error)
+            fatalError(error.localizedDescription)
+        }
     }
     
-    public func callAsFunction<Node: RecoilAsyncNode>(_ node: Node) -> Node.T? {
+    public func callAsFunction<Node: RecoilAsyncNode>(_ node: Node) async throws -> Node.T {
         if let host = upstreamNodeKey {
             _ = nodeAccessor.store.safeGetLoadable(for: node)
             nodeAccessor.store.makeConnect(key: host, upstream: node.key)
         }
         
-        return nodeAccessor.get(node)
+        return try await nodeAccessor.get(node)
     }
 }
 
@@ -53,9 +58,10 @@ internal struct NodeAccessor {
         self.store = store
     }
 
-    internal func get<Node: RecoilSyncNode>(_ node: Node) -> Node.T {
+    internal func get<Node: RecoilSyncNode>(_ node: Node) throws -> Node.T {
         guard let loadable = store.safeGetLoadable(for: node) as? SyncLoadBox<Node.T> else {
-            fatalError(RecoilError.unknown.localizedDescription)
+            // TODO: define a property error
+            throw RecoilError.unknown
         }
         
         if let data = loadable.data {
@@ -63,7 +69,7 @@ internal struct NodeAccessor {
         }
         
         if let error = loadable.error {
-            fatalError(error.localizedDescription)
+            throw error
         }
         
         do {
@@ -73,7 +79,7 @@ internal struct NodeAccessor {
         }
     }
     
-    internal func get<Node: RecoilAsyncNode>(_ node: Node) -> Node.T? {
+    internal func safeGet<Node: RecoilAsyncNode>(_ node: Node) -> Node.T? {
         let loadable = store.safeGetLoadable(for: node)
         
         if loadable.isInvalid {
@@ -81,6 +87,27 @@ internal struct NodeAccessor {
         }
         
         return loadable.anyData as? Node.T
+    }
+    
+    internal func get<Node: RecoilAsyncNode>(_ node: Node) async throws -> Node.T {
+        guard let loadable = store.safeGetLoadable(for: node) as? AsyncLoadBox<Node.T> else {
+            throw RecoilError.unknown
+        }
+        
+        if let value = loadable.data {
+            return value
+        }
+        
+        if let error = loadable.error {
+            throw error
+        }
+        
+        if case let .loading(task) = loadable.status {
+            return try await task.value
+        }
+        
+        // The status invalid then should compute
+        return try await loadable.compute(getter(upstreamKey: node.key)).value
     }
     
     internal func set<T: RecoilNode & Writeable>(_ node: T, _ newValue: T.T) -> Void {

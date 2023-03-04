@@ -22,11 +22,11 @@ let package = Package(
     ],
     
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        .package(
-            url: "https://github.com/hollyoops/SwiftUI-Hooks",
-            from: "0.0.3"
-        )
+      // Dependencies declare other packages that this package depends on.
+      .package(
+        url: "https://github.com/hollyoops/SwiftUI-Hooks",
+        from: "0.0.4"
+      )
     ],
     
     targets: [

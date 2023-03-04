@@ -60,9 +60,12 @@ struct AddBookView: HookView {
       .frame(height: 280)
       
       Button("Add to local") {
-        if (addBook(form.toBook())) {
-          navigateTo(HomeTab.list)
-        }
+          Task {
+              if (try await addBook(form.toBook())) {
+                navigateTo(HomeTab.list)
+              }
+          }
+     
       }
       .frame(width: 200, height: 60)
       .foregroundColor(Color.white)

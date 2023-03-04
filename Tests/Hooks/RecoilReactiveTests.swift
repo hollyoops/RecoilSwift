@@ -15,11 +15,10 @@ final class RecoilReactiveTests: XCTestCase {
             return string.uppercased()
         }
         
-        static let upstreamErrorState = makeCombineAtom(error: MyError.param, type: String.self)
-        
+        static let upstreamErrorState = makeCombineSelector(error: MyError.param, type: String.self)
         static let upstreamAsyncState = makeAsyncSelector(value: "async value")
-        static let downstreamAsyncState = selector { get throws -> String in
-            let string = get(TestModule.upstreamAsyncState) ?? ""
+        static let downstreamAsyncState = selector { get async throws -> String in
+            let string = try await get(TestModule.upstreamAsyncState)
             return string.uppercased()
         }
     }
@@ -30,7 +29,7 @@ final class RecoilReactiveTests: XCTestCase {
 }
 
 extension RecoilReactiveTests {
-    func test_should_get_value_from_upstream_sync_selector() {
+    func test_should_getValueFromUpstreamSyncSelector_when_useRecoilValue_given_downstreamSyncState() {
         let tester = HookTester {
             useRecoilValue(TestModule.downstreamSyncState)
         }
@@ -38,8 +37,8 @@ extension RecoilReactiveTests {
         XCTAssertEqual(tester.value, "sync value".uppercased())
     }
     
-    func test_should_get_value_from_upstream_async_selector() {
-        let expectation = XCTestExpectation(description: "Async value resolved")
+    func test_should_getValueFromUpstreamAsyncSelector_when_useRecoilValueLoadable_given_downstreamAsyncState() {
+        let expectation = XCTestExpectation(description: "Async value reovled")
         
         let tester = HookTester { () -> LoadableContent<String> in
             let loadable = useRecoilValueLoadable(TestModule.downstreamAsyncState)
@@ -51,12 +50,12 @@ extension RecoilReactiveTests {
             return loadable
         }
         
-        XCTAssertTrue(tester.value.data == "")
+        XCTAssertNil(tester.value.data)
         
         wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
     }
     
-    func test_should_return_loading_when_upstream_is_loading() {
+    func test_should_returnLoading_when_useRecoilValueLoadable_given_downstreamAsyncState() {
         let expectation = XCTestExpectation(description: "should return correct loading status")
         
         let tester = HookTester { () -> LoadableContent<String> in
@@ -73,11 +72,11 @@ extension RecoilReactiveTests {
         wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
     }
     
-    func test_should_return_error_when_one_of_upstream_is_error() {
-        let expectation = XCTestExpectation(description: "should return correct error status")
+    func test_should_returnError_when_useRecoilValueLoadable_given_selectorWithError() {
+        let expectation = XCTestExpectation(description: "should return correct loading status")
         
-        let selectorWithError = Selector { get throws -> String in
-            let string = get(TestModule.upstreamErrorState) ?? ""
+        let selectorWithError = AsyncSelector { get in
+            let string = try await get(TestModule.upstreamErrorState)
             return string.uppercased()
         }
         

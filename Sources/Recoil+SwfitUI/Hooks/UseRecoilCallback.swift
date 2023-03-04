@@ -20,6 +20,12 @@ public func useRecoilCallback<Return>(_ fn: @escaping Callback<Return>) -> () ->
     return useHook(hook)
 }
 
+public typealias AsyncCallback<R> = (RecoilCallbackContext) async throws -> R
+public func useRecoilCallback<Return>(_ fn: @escaping AsyncCallback<Return>) -> () async throws -> Return {
+    let hook = RecoilCallbackHook(callback: curryFirst(fn))
+    return useHook(hook)
+}
+
 /// A hook provide an API for your callbacks to work with Recoil state. Diffrent with other hooks, the hook don't load state, until you manually call it. Asynchronously read Recoil state without subscribing a component to re-render if the atom or selector is updated.
 /// - Parameters:
 ///   - fn: A function that you want to access the Recoil state with one user-defined parameter
@@ -31,6 +37,13 @@ public func useRecoilCallback<P, R>(_ fn: @escaping Callback1<P, R>) -> (P) -> R
     return useHook(hook)
 }
 
+public typealias AsyncCallback1<P, R> = (RecoilCallbackContext, P) async throws -> R
+@MainActor
+public func useRecoilCallback<P, R>(_ fn: @escaping AsyncCallback1<P, R>) -> (P) async throws -> R {
+    let hook = RecoilCallbackHook(callback: curryFirst(fn))
+    return useHook(hook)
+}
+
 /// A hook provide an API for your callbacks to work with Recoil state. Diffrent with other hooks, the hook don't load state, until you manually call it. Asynchronously read Recoil state without subscribing a component to re-render if the atom or selector is updated.
 /// - Parameters:
 ///   - fn: A function that you want to access the Recoil state with two user-defined parameters
@@ -38,6 +51,13 @@ public func useRecoilCallback<P, R>(_ fn: @escaping Callback1<P, R>) -> (P) -> R
 public typealias Callback2<P1, P2, R> = (RecoilCallbackContext, P1, P2) -> R
 @MainActor
 public func useRecoilCallback<P1, P2, R>(_ fn: @escaping Callback2<P1, P2, R>) -> (P1, P2) -> R {
+    let hook = RecoilCallbackHook(callback: curryFirst(fn))
+    return useHook(hook)
+}
+
+public typealias AsyncCallback2<P1, P2, R> = (RecoilCallbackContext, P1, P2) async throws -> R
+@MainActor
+public func useRecoilCallback<P1, P2, R>(_ fn: @escaping AsyncCallback2<P1, P2, R>) -> (P1, P2) async throws -> R {
     let hook = RecoilCallbackHook(callback: curryFirst(fn))
     return useHook(hook)
 }

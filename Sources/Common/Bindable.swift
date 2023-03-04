@@ -25,6 +25,24 @@ public struct BindableValue<Value>: Bindable {
     }
 }
 
+public struct ThrowingBinding<Value> {
+    private let get: () throws -> Value
+    private let set: (Value) -> Void
+    
+    public init(get: @escaping () throws -> Value, set: @escaping (Value) -> Void) {
+        self.get = get
+        self.set = set
+    }
+    
+    public var value: Value {
+        get throws { try get() }
+    }
+    
+    public func setValue(_ newValue: Value) {
+        set(newValue)
+    }
+}
+
 #if canImport(SwiftUI)
 import SwiftUI
 

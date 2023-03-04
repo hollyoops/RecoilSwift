@@ -9,7 +9,7 @@ struct BookList {
 // MARK: - Selectors
 extension BookList {
   static let currentBooks = selector { get -> [Book] in
-    let books = get(AllBooks.allBookState) ?? []
+    let books = try await get(AllBooks.allBookState)
     if let category = get(selectedCategoryState) {
       return books.filter { $0.category == category }
     }

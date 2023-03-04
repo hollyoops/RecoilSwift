@@ -3,7 +3,7 @@ import RecoilSwift
 
 struct AllBooksView: HookView {
     var hookBody: some View {
-        let currentBooks = useRecoilValue(BookList.currentBooks)
+        let currentBooks = useRecoilValueLoadable(BookList.currentBooks).data ?? []
         let isTabbarVisible = useRecoilState(Home.tabBarVisibleState)
         
         NavigationView {
