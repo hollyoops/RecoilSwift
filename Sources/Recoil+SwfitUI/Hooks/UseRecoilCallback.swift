@@ -20,6 +20,7 @@ public func useRecoilCallback<Return>(_ fn: @escaping Callback<Return>) -> () ->
 }
 
 public typealias AsyncCallback<R> = (RecoilCallbackContext) async throws -> R
+@MainActor
 public func useRecoilCallback<Return>(_ fn: @escaping AsyncCallback<Return>) -> () async throws -> Return {
     let hook = RecoilCallbackHook(callback: curryFirst(fn))
     return useHook(hook)
@@ -72,6 +73,7 @@ private struct RecoilCallbackHook<T>: RecoilHook {
         self.updateStrategy = updateStrategy
     }
 
+    @MainActor
     func value(coordinator: Coordinator) -> T {
         let ctx = getStoredContext(coordinator: coordinator)
         return ctx.useRecoilCallback(initialValue)

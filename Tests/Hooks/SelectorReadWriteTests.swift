@@ -6,8 +6,8 @@ import XCTest
 final class SelectorReadWriteTests: XCTestCase {
     struct TestModule  {
         static var namesState = atom { ["", "Ella", "Chris", "", "Paul"] }
-        static let filteredNamesState = selector { accessor  -> [String] in
-            accessor .getUnsafe(namesState).filter { $0 != "" }
+        static let filteredNamesState = selector { accessor -> [String] in
+            accessor.getUnsafe(namesState).filter { $0 != "" }
         }
         
         static let tempFahrenheitState: Atom<Int> = atom(32)

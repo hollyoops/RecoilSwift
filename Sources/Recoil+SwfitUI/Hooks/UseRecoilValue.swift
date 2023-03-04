@@ -76,10 +76,12 @@ protocol RecoilHook: Hook {
 }
 
 extension RecoilHook where State == Ref<T> {
+    @MainActor
     func makeState() -> Ref<T> {
         Ref(initialState: initialValue)
     }
     
+    @MainActor
     func makeScopeContext(coordinator: Coordinator) -> ScopedRecoilContext {
         ScopedRecoilContext(store: coordinator.environment.store,
                             subscriptions: coordinator.state.storeSubs,
@@ -87,6 +89,7 @@ extension RecoilHook where State == Ref<T> {
                             refresher: AnyViewRefreher(viewUpdator: coordinator.updateView))
     }
     
+    @MainActor
     func getStoredContext(coordinator: Coordinator) -> ScopedRecoilContext {
         let refState = coordinator.state
         let ctx = refState.ctx ?? makeScopeContext(coordinator: coordinator)
@@ -98,12 +101,14 @@ extension RecoilHook where State == Ref<T> {
         return ctx
     }
     
+    @MainActor
     func updateState(coordinator: Coordinator) {
         let refState = coordinator.state
         refState.update(newValue: initialValue,
                         context: makeScopeContext(coordinator: coordinator))
     }
 
+    @MainActor
     func dispose(state: Ref<T>) {
         state.dispose()
     }
@@ -118,6 +123,7 @@ private struct RecoilValueHook<Node: RecoilSyncNode>: RecoilHook {
         self.updateStrategy = updateStrategy
     }
 
+    @MainActor
     func value(coordinator: Coordinator) -> T.T {
         let ctx = getStoredContext(coordinator: coordinator)
         return ctx.useRecoilValue(initialValue)
@@ -132,7 +138,8 @@ private struct RecoilAsyncValueHook<Node: RecoilAsyncNode>: RecoilHook {
         self.initialValue = node
         self.updateStrategy = updateStrategy
     }
-
+    
+    @MainActor
     func value(coordinator: Coordinator) -> Node.T? {
         let ctx = getStoredContext(coordinator: coordinator)
         return ctx.useRecoilValue(initialValue)
@@ -148,6 +155,7 @@ private struct RecoilStateHook<Node: RecoilMutableSyncNode>: RecoilHook {
         self.updateStrategy = updateStrategy
     }
     
+    @MainActor
     func value(coordinator: Coordinator) -> Binding<Node.T> {
         let ctx = getStoredContext(coordinator: coordinator)
         let bindableValue = ctx.useRecoilState(initialValue)

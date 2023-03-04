@@ -57,7 +57,7 @@ final class CallbackTests: XCTestCase {
         }
     }
     
-    var accessor : StateGetter!
+    var accessor: StateGetter!
     @MainActor override func setUp() {
         accessor  = RecoilTest.shared.nodeAccessor.getter()
         RecoilTest.shared.reset()
@@ -75,7 +75,7 @@ extension CallbackTests {
         let value = tester.value(10)
         
         XCTAssertEqual(value, 12)
-        XCTAssertEqual(accessor .getUnsafe(TestModule.numberState), 12)
+        XCTAssertEqual(accessor.getUnsafe(TestModule.numberState), 12)
     }
     
     func test_should_return60_when_addThenMultiple_given_number10_and_multiple5() {
@@ -86,7 +86,7 @@ extension CallbackTests {
         let value = tester.value(10, 5)
         
         XCTAssertEqual(value, 60)
-        XCTAssertEqual(accessor .getUnsafe(TestModule.numberState), 60)
+        XCTAssertEqual(accessor.getUnsafe(TestModule.numberState), 60)
     }
     
     func test_should_return16_when_square_given_twice_invocation() {
@@ -97,7 +97,7 @@ extension CallbackTests {
         tester.value()
         tester.value()
         
-        XCTAssertEqual(accessor .getUnsafe(TestModule.numberState), 16)
+        XCTAssertEqual(accessor.getUnsafe(TestModule.numberState), 16)
     }
 }
 
@@ -109,10 +109,10 @@ extension CallbackTests {
         }
         
         tester.value()
-        XCTAssertEqual(accessor .getUnsafe(TestModule.numberState), 2)
+        XCTAssertEqual(accessor.getUnsafe(TestModule.numberState), 2)
         
         wait(timeInSeconds: 0.5)
         
-        XCTAssertEqual(accessor .getUnsafe(TestModule.numberState), 1002)
+        XCTAssertEqual(accessor.getUnsafe(TestModule.numberState), 1002)
     }
 }
