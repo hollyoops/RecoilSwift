@@ -12,8 +12,8 @@ final class RecoilFamilyTests: XCTestCase {
       3 * multiplier;
     }
     
-    static let myMultipliedState = selectorFamily { (multiplier: Int, get: Getter) -> Int in
-      get(myNumberState) * multiplier;
+    static let myMultipliedState = selectorFamily { (multiplier: Int, accessor : StateGetter) -> Int in
+        accessor .getUnsafe(myNumberState) * multiplier;
     }
     
     static let getBookByType = atomFamily { (type: String) -> AnyPublisher<[String], Error> in
@@ -23,7 +23,7 @@ final class RecoilFamilyTests: XCTestCase {
       )
     }
     
-    static let getBookByCategory = selectorFamily { (category: String, get: Getter) -> AnyPublisher<[String], Error> in
+    static let getBookByCategory = selectorFamily { (category: String, accessor : StateGetter) -> AnyPublisher<[String], Error> in
       MockAPI.makeCombine(
         result: .success(["\(category):Book1", "\(category):Book2"]),
         delay: TestConfig.mock_async_wait_seconds
@@ -36,7 +36,7 @@ final class RecoilFamilyTests: XCTestCase {
         delay: TestConfig.mock_async_wait_nanoseconds)
     }
     
-    static let fetchBookByCategory = selectorFamily { (category: String, get: Getter) async -> [String] in
+    static let fetchBookByCategory = selectorFamily { (category: String, accessor : StateGetter) async -> [String] in
       await MockAPI.makeAsync(
         value: ["\(category):Book1", "\(category):Book2"],
         delay: TestConfig.mock_async_wait_nanoseconds)

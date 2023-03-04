@@ -1,23 +1,12 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "ReactiveForm",
-        "repositoryURL": "https://github.com/hollyoops/ReactiveForm",
-        "state": {
-          "branch": null,
-          "revision": "d7d7f405d878e421e6c0fe14f89c803a31422c5e",
-          "version": "0.2.0"
-        }
-      },
-      {
-        "package": "swiftui-hooks",
-        "repositoryURL": "https://github.com/hollyoops/SwiftUI-Hooks",
-        "state": {
-          "branch": null,
-          "revision": "052c358884b31e46e3a1268de5d00fddb2beaf45",
-          "version": "0.0.4"
-        }
+  "pins" : [
+    {
+      "identity" : "reactiveform",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/hollyoops/ReactiveForm",
+      "state" : {
+        "revision" : "d7d7f405d878e421e6c0fe14f89c803a31422c5e",
+        "version" : "0.2.0"
       }
     },
     {

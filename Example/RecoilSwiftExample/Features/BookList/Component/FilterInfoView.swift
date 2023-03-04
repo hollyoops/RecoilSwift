@@ -2,6 +2,8 @@ import SwiftUI
 import RecoilSwift
 
 struct FilterInfoView: HookView {
+    
+    @MainActor
     var hookBody: some View {
         let selectedCategoryState = useRecoilState(BookList.selectedCategoryState)
         let value = selectedCategoryState.wrappedValue?.rawValue ??  "None"

@@ -18,6 +18,6 @@ struct Home {
 // MARK: - Actions
 extension Home {
   static func selectTab(_ context: RecoilCallbackContext, tab: Tab) {
-      context.set(selectedTabState, tab)
+      context.accessor.set(selectedTabState, tab)
   }
 }

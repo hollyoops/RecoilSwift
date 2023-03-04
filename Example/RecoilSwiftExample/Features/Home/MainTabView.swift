@@ -2,6 +2,8 @@ import SwiftUI
 import RecoilSwift
 
 public struct MainTabView: HookView {
+    
+    @MainActor
     public var hookBody: some View  {
         let selectedTab = useRecoilState(Home.selectedTabState)
         let isTabBarVisible = useRecoilValue(Home.tabBarVisibleState)

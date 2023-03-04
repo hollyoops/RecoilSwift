@@ -3,7 +3,7 @@ typealias StatusChangedCallback<T: Equatable> = (NodeStatus<T>) -> Void
 internal class SyncLoadBox<T: Equatable>: RecoilLoadable {
     private(set) var onStatusChange: StatusChangedCallback<T>?
     let key: NodeKey
-    let computeBody: (Getter) throws -> T
+    let computeBody: (StateGetter) throws -> T
     
     init<Node: RecoilSyncNode>(node: Node) where Node.T == T {
         self.key = node.key
@@ -14,7 +14,7 @@ internal class SyncLoadBox<T: Equatable>: RecoilLoadable {
         didSet { onStatusChange?(status) }
     }
 
-    func compute(_ ctx: Getter) throws -> T {
+    func compute(_ ctx: StateGetter) throws -> T {
         do {
             let value = try self.computeBody(ctx)
             self.status = .solved(value)
@@ -25,7 +25,7 @@ internal class SyncLoadBox<T: Equatable>: RecoilLoadable {
         }
     }
     
-    func refresh(_ ctx: Getter) {
+    func refresh(_ ctx: StateGetter) {
         _ = try? compute(ctx)
     }
     
@@ -40,7 +40,7 @@ internal class SyncLoadBox<T: Equatable>: RecoilLoadable {
 internal class AsyncLoadBox<T: Equatable>: RecoilLoadable {
     let key: NodeKey
     var onStatusChange: StatusChangedCallback<T>?
-    let computeBody: (Getter) async throws -> T
+    let computeBody: (StateGetter) async throws -> T
     
     init<Node: RecoilAsyncNode>(node: Node) where Node.T == T {
         self.key = node.key
@@ -51,7 +51,7 @@ internal class AsyncLoadBox<T: Equatable>: RecoilLoadable {
         didSet { onStatusChange?(status) }
     }
     
-    func compute(_ ctx: Getter) -> Task<T, Error> {
+    func compute(_ ctx: StateGetter) -> Task<T, Error> {
         if case let .loading(task) = self.status {
             return task
         }
@@ -82,7 +82,7 @@ internal class AsyncLoadBox<T: Equatable>: RecoilLoadable {
         status.task?.cancel()
     }
     
-    func refresh(_ ctx: Getter) {
+    func refresh(_ ctx: StateGetter) {
         _ = compute(ctx)
     }
 }

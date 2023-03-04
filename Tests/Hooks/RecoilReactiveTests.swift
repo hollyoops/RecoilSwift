@@ -10,15 +10,15 @@ final class RecoilReactiveTests: XCTestCase {
     struct TestModule  {
         static let stringAtom = atom { "rawValue" }
         static let upstreamSyncState = selector { _ throws -> String in "sync value" }
-        static let downstreamSyncState = selector { get throws -> String in
-            let string = get(TestModule.upstreamSyncState)
+        static let downstreamSyncState = selector { accessor  throws -> String in
+            let string = try accessor .get(TestModule.upstreamSyncState)
             return string.uppercased()
         }
         
         static let upstreamErrorState = makeCombineSelector(error: MyError.param, type: String.self)
         static let upstreamAsyncState = makeAsyncSelector(value: "async value")
-        static let downstreamAsyncState = selector { get async throws -> String in
-            let string = try await get(TestModule.upstreamAsyncState)
+        static let downstreamAsyncState = selector { accessor  async throws -> String in
+            let string = try await accessor .get(TestModule.upstreamAsyncState)
             return string.uppercased()
         }
     }
@@ -75,8 +75,8 @@ extension RecoilReactiveTests {
     func test_should_returnError_when_useRecoilValueLoadable_given_selectorWithError() {
         let expectation = XCTestExpectation(description: "should return correct loading status")
         
-        let selectorWithError = AsyncSelector { get in
-            let string = try await get(TestModule.upstreamErrorState)
+        let selectorWithError = AsyncSelector { accessor  in
+            let string = try await accessor .get(TestModule.upstreamErrorState)
             return string.uppercased()
         }
         

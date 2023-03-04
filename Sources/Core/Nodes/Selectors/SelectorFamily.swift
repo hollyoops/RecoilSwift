@@ -1,8 +1,8 @@
 import Combine
 
-public typealias SelectorFamilyGet<P, T> = (P, Getter) throws -> T
-public typealias SelectorFamilyCombineGet<P, T, E: Error> = (P, Getter) -> AnyPublisher<T, E>
-public typealias SelectorFamilyAsyncGet<P, T> = (P, Getter) async throws -> T
+public typealias SelectorFamilyGet<P, T> = (P, StateGetter) throws -> T
+public typealias SelectorFamilyCombineGet<P, T, E: Error> = (P, StateGetter) -> AnyPublisher<T, E>
+public typealias SelectorFamilyAsyncGet<P, T> = (P, StateGetter) async throws -> T
 
 /// A ``selectorFamily`` is a powerful pattern that is similar to a selector, but allows you to pass parameters
 /// - Parameters:

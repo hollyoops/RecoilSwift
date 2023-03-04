@@ -6,19 +6,19 @@ import XCTest
 final class SelectorReadWriteTests: XCTestCase {
     struct TestModule  {
         static var namesState = atom { ["", "Ella", "Chris", "", "Paul"] }
-        static let filteredNamesState = selector { get -> [String] in
-            get(namesState).filter { $0 != "" }
+        static let filteredNamesState = selector { accessor  -> [String] in
+            accessor .getUnsafe(namesState).filter { $0 != "" }
         }
         
         static let tempFahrenheitState: Atom<Int> = atom(32)
         static let tempCelsiusSelector: MutableSelector<Int> = selector(
-            get: { get in
-                let fahrenheit = get(tempFahrenheitState)
+            get: { context in
+                let fahrenheit = context.getUnsafe(tempFahrenheitState)
                 return (fahrenheit - 32) * 5 / 9
             },
             set: { context, newValue in
                 let newFahrenheit = (newValue * 9) / 5 + 32
-                context.set(tempFahrenheitState, newFahrenheit)
+                context.accessor.set(tempFahrenheitState, newFahrenheit)
             }
         )
         
@@ -29,10 +29,10 @@ final class SelectorReadWriteTests: XCTestCase {
         )
     }
     
-    var getter: Getter!
+    var reader: StateGetter!
     @MainActor override func setUp() {
         RecoilTest.shared.reset()
-        getter = RecoilTest.shared.nodeAccessor.getter()
+        reader = RecoilTest.shared.nodeAccessor.getter()
     }
 }
 
@@ -55,7 +55,7 @@ extension SelectorReadWriteTests {
         
         tester.value.wrappedValue = 30
         
-        XCTAssertEqual(getter(TestModule.tempFahrenheitState), 86)
+        XCTAssertEqual(reader.getUnsafe(TestModule.tempFahrenheitState), 86)
         XCTAssertEqual(tester.value.wrappedValue, 30)
     }
 }

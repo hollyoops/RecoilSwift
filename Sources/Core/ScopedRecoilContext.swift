@@ -66,8 +66,7 @@ public class ScopedRecoilContext {
     
     public func useRecoilCallback<T>(_ fn: @escaping Callback<T>) -> T {
         let context = RecoilCallbackContext(
-            get: nodeAccessor.getter(),
-            set: nodeAccessor.setter(),
+            accessor: nodeAccessor.accessor(),
             store: subscriptions.store
         )
         return fn(context)
@@ -75,8 +74,7 @@ public class ScopedRecoilContext {
     
     public func useRecoilCallback<T>(_ fn: @escaping AsyncCallback<T>) async throws -> T {
         let context = RecoilCallbackContext(
-            get: nodeAccessor.getter(),
-            set: nodeAccessor.setter(),
+            accessor: nodeAccessor.accessor(),
             store: subscriptions.store
         )
         

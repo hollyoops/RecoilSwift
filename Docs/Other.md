@@ -8,9 +8,9 @@ let allBooksState = atom {
 let selectedCategoryState = atom<Category?> { nil }
 
 // Create readonly Selector
-let currentBooksSelector = selector { get -> [Book] in
-    let books = get(allBooksState)
-    if let category = get(selectedCategoryState) {
+let currentBooksSelector = selector { accessor -> [Book] in
+    let books = accessor.get(allBooksState)
+    if let category = accessor.get(selectedCategoryState) {
         return books.filter { $0.category == category }
     }
     return books

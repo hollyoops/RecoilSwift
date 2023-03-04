@@ -2,9 +2,9 @@ import SwiftUI
 import RecoilSwift
 
 struct RemoteControllView: HookView {
-    let isTabbarVisible = useRecoilState(Home.tabBarVisibleState)
-    
+    @MainActor
     var hookBody: some View {
+        let isTabbarVisible = useRecoilState(Home.tabBarVisibleState)
         NavigationView {
             AddBookView()
                 .navigationBarTitle("Add local book")

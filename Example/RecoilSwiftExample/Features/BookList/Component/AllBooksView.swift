@@ -2,6 +2,7 @@ import SwiftUI
 import RecoilSwift
 
 struct AllBooksView: HookView {
+    @MainActor
     var hookBody: some View {
         let currentBooks = useRecoilValueLoadable(BookList.currentBooks).data ?? []
         let isTabbarVisible = useRecoilState(Home.tabBarVisibleState)

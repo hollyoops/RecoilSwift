@@ -1,53 +1,63 @@
-public struct Getter {
+import Combine
+public protocol StateGetter {
+    func get<Node: RecoilSyncNode>(_ node: Node) throws -> Node.T
+    
+    func get<Node: RecoilAsyncNode>(_ node: Node) async throws -> Node.T
+    
+    func getOrNil<Node: RecoilNode>(_ node: Node) -> Node.T?
+    
+    func getUnsafe<Node: RecoilSyncNode>(_ node: Node) -> Node.T
+}
+
+public protocol StateSetter {
+    func set<T: RecoilNode & Writeable>(_ node: T, _ newValue: T.T) -> Void
+}
+
+public typealias StateAccessor = StateGetter & StateSetter
+
+internal struct NodeAccessorWrapper: StateAccessor {
     private let nodeAccessor: NodeAccessor
     private let upstreamNodeKey: NodeKey?
-
+    
     fileprivate init(nodeAccessor: NodeAccessor, upstreamKey: NodeKey?) {
         self.upstreamNodeKey = upstreamKey
         self.nodeAccessor = nodeAccessor
     }
     
-    public func callAsFunction<Node: RecoilSyncNode>(_ node: Node) -> Node.T {
-        if let host = upstreamNodeKey {
-            _ = nodeAccessor.store.safeGetLoadable(for: node)
-            nodeAccessor.store.makeConnect(key: host, upstream: node.key)
-        }
-        
-        do {
-            return try nodeAccessor.get(node)
-        } catch {
-            print(error)
-            fatalError(error.localizedDescription)
-        }
+    func getUnsafe<Node: RecoilSyncNode>(_ node: Node) -> Node.T {
+        try! get(node)
     }
     
-    public func callAsFunction<Node: RecoilAsyncNode>(_ node: Node) async throws -> Node.T {
-        if let host = upstreamNodeKey {
-            _ = nodeAccessor.store.safeGetLoadable(for: node)
-            nodeAccessor.store.makeConnect(key: host, upstream: node.key)
-        }
-        
+    public func get<Node: RecoilSyncNode>(_ node: Node) throws -> Node.T {
+        buildRelation(node)
+        return try nodeAccessor.get(node)
+    }
+    
+    public func get<Node: RecoilAsyncNode>(_ node: Node) async throws -> Node.T {
+        buildRelation(node)
         return try await nodeAccessor.get(node)
     }
-}
-
-public struct Setter {
-    private let nodeAccessor: NodeAccessor
-    private let upstreamNodeKey: NodeKey?
     
-    fileprivate init(nodeAccessor: NodeAccessor, upstreamKey: NodeKey? = nil) {
-        self.upstreamNodeKey = upstreamKey
-        self.nodeAccessor = nodeAccessor
+    public func getOrNil<Node: RecoilNode>(_ node: Node) -> Node.T? {
+        buildRelation(node)
+        return nodeAccessor.safeGet(node)
     }
     
-    public func callAsFunction<T: RecoilNode & Writeable>(_ node: T, _ newValue: T.T) -> Void {
+    public func set<T: RecoilNode & Writeable>(_ node: T, _ newValue: T.T) -> Void {
         nodeAccessor.set(node, newValue)
+    }
+    
+    private func buildRelation<Node: RecoilNode>(_ node: Node) {
+        guard let host = upstreamNodeKey else { return }
+        
+        let store = nodeAccessor.store
+        _ = store.safeGetLoadable(for: node)
+        store.makeConnect(key: host, upstream: node.key)
     }
 }
 
 public struct MutableContext {
-    let get: Getter
-    let set: Setter
+    let accessor: StateAccessor
     let loadable: BaseLoadable
 }
 
@@ -79,7 +89,7 @@ internal struct NodeAccessor {
         }
     }
     
-    internal func safeGet<Node: RecoilAsyncNode>(_ node: Node) -> Node.T? {
+    internal func safeGet<Node: RecoilNode>(_ node: Node) -> Node.T? {
         let loadable = store.safeGetLoadable(for: node)
         
         if loadable.isInvalid {
@@ -112,20 +122,23 @@ internal struct NodeAccessor {
     
     internal func set<T: RecoilNode & Writeable>(_ node: T, _ newValue: T.T) -> Void {
         let ctx = MutableContext(
-            get: getter(upstreamKey: node.key),
-            set: setter(upstreamKey: node.key),
+            accessor: accessor(upstreamKey: node.key),
             loadable: store.safeGetLoadable(for: node)
         )
         
         node.update(context: ctx, newValue: newValue)
     }
     
-    internal func getter(upstreamKey: NodeKey? = nil) -> Getter {
-        Getter(nodeAccessor: self, upstreamKey: upstreamKey)
+    internal func getter(upstreamKey: NodeKey? = nil) -> StateGetter {
+        accessor(upstreamKey: upstreamKey)
     }
 
-    internal func setter(upstreamKey: NodeKey? = nil) -> Setter {
-        Setter(nodeAccessor: self, upstreamKey: upstreamKey)
+    internal func setter(upstreamKey: NodeKey? = nil) -> StateSetter {
+        accessor(upstreamKey: upstreamKey)
+    }
+    
+    internal func accessor(upstreamKey: NodeKey? = nil) -> StateAccessor {
+        NodeAccessorWrapper(nodeAccessor: self, upstreamKey: upstreamKey)
     }
     
     internal func loadNodeIfNeeded<T: RecoilNode>(_ node: T) {

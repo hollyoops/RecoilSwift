@@ -4,9 +4,8 @@ import Combine
 import Hooks
 
 public struct RecoilCallbackContext {
-    public let get: Getter
-    public let set: Setter
-    public var store: (AnyCancellable) -> Void
+    public let accessor: StateAccessor
+    public let store: (AnyCancellable) -> Void
 }
 
 /// A hook provide an API for your callbacks to work with Recoil state. Diffrent with other hooks, the hook don't load state, until you manually call it. Asynchronously read Recoil state without subscribing a component to re-render if the atom or selector is updated.

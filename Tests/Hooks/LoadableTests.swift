@@ -14,12 +14,12 @@ final class LoadableTests: XCTestCase {
     struct TestModule  {
         static var myNumberState = atom { 2 }
         
-        static let myMultipliedState = selector { get -> Int in
-            get(myNumberState) * 2;
+        static let myMultipliedState = selector { accessor  -> Int in
+            accessor .getUnsafe(myNumberState) * 2;
         }
         
-        static let myCustomMultipliedState = selectorFamily { (multiplier: Int, get: Getter) -> Int in
-            get(myNumberState) * multiplier;
+        static let myCustomMultipliedState = selectorFamily { (multiplier: Int, accessor : StateGetter) -> Int in
+            accessor .getUnsafe(myNumberState) * multiplier;
         }
         
         static let myMultipliedStateError = makeSelector(error: MyError.unknown, type: Int.self)

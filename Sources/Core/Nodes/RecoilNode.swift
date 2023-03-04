@@ -13,7 +13,7 @@ extension RecoilNode {
 }
 
 public protocol RecoilSyncNode: RecoilNode {
-    func compute(_ accessor: Getter) throws -> T
+    func compute(_ accessor: StateGetter) throws -> T
 }
 
 public extension RecoilSyncNode {
@@ -23,7 +23,7 @@ public extension RecoilSyncNode {
 }
 
 public protocol RecoilAsyncNode: RecoilNode {
-    func compute(_ accessor: Getter) async throws -> T
+    func compute(_ accessor: StateGetter) async throws -> T
 }
 
 public extension RecoilAsyncNode {

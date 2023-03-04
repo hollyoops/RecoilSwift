@@ -85,7 +85,7 @@ func makeCombineSelector<T>(
   type: T.Type,
   delayInSeconds: Double = TestConfig.mock_async_wait_seconds
 ) -> AsyncSelector<T> {
-  selector { get -> AnyPublisher<T, Error> in
+  selector { accessor  -> AnyPublisher<T, Error> in
     MockAPI.makeCombine(result: .failure(error), delay: delayInSeconds)
   }
 }

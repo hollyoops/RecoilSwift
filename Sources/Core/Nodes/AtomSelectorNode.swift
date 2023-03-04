@@ -3,7 +3,7 @@ public protocol SyncAtomNode: RecoilSyncNode {
 }
 
 extension SyncAtomNode {
-    public func compute(_ accessor: Getter) throws -> T {
+    public func compute(_ accessor: StateGetter) throws -> T {
         try compute()
     }
 }
@@ -13,7 +13,7 @@ public protocol AsyncAtomNode: RecoilAsyncNode {
 }
 
 extension AsyncAtomNode {
-    public func compute(_ accessor: Getter) async throws -> T {
+    public func compute(_ accessor: StateGetter) async throws -> T {
         try await compute()
     }
 }

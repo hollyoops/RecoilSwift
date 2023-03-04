@@ -4,6 +4,7 @@ import RecoilSwift
 struct FilterOptionsView: HookView {
     @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     
+    @MainActor
     var hookBody: some View {
         let selectedCategoryState = useRecoilState(BookList.selectedCategoryState)
         

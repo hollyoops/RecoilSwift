@@ -13,7 +13,7 @@ This is the recommended hook to use when a component intends to read state witho
 
 ```swift
 let namesState = atom { ["", "Ella", "Chris", "", "Paul"] }
-let filteredNamesState = selector { get -> [String] in
+let filteredNamesState = selector { accessor -> [String] in
    get(namesState).filter { $0 != ""}
 }
 
@@ -73,10 +73,10 @@ You can use `useRecoilCallback()` to lazily read state without subscribing a com
 ```swift
  var hookBody: some View {
         let callback = useRecoilCallback { context in
-            let someValue = context.get(someAtom)
+            let someValue = context.accessor.getUnsafe(someAtom)
             
             BookShop.getALLBooks()
-                .sink(receiveCompletion: { _ in }, receiveValue: { context.set(BookShop.allBookStore, $0) })
+                .sink(receiveCompletion: { _ in }, receiveValue: { context.accessor.set(BookShop.allBookStore, $0) })
                 .store(in: context)
         }
         

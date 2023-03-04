@@ -21,16 +21,16 @@ final class CallbackTests: XCTestCase {
         static var numberState: Atom<Int>!
         
         static func add(context: RecoilCallbackContext, number: Int) -> Int {
-            let num = context.get(numberState)
+            let num = context.accessor.getUnsafe(numberState)
             let final = number + num
-            context.set(numberState, final)
+            context.accessor.set(numberState, final)
             return final
         }
         
         static func addThenMultiple(context: RecoilCallbackContext, number: Int, multiple: Int) -> Int {
-            let num = context.get(numberState)
+            let num = context.accessor.getUnsafe(numberState)
             let final = (number + num) * multiple
-            context.set(numberState, final)
+            context.accessor.set(numberState, final)
             return final
         }
         
@@ -44,22 +44,22 @@ final class CallbackTests: XCTestCase {
                     }
                 }.eraseToAnyPublisher()
             }
-            let num = context.get(numberState)
+            let num = context.accessor.getUnsafe(numberState)
             fetchRemoteNumber()
                 .sink(receiveCompletion: { _ in },
-                      receiveValue: { context.set(numberState, $0 + num) })
+                      receiveValue: { context.accessor.set(numberState, $0 + num) })
                 .store(in: context)
         }
         
         static func square(context: RecoilCallbackContext) {
-            let num = context.get(numberState)
-            context.set(numberState, num * num)
+            let num = context.accessor.getUnsafe(numberState)
+            context.accessor.set(numberState, num * num)
         }
     }
     
-    var getter: Getter!
+    var accessor : StateGetter!
     @MainActor override func setUp() {
-        getter = RecoilTest.shared.nodeAccessor.getter()
+        accessor  = RecoilTest.shared.nodeAccessor.getter()
         RecoilTest.shared.reset()
         TestModule.numberState = atom { 2 }
     }
@@ -75,7 +75,7 @@ extension CallbackTests {
         let value = tester.value(10)
         
         XCTAssertEqual(value, 12)
-        XCTAssertEqual(getter(TestModule.numberState), 12)
+        XCTAssertEqual(accessor .getUnsafe(TestModule.numberState), 12)
     }
     
     func test_should_return60_when_addThenMultiple_given_number10_and_multiple5() {
@@ -86,7 +86,7 @@ extension CallbackTests {
         let value = tester.value(10, 5)
         
         XCTAssertEqual(value, 60)
-        XCTAssertEqual(getter(TestModule.numberState), 60)
+        XCTAssertEqual(accessor .getUnsafe(TestModule.numberState), 60)
     }
     
     func test_should_return16_when_square_given_twice_invocation() {
@@ -97,7 +97,7 @@ extension CallbackTests {
         tester.value()
         tester.value()
         
-        XCTAssertEqual(getter(TestModule.numberState), 16)
+        XCTAssertEqual(accessor .getUnsafe(TestModule.numberState), 16)
     }
 }
 
@@ -109,10 +109,10 @@ extension CallbackTests {
         }
         
         tester.value()
-        XCTAssertEqual(getter(TestModule.numberState), 2)
+        XCTAssertEqual(accessor .getUnsafe(TestModule.numberState), 2)
         
         wait(timeInSeconds: 0.5)
         
-        XCTAssertEqual(getter(TestModule.numberState), 1002)
+        XCTAssertEqual(accessor .getUnsafe(TestModule.numberState), 1002)
     }
 }

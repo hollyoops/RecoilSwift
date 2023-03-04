@@ -7,11 +7,11 @@ import Combine
 // MARK: - Sync Selector
 public typealias SetBody<T> = (MutableContext, T) -> Void
 
-public typealias CombineGet<T: Equatable, E: Error> = (Getter) throws -> AnyPublisher<T, E>
+public typealias CombineGet<T: Equatable, E: Error> = (StateGetter) throws -> AnyPublisher<T, E>
 
-public typealias SyncGet<T> = (Getter) throws -> T
+public typealias SyncGet<T> = (StateGetter) throws -> T
 
-public typealias AsyncGet<T: Equatable> = (Getter) async throws -> T
+public typealias AsyncGet<T: Equatable> = (StateGetter) async throws -> T
 
 
 /// A Selector represent a derived state in Recoil. If only a get function is provided, the selector is read-only and returns a ``Readonly Selector``
@@ -65,9 +65,9 @@ public func selector<T: Equatable>(get getBody: @escaping SyncGet<T>,
 /// **Selectors** are used to calculate derived data that is based on state. This lets us avoid redundant state because a minimal set of state is stored in atoms, while everything else is efficiently computed as a function of that minimal state.
 ///
 ///```swift
-/// let currentBooksSel = selector { get -> [Book] in
-///    let books = get(allBookStore)
-///      if let category = get(selectedCategoryState) {
+/// let currentBooksSel = selector { accessor -> [Book] in
+///    let books = accessor.get(allBookStore)
+///      if let category = accessor.get(selectedCategoryState) {
 ///          return books.filter { $0.category == category }
 ///      }
 ///    return books
@@ -78,7 +78,7 @@ public struct Selector<T: Equatable>: SyncSelectorNode {
     public typealias E = Never
     
     public let key: NodeKey
-    public let get: (Getter) throws -> T
+    public let get: (StateGetter) throws -> T
     
     init(key: NodeKey, body: @escaping SyncGet<T>) {
         self.key = key
@@ -90,7 +90,7 @@ public struct Selector<T: Equatable>: SyncSelectorNode {
         self.init(key: NodeKey(name: keyName), body: body)
     }
     
-    public func compute(_ accessor: Getter) throws -> T {
+    public func compute(_ accessor: StateGetter) throws -> T {
         try get(accessor)
     }
 }
@@ -101,12 +101,12 @@ public struct Selector<T: Equatable>: SyncSelectorNode {
 /// let tempFahrenheitState = atom(32)
 /// let tempCelsiusSelector = selector(
 ///      get: { get in
-///        let fahrenheit = get(tempFahrenheitState)
+///        let fahrenheit = accessor.get(tempFahrenheitState)
 ///        return (fahrenheit - 32) * 5 / 9
 ///      },
 ///      set: { context, newValue in
 ///        let newFahrenheit = (newValue * 9) / 5 + 32
-///        context.set(tempFahrenheitState, newFahrenheit)
+///        context.accessor.set(tempFahrenheitState, newFahrenheit)
 ///      }
 ///)
 ///```
@@ -115,7 +115,7 @@ public struct MutableSelector<T: Equatable>: SyncSelectorNode {
     public typealias E = Never
     
     public let key: NodeKey
-    public let get: (Getter) throws -> T
+    public let get: (StateGetter) throws -> T
     public let set: SetBody<T>
 
     public init(key: NodeKey, get: @escaping SyncGet<T>, set: @escaping SetBody<T>) {
@@ -132,7 +132,7 @@ public struct MutableSelector<T: Equatable>: SyncSelectorNode {
         self.init(key: NodeKey(name: keyName), get: get, set: set)
     }
     
-    public func compute(_ accessor: Getter) throws -> T {
+    public func compute(_ accessor: StateGetter) throws -> T {
         try get(accessor)
     }
 }
@@ -152,7 +152,7 @@ extension MutableSelector: Writeable {
 
 public struct AsyncSelector<T: Equatable>: AsyncSelectorNode {
     public let key: NodeKey
-    public let get: (Getter) async throws -> T
+    public let get: (StateGetter) async throws -> T
 
     public init<E: Error>(key: NodeKey, get: @escaping CombineGet<T, E>) {
         self.key = key
@@ -174,7 +174,7 @@ public struct AsyncSelector<T: Equatable>: AsyncSelectorNode {
         self.init(key: NodeKey(name: keyName), get: get)
     }
     
-    public func compute(_ accessor: Getter) async throws -> T {
+    public func compute(_ accessor: StateGetter) async throws -> T {
         try await get(accessor)
     }
 }
