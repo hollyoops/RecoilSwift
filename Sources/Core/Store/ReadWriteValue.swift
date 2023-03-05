@@ -95,7 +95,7 @@ internal struct NodeAccessor {
         }
         
         let dependencies = deps.map { $0 + [node.key] }
-        return try loadable.compute(getter(deps: dependencies))
+        return try loadable.getValue(getter(deps: dependencies))
     }
     
     internal func getOrNil<Node: RecoilNode>(_ node: Node, deps: [NodeKey]?) -> Node.T? {
@@ -128,7 +128,7 @@ internal struct NodeAccessor {
         
         // The status invalid then should compute
         let dependencies = deps.map { $0 + [node.key] }
-        return try await loadable.compute(getter(deps: dependencies)).value
+        return try await loadable.getValue(getter(deps: dependencies)).value
     }
     
     internal func set<T: RecoilNode & Writeable>(_ node: T, _ newValue: T.T) -> Void {
@@ -137,7 +137,7 @@ internal struct NodeAccessor {
             loadable: store.safeGetLoadable(for: node)
         )
         
-        node.update(context: ctx, newValue: newValue)
+        node.setValue(context: ctx, newValue: newValue)
     }
     
     internal func getter(deps: [NodeKey]?) -> StateGetter {

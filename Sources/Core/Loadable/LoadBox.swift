@@ -7,14 +7,14 @@ internal class SyncLoadBox<T: Equatable>: RecoilLoadable {
     
     init<Node: RecoilSyncNode>(node: Node) where Node.T == T {
         self.key = node.key
-        computeBody = { try node.compute($0) }
+        computeBody = { try node.getValue($0) }
     }
     
     var status: NodeStatus<T> = .invalid {
         didSet { onStatusChange?(status) }
     }
 
-    func compute(_ ctx: StateGetter) throws -> T {
+    func getValue(_ ctx: StateGetter) throws -> T {
         do {
             let value = try self.computeBody(ctx)
             self.status = .solved(value)
@@ -26,7 +26,7 @@ internal class SyncLoadBox<T: Equatable>: RecoilLoadable {
     }
     
     func refresh(_ ctx: StateGetter) {
-        _ = try? compute(ctx)
+        _ = try? getValue(ctx)
     }
     
     func observeStatusChange(_ change: @escaping (NodeStatus<T>) -> Void) -> Subscription {
@@ -44,14 +44,14 @@ internal class AsyncLoadBox<T: Equatable>: RecoilLoadable {
     
     init<Node: RecoilAsyncNode>(node: Node) where Node.T == T {
         self.key = node.key
-        self.computeBody = { try await node.compute($0) }
+        self.computeBody = { try await node.getValue($0) }
     }
     
     var status: NodeStatus<T> = .invalid {
         didSet { onStatusChange?(status) }
     }
     
-    func compute(_ ctx: StateGetter) -> Task<T, Error> {
+    func getValue(_ ctx: StateGetter) -> Task<T, Error> {
         if case let .loading(task) = self.status {
             return task
         }
@@ -83,6 +83,6 @@ internal class AsyncLoadBox<T: Equatable>: RecoilLoadable {
     }
     
     func refresh(_ ctx: StateGetter) {
-        _ = compute(ctx)
+        _ = getValue(ctx)
     }
 }

@@ -90,7 +90,7 @@ public struct Selector<T: Equatable>: SyncSelectorNode {
         self.init(key: NodeKey(name: keyName), body: body)
     }
     
-    public func compute(_ accessor: StateGetter) throws -> T {
+    public func getValue(_ accessor: StateGetter) throws -> T {
         try get(accessor)
     }
 }
@@ -132,13 +132,13 @@ public struct MutableSelector<T: Equatable>: SyncSelectorNode {
         self.init(key: NodeKey(name: keyName), get: get, set: set)
     }
     
-    public func compute(_ accessor: StateGetter) throws -> T {
+    public func getValue(_ accessor: StateGetter) throws -> T {
         try get(accessor)
     }
 }
 
 extension MutableSelector: Writeable {
-    public func update(context: MutableContext, newValue: T) {
+    public func setValue(context: MutableContext, newValue: T) {
         set(context, newValue)
     }
 }
@@ -174,7 +174,7 @@ public struct AsyncSelector<T: Equatable>: AsyncSelectorNode {
         self.init(key: NodeKey(name: keyName), get: get)
     }
     
-    public func compute(_ accessor: StateGetter) async throws -> T {
+    public func getValue(_ accessor: StateGetter) async throws -> T {
         try await get(accessor)
     }
 }
