@@ -17,11 +17,13 @@ public typealias StateAccessor = StateGetter & StateSetter
 
 internal struct NodeAccessorWrapper: StateAccessor {
     private let nodeAccessor: NodeAccessor
-    private let upstreamNodeKey: NodeKey?
+    private let needBuildDependencies: Bool
+    private let deps: [NodeKey]
     
-    fileprivate init(nodeAccessor: NodeAccessor, upstreamKey: NodeKey?) {
-        self.upstreamNodeKey = upstreamKey
+    fileprivate init(nodeAccessor: NodeAccessor, deps: [NodeKey], buildDependencies: Bool) {
         self.nodeAccessor = nodeAccessor
+        self.needBuildDependencies = buildDependencies
+        self.deps = deps
     }
     
     func getUnsafe<Node: RecoilSyncNode>(_ node: Node) -> Node.T {
@@ -29,30 +31,40 @@ internal struct NodeAccessorWrapper: StateAccessor {
     }
     
     public func get<Node: RecoilSyncNode>(_ node: Node) throws -> Node.T {
-        buildRelation(node)
-        return try nodeAccessor.get(node)
+        try buildRelation(node)
+        return try nodeAccessor.get(node, deps: deps)
     }
     
     public func get<Node: RecoilAsyncNode>(_ node: Node) async throws -> Node.T {
-        buildRelation(node)
-        return try await nodeAccessor.get(node)
+        try buildRelation(node)
+        return try await nodeAccessor.get(node, deps: deps)
     }
     
     public func getOrNil<Node: RecoilNode>(_ node: Node) -> Node.T? {
-        buildRelation(node)
-        return nodeAccessor.safeGet(node)
+        do {
+            try buildRelation(node)
+            return nodeAccessor.getOrNil(node, deps: deps)
+        } catch {
+            return nil
+        }
     }
     
     public func set<T: RecoilNode & Writeable>(_ node: T, _ newValue: T.T) -> Void {
         nodeAccessor.set(node, newValue)
     }
     
-    private func buildRelation<Node: RecoilNode>(_ node: Node) {
-        guard let host = upstreamNodeKey else { return }
+    private func buildRelation<Node: RecoilNode>(_ node: Node) throws {
+        guard needBuildDependencies, let nodeKey = deps.first else {
+            return
+        }
+        
+        guard !deps.contains(node.key) else {
+            throw RecoilError.circular
+        }
         
         let store = nodeAccessor.store
         _ = store.safeGetLoadable(for: node)
-        store.makeConnect(key: host, upstream: node.key)
+        store.addNodeRelation(downstream: nodeKey, upstream: node.key)
     }
 }
 
@@ -67,8 +79,8 @@ internal struct NodeAccessor {
     internal init(store: Store) {
         self.store = store
     }
-
-    internal func get<Node: RecoilSyncNode>(_ node: Node) throws -> Node.T {
+    
+    internal func get<Node: RecoilSyncNode>(_ node: Node, deps: [NodeKey]?) throws -> Node.T {
         guard let loadable = store.safeGetLoadable(for: node) as? SyncLoadBox<Node.T> else {
             // TODO: define a property error
             throw RecoilError.unknown
@@ -82,24 +94,22 @@ internal struct NodeAccessor {
             throw error
         }
         
-        do {
-            return try loadable.compute(getter(upstreamKey: node.key))
-        } catch {
-            fatalError(error.localizedDescription)
-        }
+        let dependencies = deps.map { $0 + [node.key] }
+        return try loadable.compute(getter(deps: dependencies))
     }
     
-    internal func safeGet<Node: RecoilNode>(_ node: Node) -> Node.T? {
+    internal func getOrNil<Node: RecoilNode>(_ node: Node, deps: [NodeKey]?) -> Node.T? {
         let loadable = store.safeGetLoadable(for: node)
         
         if loadable.isInvalid {
-            loadable.refresh(getter(upstreamKey: node.key))
+            let dependencies = deps.map { $0 + [node.key] }
+            loadable.refresh(getter(deps: dependencies))
         }
         
         return loadable.anyData as? Node.T
     }
     
-    internal func get<Node: RecoilAsyncNode>(_ node: Node) async throws -> Node.T {
+    internal func get<Node: RecoilAsyncNode>(_ node: Node, deps: [NodeKey]?) async throws -> Node.T {
         guard let loadable = store.safeGetLoadable(for: node) as? AsyncLoadBox<Node.T> else {
             throw RecoilError.unknown
         }
@@ -117,43 +127,47 @@ internal struct NodeAccessor {
         }
         
         // The status invalid then should compute
-        return try await loadable.compute(getter(upstreamKey: node.key)).value
+        let dependencies = deps.map { $0 + [node.key] }
+        return try await loadable.compute(getter(deps: dependencies)).value
     }
     
     internal func set<T: RecoilNode & Writeable>(_ node: T, _ newValue: T.T) -> Void {
         let ctx = MutableContext(
-            accessor: accessor(upstreamKey: node.key),
+            accessor: accessor(deps: nil),
             loadable: store.safeGetLoadable(for: node)
         )
         
         node.update(context: ctx, newValue: newValue)
     }
     
-    internal func getter(upstreamKey: NodeKey? = nil) -> StateGetter {
-        accessor(upstreamKey: upstreamKey)
+    internal func getter(deps: [NodeKey]?) -> StateGetter {
+        accessor(deps: deps)
     }
 
-    internal func setter(upstreamKey: NodeKey? = nil) -> StateSetter {
-        accessor(upstreamKey: upstreamKey)
+    internal func setter(deps: [NodeKey]?) -> StateSetter {
+        accessor(deps: deps)
     }
     
-    internal func accessor(upstreamKey: NodeKey? = nil) -> StateAccessor {
-        NodeAccessorWrapper(nodeAccessor: self, upstreamKey: upstreamKey)
+    internal func accessor(deps: [NodeKey]?) -> StateAccessor {
+        let shouldbuildDependencies = deps.isSome
+        return NodeAccessorWrapper(nodeAccessor: self,
+                            deps: deps ?? [],
+                            buildDependencies: shouldbuildDependencies)
     }
-    
+                                
     internal func loadNodeIfNeeded<T: RecoilNode>(_ node: T) {
         let loadable = store.safeGetLoadable(for: node)
         if loadable.isInvalid {
-            loadable.refresh(getter(upstreamKey: node.key))
+            loadable.refresh(getter(deps: [node.key]))
         }
     }
     
     internal func refresh<T: RecoilNode>(_ node: T) {
         let loadable = store.safeGetLoadable(for: node)
-        loadable.refresh(getter(upstreamKey: node.key))
+        loadable.refresh(getter(deps: [node.key]))
     }
     
     internal func refresh(for key: NodeKey) {
-        store.getLoadable(for: key)?.refresh(getter(upstreamKey: key))
+        store.getLoadable(for: key)?.refresh(getter(deps: [key]))
     }
 }

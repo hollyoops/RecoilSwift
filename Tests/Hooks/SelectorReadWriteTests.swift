@@ -32,7 +32,7 @@ final class SelectorReadWriteTests: XCTestCase {
     var reader: StateGetter!
     @MainActor override func setUp() {
         RecoilTest.shared.reset()
-        reader = RecoilTest.shared.nodeAccessor.getter()
+        reader = RecoilTest.shared.nodeAccessor.getter(deps: [])
     }
 }
 

@@ -21,7 +21,7 @@ public struct LoadableContent<DataType: Equatable> {
     }
     
     public var data: DataType? {
-        store.getData(for: key, dataType: DataType.self)
+        store.getLoadable(for: key)?.anyData as? DataType
     }
     
     public var isLoading: Bool {

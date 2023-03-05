@@ -44,4 +44,5 @@ public typealias RecoilMutableAsyncNode = RecoilAsyncNode & Writeable
 
 enum RecoilError: Error {
     case unknown
+    case circular
 }

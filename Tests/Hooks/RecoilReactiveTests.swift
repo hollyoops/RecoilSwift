@@ -7,17 +7,17 @@ import Combine
 final class RecoilReactiveTests: XCTestCase {
     typealias Selector = RecoilSwift.Selector
     
-    struct TestModule  {
+    struct TestModule {
         static let stringAtom = atom { "rawValue" }
-        static let upstreamSyncState = selector { _  -> String in "sync value" }
-        static let downstreamSyncState = selector { accessor -> String in
+        static let upstreamSyncState = selector { _ in "sync value" }
+        static let downstreamSyncState = selector { accessor in
             let string = try accessor.get(TestModule.upstreamSyncState)
             return string.uppercased()
         }
         
         static let upstreamErrorState = makeCombineSelector(error: MyError.param, type: String.self)
         static let upstreamAsyncState = makeAsyncSelector(value: "async value")
-        static let downstreamAsyncState = selector { accessor -> String in
+        static let downstreamAsyncState = selector { accessor in
             let string = try await accessor.get(TestModule.upstreamAsyncState)
             return string.uppercased()
         }

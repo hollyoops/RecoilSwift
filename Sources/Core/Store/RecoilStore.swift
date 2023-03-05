@@ -11,9 +11,7 @@ protocol Store: AnyObject {
     
     func getErrors(for key: NodeKey) -> [Error]
     
-    func getData<T>(for key: NodeKey, dataType: T.Type) -> T?
-    
-    func makeConnect(key: NodeKey, upstream upKey: NodeKey)
+    func addNodeRelation(downstream: NodeKey, upstream upKey: NodeKey)
 }
 
 internal final class RecoilStore: Store {
@@ -30,12 +28,6 @@ internal final class RecoilStore: Store {
     @MainActor
     func getLoadable(for key: NodeKey) -> BaseLoadable? {
         states[key]
-    }
-    
-    @MainActor
-    func getData<T>(for key: NodeKey, dataType: T.Type) -> T? {
-        let load = getLoadable(for: key)
-        return load?.anyData as? T
     }
     
     @MainActor
@@ -85,12 +77,12 @@ internal final class RecoilStore: Store {
     }
     
     @MainActor
-    func makeConnect(key: NodeKey, upstream upKey: NodeKey) {
-        guard states.has(key), states.has(upKey) else {
-            dePrint("Cannot make connect! \(key)")
+    func addNodeRelation(downstream: NodeKey, upstream upKey: NodeKey) {
+        guard states.has(downstream), states.has(upKey) else {
+            dePrint("Cannot make connect! \(downstream)")
 #if DEBUG
-            if !states.has(key) {
-                dePrint("Node not exist: \(key)")
+            if !states.has(downstream) {
+                dePrint("Node not exist: \(downstream)")
             }
             
             if !states.has(upKey) {
@@ -100,12 +92,12 @@ internal final class RecoilStore: Store {
             return
         }
         
-        if graph.isContainEdge(key: upKey, downstream: key) {
+        if graph.isContainEdge(key: upKey, downstream: downstream) {
             return
         }
         
-        if checker.canAddEdge(graph: graph, forKey: upKey, downstream: key) {
-            graph.addEdge(key: upKey, downstream: key)
+        if checker.canAddEdge(graph: graph, forKey: upKey, downstream: downstream) {
+            graph.addEdge(key: upKey, downstream: downstream)
         }
     }
     
