@@ -18,7 +18,6 @@ internal final class RecoilStore: Store {
     private var states: [NodeKey: BaseLoadable] = [:]
     private var subscriberMap: [NodeKey: Set<KeyedSubscriber>] = [:]
     private let graph = Graph()
-    private let checker = DFSCircularChecker()
     
     @MainActor
     func safeGetLoadable<T: RecoilNode>(for node: T) -> BaseLoadable {
@@ -77,28 +76,26 @@ internal final class RecoilStore: Store {
     }
     
     @MainActor
-    func addNodeRelation(downstream: NodeKey, upstream upKey: NodeKey) {
-        guard states.has(downstream), states.has(upKey) else {
-            dePrint("Cannot make connect! \(downstream)")
+    func addNodeRelation(downstream: NodeKey, upstream: NodeKey) {
+        guard states.has(downstream), states.has(upstream) else {
+            dePrint("[Warning] Cannot make connect: \(downstream.name) -> \(upstream.name)")
 #if DEBUG
             if !states.has(downstream) {
-                dePrint("Node not exist: \(downstream)")
+                dePrint("[Warning] node not exist: \(downstream.name)")
             }
             
-            if !states.has(upKey) {
-                dePrint("Node not exist: \(upKey)")
+            if !states.has(upstream) {
+                dePrint("[Warning] Node not exist: \(upstream.name)")
             }
 #endif
             return
         }
         
-        if graph.isContainEdge(key: upKey, downstream: downstream) {
+        guard !graph.isContainEdge(key: upstream, downstream: downstream) else {
             return
         }
         
-        if checker.canAddEdge(graph: graph, forKey: upKey, downstream: downstream) {
-            graph.addEdge(key: upKey, downstream: downstream)
-        }
+        graph.addEdge(key: upstream, downstream: downstream)
     }
     
     @MainActor
@@ -113,6 +110,7 @@ internal final class RecoilStore: Store {
             DispatchQueue.main.async {
                 self?.subscriberMap[nodeKey]?.remove(keyedSubscriber)
                 // TODO: try to release
+                print("release")
                 self?.releaseNode(nodeKey)
             }
         }

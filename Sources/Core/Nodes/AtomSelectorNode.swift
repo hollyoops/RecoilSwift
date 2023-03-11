@@ -1,4 +1,4 @@
-public protocol SyncAtomNode: RecoilSyncNode {
+public protocol SyncAtomNode: RecoilSyncNode, Writeable {
     func getValue() throws -> T
 }
 

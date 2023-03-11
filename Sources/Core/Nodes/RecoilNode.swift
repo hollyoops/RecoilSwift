@@ -7,7 +7,7 @@ public protocol RecoilNode<T> {
 }
 
 extension RecoilNode {
-    var key: NodeKey {
+    public var key: NodeKey {
         NodeKey(self)
     }
 }

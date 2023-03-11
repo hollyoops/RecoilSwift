@@ -69,8 +69,8 @@ internal struct NodeAccessorWrapper: StateAccessor {
 }
 
 public struct MutableContext {
-    let accessor: StateAccessor
-    let loadable: BaseLoadable
+    public let accessor: StateAccessor
+    public let loadable: BaseLoadable
 }
 
 internal struct NodeAccessor {
