@@ -13,4 +13,8 @@ struct RecoilTest {
     var nodeAccessor: NodeAccessor {
         NodeAccessor(store: store)
     }
+    
+    var accessor: StateAccessor {
+        nodeAccessor.accessor(deps: [])
+    }
 }

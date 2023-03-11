@@ -10,9 +10,9 @@ import Hooks
 /// if the state is async state, it return will `'value?'`, otherwise it return `'value'`
 @MainActor
 public func useRecoilValue<P: Equatable, Return: RecoilSyncNode>(
-    _ value: ParametricRecoilValue<P, Return>
+    _ value: RecoilParamNode<P, Return>
 ) -> Return.T {
-    let hook = RecoilValueHook(node: value.recoilValue,
+    let hook = RecoilValueHook(node: value.node,
                                 updateStrategy: .preserved(by: value.param))
     
     return useHook(hook)
@@ -20,9 +20,9 @@ public func useRecoilValue<P: Equatable, Return: RecoilSyncNode>(
 
 @MainActor
 public func useRecoilValue<P: Equatable, Return: RecoilAsyncNode>(
-    _ value: ParametricRecoilValue<P, Return>
+    _ value: RecoilParamNode<P, Return>
 ) -> Return.T? {
-    let hook = RecoilAsyncValueHook(node: value.recoilValue,
+    let hook = RecoilAsyncValueHook(node: value.node,
                                 updateStrategy: .preserved(by: value.param))
     
     return useHook(hook)
@@ -50,9 +50,9 @@ public func useRecoilValue<Value: RecoilAsyncNode>(_ initialState: Value) -> Val
 /// if the state is async state, it return will `'Binding<value?>'`, otherwise it return `'Binding<value>'`
 @MainActor
 public func useRecoilState<P: Equatable, Return: RecoilMutableSyncNode>(
-    _ value: ParametricRecoilValue<P, Return>
+    _ value: RecoilParamNode<P, Return>
 ) -> Binding<Return.T> {
-    let hook = RecoilStateHook(node: value.recoilValue,
+    let hook = RecoilStateHook(node: value.node,
                                updateStrategy: .preserved(by: value.param))
     
     return useHook(hook)

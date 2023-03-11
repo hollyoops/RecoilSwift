@@ -57,9 +57,11 @@ final class CallbackTests: XCTestCase {
         }
     }
     
-    var accessor: StateGetter!
+    var accessor: StateAccessor {
+        RecoilTest.shared.accessor
+    }
+    
     @MainActor override func setUp() {
-        accessor = RecoilTest.shared.nodeAccessor.getter(deps: [])
         RecoilTest.shared.reset()
         TestModule.numberState = atom { 2 }
     }

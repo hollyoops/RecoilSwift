@@ -29,10 +29,12 @@ final class SelectorReadWriteTests: XCTestCase {
         )
     }
     
-    var reader: StateGetter!
+    var accessor: StateAccessor {
+        RecoilTest.shared.accessor
+    }
+    
     @MainActor override func setUp() {
         RecoilTest.shared.reset()
-        reader = RecoilTest.shared.nodeAccessor.getter(deps: [])
     }
 }
 
@@ -55,7 +57,7 @@ extension SelectorReadWriteTests {
         
         tester.value.wrappedValue = 30
         
-        XCTAssertEqual(reader.getUnsafe(TestModule.tempFahrenheitState), 86)
+        XCTAssertEqual(accessor.getUnsafe(TestModule.tempFahrenheitState), 86)
         XCTAssertEqual(tester.value.wrappedValue, 30)
     }
 }

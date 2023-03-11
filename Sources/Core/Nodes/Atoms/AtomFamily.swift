@@ -1,11 +1,13 @@
 import Combine
 
-public struct ParametricRecoilValue<P, Node: RecoilNode> {
-    let recoilValue: Node
+public struct RecoilParamNode<P, Node: RecoilNode> {
+    let node: Node
     let param: P
 }
 
-public typealias FamilyFunc<P, T: RecoilNode> = (P) -> ParametricRecoilValue<P, T>
+public typealias AtomFamily<P: Hashable, T: Equatable> = (P) -> RecoilParamNode<P, Atom<T>>
+
+public typealias AsyncAtomFamily<P: Hashable, T: Equatable> = (P) -> RecoilParamNode<P, AsyncAtom<T>>
 
 public typealias AtomFamilyGet<P, T> = (P) throws -> T
 
@@ -24,15 +26,15 @@ public func atomFamily<P: Hashable, T: Equatable>(
     _ getBody: @escaping AtomFamilyGet<P, T>,
     fileID: String = #fileID,
     line: Int = #line
-) -> FamilyFunc<P, Atom<T>> {
-    return { (param: P) -> ParametricRecoilValue<P, Atom<T>> in
+) -> AtomFamily<P, T> {
+    return { (param: P) -> RecoilParamNode<P, Atom<T>> in
         
         let keyName = sourceLocationKey(Atom<T>.self, fileName: fileID, line: line)
         let key = NodeKey(name: keyName) { hasher in
             hasher.combine(param)
         }
-        return ParametricRecoilValue(
-            recoilValue: Atom(key: key){ try getBody(param) },
+        return RecoilParamNode(
+            node: Atom(key: key){ try getBody(param) },
             param: param
         )
     }
@@ -46,15 +48,15 @@ public func atomFamily<P: Hashable, T: Equatable, E: Error>(
     _ getBody: @escaping AtomFamilyCombineGet<P, T, E>,
     fileID: String = #fileID,
     line: Int = #line
-) -> FamilyFunc<P, AsyncAtom<T>> {
-    return { (param: P) -> ParametricRecoilValue<P, AsyncAtom<T>> in
+) -> AsyncAtomFamily<P, T> {
+    return { (param: P) -> RecoilParamNode<P, AsyncAtom<T>> in
         let keyName = sourceLocationKey(AsyncAtom<T>.self, fileName: fileID, line: line)
         let key = NodeKey(name: keyName) { hasher in
             hasher.combine(param)
         }
         
-        return ParametricRecoilValue(
-            recoilValue: AsyncAtom(key: key) { try await getBody(param).async() },
+        return RecoilParamNode(
+            node: AsyncAtom(key: key) { try await getBody(param).async() },
             param: param
         )
     }
@@ -68,15 +70,15 @@ public func atomFamily<P: Hashable, T: Equatable>(
   _ getBody: @escaping AtomFamilyAsyncGet<P, T>,
   fileID: String = #fileID,
   line: Int = #line
-) -> FamilyFunc<P, AsyncAtom<T>> {
-    return { (param: P) -> ParametricRecoilValue<P, AsyncAtom<T>> in
+) -> AsyncAtomFamily<P, T> {
+    return { (param: P) -> RecoilParamNode<P, AsyncAtom<T>> in
         
         let keyName = sourceLocationKey(AsyncAtom<T>.self, fileName: fileID, line: line)
         let key = NodeKey(name: keyName) { hasher in
             hasher.combine(param)
         }
-        return ParametricRecoilValue(
-            recoilValue: AsyncAtom(key: key) { try await getBody(param) },
+        return RecoilParamNode(
+            node: AsyncAtom(key: key) { try await getBody(param) },
             param: param
         )
     }

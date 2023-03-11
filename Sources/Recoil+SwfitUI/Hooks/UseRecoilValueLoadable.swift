@@ -60,9 +60,9 @@ public struct LoadableContent<DataType: Equatable> {
 /// - Returns: return a loadable object that contains loading informations
 @MainActor
 public func useRecoilValueLoadable<P: Equatable, Return: RecoilNode>(
-    _ value: ParametricRecoilValue<P, Return>
+    _ value: RecoilParamNode<P, Return>
 ) -> LoadableContent<Return.T> {
-    let hook = RecoilLoadableValueHook(node: value.recoilValue,
+    let hook = RecoilLoadableValueHook(node: value.node,
                                        updateStrategy: .preserved(by: value.param))
     
     return useHook(hook)
