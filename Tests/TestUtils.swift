@@ -12,7 +12,7 @@ struct TestConfig {
 struct MockAPI {
     static func makeCombine<T>(
         result: Result<T, Error>,
-        delay: Double = Double(TestConfig.mock_async_wait_nanoseconds)
+        delay: Double = Double(TestConfig.mock_async_wait_seconds)
     ) -> AnyPublisher<T, Error> {
         Deferred {
             Future { promise in

@@ -23,19 +23,21 @@ final class SelectorReadWriteTests: XCTestCase {
         )
     }
     
+    @RecoilTestScope var scope
+    
     var accessor: StateAccessor {
-        RecoilTest.shared.accessor
+        _scope.accessor(deps: [])
     }
     
-    @MainActor override func setUp() {
-        RecoilTest.shared.reset()
+    override func setUp() {
+        _scope.reset()
     }
 }
 
 // MARK: - sync selector
 extension SelectorReadWriteTests {
     func test_should_return_filtered_names_when_using_filtered_names_selector_given_names_state() {
-        let tester = HookTester {
+        let tester = HookTester(scope: _scope) {
             useRecoilValue(TestModule.filteredNamesState)
         }
         
@@ -43,7 +45,7 @@ extension SelectorReadWriteTests {
     }
     
     func test_should_return_correct_values_when_using_writable_selector_given_tempCelsiusSelector_and_tempFahrenheitState() {
-        let tester = HookTester {
+        let tester = HookTester(scope: _scope) {
             useRecoilState(TestModule.tempCelsiusSelector)
         }
         
@@ -61,7 +63,7 @@ extension SelectorReadWriteTests {
     func test_should_return_books_when_fetching_remote_data_given_remote_data_source() {
         let expectation = XCTestExpectation(description: "get async data source to atom")
         
-        let tester = HookTester { () -> [String]? in
+        let tester = HookTester(scope: _scope) { () -> [String]? in
             let value = useRecoilValue(MockSelector.remoteBooks(["Book1", "Book2"]))
             
             if value == ["Book1", "Book2"] {
@@ -77,7 +79,7 @@ extension SelectorReadWriteTests {
     }
     
     func test_should_return_nil_when_fetching_remote_data_given_remote_data_source_error() {
-        let tester = HookTester { () -> [String]? in
+        let tester = HookTester(scope: _scope) { () -> [String]? in
             useRecoilValue(RemoteErrorState<[String]>(error: MyError.param))
         }
         

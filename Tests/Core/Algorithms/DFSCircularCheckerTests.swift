@@ -5,10 +5,6 @@ import XCTest
 
 final class DFSCircularCheckerTests: XCTestCase {
   let checker = DFSCircularChecker()
-  
-    @MainActor override func setUp() {
-    RecoilTest.shared.reset()
-  }
 }
 
  // MARK: - No circular

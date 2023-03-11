@@ -8,11 +8,11 @@ final class NodeAccessorTests: XCTestCase {
     @RecoilTestScope var scope
     
     var accessor: StateAccessor {
-        RecoilTest.shared.accessor
+        _scope.accessor(deps: [])
     }
     
-    @MainActor override func setUp() {
-        RecoilTest.shared.reset()
+    override func setUp() {
+        _scope.reset()
     }
 }
 

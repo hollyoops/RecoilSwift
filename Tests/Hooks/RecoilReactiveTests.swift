@@ -19,19 +19,21 @@ private struct TestStates {
 }
 
 final class RecoilReactiveTests: XCTestCase {
+    @RecoilTestScope var scope
+    
     var accessor: StateAccessor {
-        RecoilTest.shared.nodeAccessor.accessor(deps: [])
+        _scope.accessor(deps: [])
     }
     
-    @MainActor override func setUp() {
-        RecoilTest.shared.reset()
+    override func setUp() {
+        _scope.reset()
         accessor.set(TestStates.rawAtom, "async value")
     }
     
     func test_should_getValueFromUpstreamAsyncSelector_when_useRecoilValueLoadable_given_downstreamAsyncState() {
         let expectation = XCTestExpectation(description: "Async value reovled")
         
-        let tester = HookTester { () -> LoadableContent<String> in
+        let tester = HookTester(scope: _scope) { () -> LoadableContent<String> in
             let loadable = useRecoilValueLoadable(TestStates.uppercasedNameState)
             
             if loadable.data == "async value".uppercased() {
@@ -49,7 +51,7 @@ final class RecoilReactiveTests: XCTestCase {
     func test_should_returnLoading_when_useRecoilValueLoadable_given_downstreamAsyncState() {
         let expectation = XCTestExpectation(description: "should return correct loading status")
         
-        let tester = HookTester { () -> LoadableContent<String> in
+        let tester = HookTester(scope: _scope) { () -> LoadableContent<String> in
             useRecoilValueLoadable(TestStates.uppercasedNameState)
         }
         
@@ -71,7 +73,7 @@ final class RecoilReactiveTests: XCTestCase {
             return string.uppercased()
         }
         
-        let tester = HookTester { () -> LoadableContent<String> in
+        let tester = HookTester(scope: _scope) { () -> LoadableContent<String> in
             useRecoilValueLoadable(selectorWithError)
         }
         

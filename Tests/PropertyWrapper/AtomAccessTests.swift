@@ -12,9 +12,8 @@ final class AtomAccessTests: XCTestCase {
     
     @RecoilTestScope var scope
     
-    @MainActor override func setUp() {
+    override func setUp() {
         _scope.reset()
-        RecoilTest.shared.reset()
     }
     
     func test_should_atom_value_when_useRecoilValue_given_stringAtom() async {

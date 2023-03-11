@@ -12,6 +12,7 @@ enum MyError: String, Error {
 typealias Selector = RecoilSwift.Selector
 
 final class LoadableTests: XCTestCase {
+    @RecoilTestScope var scope
     
     struct TestModule  {
         static var myNumberState: Atom<Int> {
@@ -31,15 +32,15 @@ final class LoadableTests: XCTestCase {
         }
     }
     
-    @MainActor override func setUp() {
-        RecoilTest.shared.reset()
+    override func setUp() {
+        _scope.reset()
     }
 }
 
 // MARK: - sync loadable
 extension LoadableTests {
     func test_sync_loadable_should_be_fulfilled_when_using_my_multiplied_state() {
-        let tester = HookTester {
+        let tester = HookTester(scope: _scope) {
             useRecoilValueLoadable(TestModule.myMultipliedState)
         }
         
@@ -49,7 +50,7 @@ extension LoadableTests {
     }
     
     func test_custom_loadable_should_be_fulfilled_when_using_my_custom_multiplied_state() {
-        let tester = HookTester {
+        let tester = HookTester(scope: _scope) {
             useRecoilValueLoadable(TestModule.myCustomMultipliedState(3))
         }
         
@@ -59,7 +60,7 @@ extension LoadableTests {
     }
     
     func test_sync_loadable_should_be_rejected_when_using_my_multiplied_state_error() {
-        let tester = HookTester {
+        let tester = HookTester(scope: _scope) {
             useRecoilValueLoadable(ErrorState<Int>(error: MyError.unknown))
         }
         
@@ -76,7 +77,7 @@ extension LoadableTests {
     func test_combine_loadable_should_be_fulfilled_when_using_get_books() {
         let expectation = XCTestExpectation(description: "Combine value resolved")
         
-        let tester = HookTester { () -> LoadableContent<[String]> in
+        let tester = HookTester(scope: _scope) { () -> LoadableContent<[String]> in
             let loadable = useRecoilValueLoadable(
                 MockSelector.remoteBooksCombine(["Book1", "Book2"])
             )
@@ -97,7 +98,7 @@ extension LoadableTests {
     func test_combine_loadable_should_fail_when_using_get_books_error() {
         let expectation = XCTestExpectation(description: "Combine error")
         
-        let tester = HookTester { () -> LoadableContent<[String]> in
+        let tester = HookTester(scope: _scope) { () -> LoadableContent<[String]> in
             let loadable = useRecoilValueLoadable(
                 RemoteErrorState<[String]>(error: MyError.param)
             )
@@ -116,7 +117,7 @@ extension LoadableTests {
     
     func test_async_loadable_should_be_fulfilled_when_using_fetch_book() {
         let expectation = XCTestExpectation(description: "Async selector resolved.")
-        let tester = HookTester { () -> LoadableContent<[String]> in
+        let tester = HookTester(scope: _scope) { () -> LoadableContent<[String]> in
             let loadable = useRecoilValueLoadable(MockSelector.remoteBooks(["Book1", "Book2"]))
             
             if loadable.data == ["Book1", "Book2"] {
@@ -134,7 +135,7 @@ extension LoadableTests {
     func test_async_loadable_should_fail_when_using_fetch_book_error() {
         let expectation = XCTestExpectation(description: "Combine error")
         
-        let tester = HookTester { () -> LoadableContent<[String]> in
+        let tester = HookTester(scope: _scope) { () -> LoadableContent<[String]> in
             let loadable = useRecoilValueLoadable(
                 RemoteErrorState<[String]>(error: MyError.param)
             )

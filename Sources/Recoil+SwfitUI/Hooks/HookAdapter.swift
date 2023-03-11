@@ -23,12 +23,12 @@ public final class HookTester<Parameter, Value> {
     ) {
         tester = Hooks.HookTester(initialParameter, hook, environment: environment)
     }
-
+    
     public convenience init(
-        _ hook: @MainActor @escaping (Parameter) -> Value,
-        environment: (inout EnvironmentValues) -> Void = { _ in }
+        scope: RecoilTestScope,
+        _ hook: @MainActor @escaping (Parameter) -> Value
     ) where Parameter == Void {
-        self.init((), hook, environment: environment)
+        self.init((), hook, environment: { $0.store = scope.store })
     }
 
     public func update(with parameter: Parameter) {
