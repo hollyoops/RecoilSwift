@@ -21,12 +21,6 @@ final class SelectorReadWriteTests: XCTestCase {
                 context.accessor.set(tempFahrenheitState, newFahrenheit)
             }
         )
-        
-        static var remoteDataSource = makeAsyncSelector(value: ["Book1", "Book2"])
-        static var remoteDataSourceError = makeAsyncSelector(
-            error: MyError.param,
-            type: [String].self
-        )
     }
     
     var accessor: StateAccessor {
@@ -68,7 +62,7 @@ extension SelectorReadWriteTests {
         let expectation = XCTestExpectation(description: "get async data source to atom")
         
         let tester = HookTester { () -> [String]? in
-            let value = useRecoilValue(TestModule.remoteDataSource)
+            let value = useRecoilValue(MockSelector.remoteBooks(["Book1", "Book2"]))
             
             if value == ["Book1", "Book2"] {
                 expectation.fulfill()
@@ -84,7 +78,7 @@ extension SelectorReadWriteTests {
     
     func test_should_return_nil_when_fetching_remote_data_given_remote_data_source_error() {
         let tester = HookTester { () -> [String]? in
-            useRecoilValue(TestModule.remoteDataSourceError)
+            useRecoilValue(RemoteErrorState<[String]>(error: MyError.param))
         }
         
         XCTAssertNil(tester.value)

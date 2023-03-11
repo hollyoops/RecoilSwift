@@ -5,15 +5,16 @@ import RecoilSwiftXCTests
 
 final class AtomAccessTests: XCTestCase {
     struct TestModule  {
-        static var stringAtom: Atom<String>!
+        static var stringAtom: Atom<String> {
+            atom { "rawValue" }
+        }
     }
     
     @RecoilTestScope var scope
     
-    override func setUp() {
+    @MainActor override func setUp() {
         _scope.reset()
-        
-        TestModule.stringAtom = atom { "rawValue" }
+        RecoilTest.shared.reset()
     }
     
     func test_should_atom_value_when_useRecoilValue_given_stringAtom() async {
