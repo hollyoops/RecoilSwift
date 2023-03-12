@@ -4,6 +4,26 @@ import RecoilSwiftXCTests
 
 @testable import RecoilSwift
 
+struct ErrorDeps {
+    typealias Selector = RecoilSwift.Selector
+    
+    static var stateA: Selector<String> {
+        selector { context in
+            try context.get(stateB)
+        }
+    }
+    
+    static var stateB: Selector<String> {
+        selector { context in
+            try context.get(ErrorState(error: MyError.unknown))
+        }
+    }
+
+    static var selfErrorState: Selector<String> {
+        selector { context in throw MyError.param }
+    }
+}
+
 final class NodeAccessorTests: XCTestCase {
     @RecoilTestScope var scope
     
@@ -38,6 +58,20 @@ extension NodeAccessorTests {
         accessor.set(MockAtoms.intState, 12)
         
         XCTAssertEqual(try accessor.get(MockAtoms.intState), 12)
+    }
+    
+    func test_should_get_error_when_get_value_given_self_states_hasError() throws {
+        XCTAssertThrowsSpecificError(
+            try accessor.get(ErrorDeps.selfErrorState),
+            MyError.param
+        )
+    }
+    
+    func test_should_return_upstream_error_when_get_value_given_upstream_states_hasError() throws {
+        XCTAssertThrowsSpecificError(
+            try accessor.get(ErrorDeps.stateA),
+            MyError.unknown
+        )
     }
 }
 
