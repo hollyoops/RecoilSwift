@@ -2,17 +2,23 @@ import RecoilSwift
 
 // MARK: - Atoms
 struct BookList {
-    static let selectedCategoryState = Atom<BookCategory?>(nil)
-    static let selectedQuarterState = Atom<Int?>(nil)
+    static var selectedCategoryState: Atom<BookCategory?> {
+        atom(nil)
+    }
+    static var selectedQuarterState: Atom<Int?> {
+        atom(nil)
+    }
 }
 
 // MARK: - Selectors
 extension BookList {
-    static let currentBooks = selector { accessor -> [Book] in
-        let books = try await accessor.get(AllBooks.allBookState)
-        if let category = try accessor.get(selectedCategoryState) {
-            return books.filter { $0.category == category }
+    static var currentBooks: AsyncSelector<[Book]> {
+        selector { accessor -> [Book] in
+            let books = try await accessor.get(AllBooks.allBookState)
+            if let category = try accessor.get(selectedCategoryState) {
+                return books.filter { $0.category == category }
+            }
+            return books
         }
-        return books
     }
 }

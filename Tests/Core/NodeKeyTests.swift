@@ -37,6 +37,24 @@ class NodeKeyTests: XCTestCase {
                        "Expected NodeKeys with same name and hash rule to have same hash value")
     }
     
+    func test_should_saveToMapCorrect_when_hashIsCalled_given_NodeKeyWithHashRule() {
+        let hashRule: NodeKey.HashCalculator = { hasher in
+            hasher.combine(10)
+        }
+        
+        let key1 = NodeKey("test", hashRule: hashRule)
+        let key2 = NodeKey("test", hashRule: hashRule)
+        let key3 = NodeKey("test")
+        
+        var states: [NodeKey: String] = [:]
+        states[key1] = "Value1"
+        states[key2] = "Value2"
+        states[key3] = "Value3"
+
+        XCTAssertEqual(states.keys.count, 2)
+        XCTAssertEqual(states[key1], "Value2")
+    }
+    
     func test_should_notEqual_when_hashIsCalled_given_NodeKeyWithHashRule() {
         let hashRule: NodeKey.HashCalculator = { hasher in
             hasher.combine("param")

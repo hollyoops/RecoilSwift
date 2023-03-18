@@ -1,4 +1,5 @@
 import Combine
+import SwiftUI
 
 /// Represents a scoped context for Recoil values, allowing binding and updates.
 public class ScopedRecoilContext {
@@ -39,7 +40,11 @@ public class ScopedRecoilContext {
         useRecoilValueLoadable(valueNode).data
     }
     
-    public func useRecoilState<Value: RecoilMutableSyncNode>(_ stateNode: Value) -> BindableValue<Value.T> {
+    public func useRecoilState<Value: RecoilMutableSyncNode>(_ stateNode: Value) -> Binding<Value.T> {
+        Binding(useRecoilBinding(stateNode))
+    }
+    
+    public func useRecoilBinding<Value: RecoilMutableSyncNode>(_ stateNode: Value) -> BindableValue<Value.T> {
         subscribeChange(for: stateNode)
         return BindableValue(
               get: {

@@ -158,18 +158,6 @@ private struct RecoilStateHook<Node: RecoilMutableSyncNode>: RecoilHook {
     @MainActor
     func value(coordinator: Coordinator) -> Binding<Node.T> {
         let ctx = getStoredContext(coordinator: coordinator)
-        let bindableValue = ctx.useRecoilState(initialValue)
-        return Binding(
-            get: bindableValue.get,
-            set: { newState in
-                assertMainThread()
-
-                guard !coordinator.state.isDisposed else {
-                    return
-                }
-
-                bindableValue.set(newState)
-            }
-        )
+        return ctx.useRecoilState(initialValue)
     }
 }

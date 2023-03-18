@@ -6,7 +6,7 @@
 //
 
 import XCTest
-//import RecoilSwiftTests
+import RecoilSwift
 import RecoilSwiftXCTests
 
 final class RecoilSwiftExampleTests: XCTestCase {

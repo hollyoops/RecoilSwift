@@ -2,7 +2,9 @@ import RecoilSwift
 
 // MARK: - Atom
 struct AllBooks {
-    static let allBookState = atom { AllBooksService.getAllBooks() }
+    static var allBookState: AsyncAtom<[Book]> {
+        atom { AllBooksService.getAllBooks() }
+    }
 }
 
 // MARK: - Action

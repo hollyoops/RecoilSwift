@@ -4,20 +4,24 @@ import RecoilSwift
 struct Cart {}
 
 extension Cart {
-  static let allCartItemState = atom { [CartItem]() }
-    
-  static let cartItemBadgeState = selector { accessor -> String? in
-      let items = try accessor.get(allCartItemState)
-      let count = items.reduce(into: 0) { result, item in
-          result += item.count
-      }
-    
-      if count <= 0 {
-          return nil
-      }
+    static var allCartItemState: Atom<[CartItem]> {
+        atom { [CartItem]() }
+    }
 
-      return count < 10 ? "\(count)" : "9+"
-  }
+    static var cartItemBadgeState: RecoilSwift.Selector<String?> {
+        selector { accessor -> String? in
+            let items = try accessor.get(allCartItemState)
+            let count = items.reduce(into: 0) { result, item in
+                result += item.count
+            }
+
+            if count <= 0 {
+                return nil
+            }
+
+            return count < 10 ? "\(count)" : "9+"
+        }
+    }
 }
 
 extension Cart {

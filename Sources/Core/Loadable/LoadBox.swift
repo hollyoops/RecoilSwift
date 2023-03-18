@@ -13,7 +13,7 @@ internal class SyncLoadBox<T: Equatable>: RecoilLoadable {
     var status: NodeStatus<T> = .invalid {
         didSet { onStatusChange?(status) }
     }
-
+    
     func getValue(_ ctx: StateGetter) throws -> T {
         do {
             let value = try self.computeBody(ctx)
@@ -48,14 +48,16 @@ internal class AsyncLoadBox<T: Equatable>: RecoilLoadable {
     }
     
     var status: NodeStatus<T> = .invalid {
-        didSet { onStatusChange?(status) }
+        didSet {
+            self.onStatusChange?(self.status)
+        }
     }
     
     func getValue(_ ctx: StateGetter) -> Task<T, Error> {
         if case let .loading(task) = self.status {
             return task
         }
-       
+        
         let task = Task {
             do {
                 let val = try await computeBody(ctx)
