@@ -100,11 +100,13 @@ internal final class RecoilStore: Store {
     
     @MainActor
     func subscribe(for nodeKey: NodeKey, subscriber: Subscriber) -> Subscription {
+        var subscribers = subscriberMap[nodeKey] ?? []
         let keyedSubscriber = KeyedSubscriber(subscriber: subscriber)
         
-        var subscribers = subscriberMap[nodeKey] ?? []
-        subscribers.insert(keyedSubscriber)
-        subscriberMap[nodeKey] = subscribers
+        if !subscribers.contains(keyedSubscriber) {
+            subscribers.insert(keyedSubscriber)
+            subscriberMap[nodeKey] = subscribers
+        }
         
         return Subscription { [weak self] in
             DispatchQueue.main.async {
@@ -145,10 +147,9 @@ internal final class RecoilStore: Store {
         let key = node.key
         let box = node.makeLoadable()
         _ = box.observeValueChange { [weak self] newValue in
-            DispatchQueue.main.async {
                 guard let val = newValue as? NodeStatus<T.T> else { return }
                 self?.nodeValueChanged(node: node, value: val)
-            }
+            
         }
         states[key] = box
         return box
@@ -170,7 +171,9 @@ internal final class RecoilStore: Store {
             NodeAccessor(store: self).refresh(for: item)
         }
         
-        self.notifyChanged(node: node, value: value)
+        DispatchQueue.main.async {
+            self.notifyChanged(node: node, value: value)
+        }
     }
 }
 

@@ -72,9 +72,8 @@ public func selectorFamily<P: Hashable, T: Equatable>(
         let key = NodeKey(position: pos) { hasher in
             hasher.combine(param)
         }
-        let body = curry(getBody)(param)
         return RecoilParamNode(
-            node: AsyncSelector(key: key, get: body),
+            node: AsyncSelector(key: key) { try await getBody(param, $0) },
             param: param
         )
     }

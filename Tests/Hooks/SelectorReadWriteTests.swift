@@ -45,8 +45,13 @@ extension SelectorReadWriteTests {
     }
     
     func test_should_return_correct_values_when_using_writable_selector_given_tempCelsiusSelector_and_tempFahrenheitState() {
+        let expectation = XCTestExpectation(description: "save Value")
         let tester = HookTester(scope: _scope) {
-            useRecoilState(TestModule.tempCelsiusSelector)
+            let value = useRecoilState(TestModule.tempCelsiusSelector)
+            if value.wrappedValue == 30 {
+                expectation.fulfill()
+            }
+            return value
         }
         
         XCTAssertEqual(tester.value.wrappedValue, 0)
@@ -54,7 +59,7 @@ extension SelectorReadWriteTests {
         tester.value.wrappedValue = 30
         
         XCTAssertEqual(accessor.getUnsafe(TestModule.tempFahrenheitState), 86)
-        XCTAssertEqual(tester.value.wrappedValue, 30)
+        wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
     }
 }
 

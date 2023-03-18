@@ -4,21 +4,14 @@ import SwiftUI
 /// Represents a scoped context for Recoil values, allowing binding and updates.
 public class ScopedRecoilContext {
     private weak var store: Store?
-    private let subscriptions: ScopedSubscriptions
-    private let caches: ScopedNodeCaches
+    private let stateCache: ScopedStateCache
     private let viewRefresher: ViewRefreshable
-    private let onValueChange: (((NodeKey, Any)) -> Void)?
  
-    init(store: Store,
-         subscriptions: ScopedSubscriptions,
-         caches: ScopedNodeCaches,
-         refresher: ViewRefreshable,
-         onValueChange: (((NodeKey, Any)) -> Void)? = nil) {
-        self.viewRefresher = refresher
+    init(store: Store, cache: ScopedStateCache, refresher: ViewRefreshable) {
+        self.stateCache = cache
         self.store = store
-        self.subscriptions = subscriptions
-        self.caches = caches
-        self.onValueChange = onValueChange
+        self.viewRefresher = refresher
+        cache.onValueChange = { [weak refresher] _ in refresher?.refresh() }
     }
     
     private var nodeAccessor: NodeAccessor {
@@ -72,7 +65,7 @@ public class ScopedRecoilContext {
     public func useRecoilCallback<T>(_ fn: @escaping Callback<T>) -> T {
         let context = RecoilCallbackContext(
             accessor: nodeAccessor.accessor(deps: nil),
-            store: subscriptions.store
+            store: stateCache.store
         )
         return fn(context)
     }
@@ -80,7 +73,7 @@ public class ScopedRecoilContext {
     public func useRecoilCallback<T>(_ fn: @escaping AsyncCallback<T>) async throws -> T {
         let context = RecoilCallbackContext(
             accessor: nodeAccessor.accessor(deps: nil),
-            store: subscriptions.store
+            store: stateCache.store
         )
         
         return try await fn(context)
@@ -105,25 +98,10 @@ public class ScopedRecoilContext {
     
     private func subscribeChange<Value: RecoilNode>(for node: Value) {
         guard let store else { return }
-        let sub = store.subscribe(for: node.key, subscriber: self)
-        subscriptions[node.key] = sub
+        stateCache.subscribe(for: node, in: store)
     }
 
     func refresh() {
         viewRefresher.refresh()
-    }
-}
-
-extension ScopedRecoilContext: Subscriber {
-    func valueDidChange<Node: RecoilNode>(node: Node, newValue: NodeStatus<Node.T>) {
-        // Only refresh when value is change
-        if let value = caches.peek(for: node),
-           value == newValue {
-            return
-        }
-        
-        caches[node.key] = newValue
-        onValueChange?((node.key, newValue))
-        refresh()
     }
 }

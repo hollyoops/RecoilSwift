@@ -6,12 +6,20 @@ class NodeKeyTests: XCTestCase {
         let key1 = NodeKey("test")
         let key2 = NodeKey("test")
         XCTAssertEqual(key1.hashValue, key2.hashValue)
+        XCTAssertEqual(key1.fullKeyName, "test")
     }
 
     func test_should_returnCorrectFullKeyName_when_fullKeyNameIsCalled_given_NodeKey() {
         let pos = SourcePosition(funcName: "test", fileName: "test.swift", line: 10)
         let key = NodeKey(position: pos)
         XCTAssertEqual(key.fullKeyName, "test_test.swift_10")
+    }
+    
+    func test_should_returnCorrectFullKeyNamesOrName_when_given_NodeKey() {
+        XCTAssertEqual(TempCelsiusSelector().key.name, "TempCelsiusSelector")
+        XCTAssertEqual(TempCelsiusSelector().key.fullKeyName, "TempCelsiusSelector")
+        XCTAssertEqual(RemoteNames.names.key.name, "names")
+        XCTAssertEqual(RemoteNames.names.key.fullKeyName, "names_RecoilSwiftTests/ScopedStates.swift_12")
     }
 
     func test_should_returnCorrectEquality_when_equalityIsChecked_given_NodeKey() {

@@ -4,10 +4,9 @@ import Combine
 
 @propertyWrapper
 public class RecoilTestScope {
-    internal private(set) var store: Store
+    internal var store: Store
     internal let viewRefresher = MockViewRefresher()
-    internal let caches = ScopedNodeCaches()
-    internal let storeSubs = ScopedSubscriptions()
+    internal let stateCache = ScopedStateCache()
     internal let stateNotifier = PassthroughSubject<(NodeKey, Any), Error>()
     public let timeout: TimeInterval = 3
     
@@ -18,12 +17,16 @@ public class RecoilTestScope {
     }
     
     public var wrappedValue: ScopedRecoilContext {
-        ScopedRecoilContext(store: store,
-                            subscriptions: storeSubs,
-                            caches: caches,
-                            refresher: viewRefresher) { [weak self] pair in
+        let scope = ScopedRecoilContext(store: store,
+                            cache: stateCache,
+                            refresher: viewRefresher)
+        
+        self.stateCache.onValueChange = { [weak self] pair in
             self?.stateNotifier.send(pair)
+            self?.refresh()
         }
+        
+        return scope
     }
     
     public func refresh() {
@@ -34,10 +37,10 @@ public class RecoilTestScope {
         NodeAccessor(store: store).accessor(deps: deps)
     }
     
+    
     public func reset() {
         store = RecoilStore()
-        viewRefresher.reset()
-        caches.clear()
+        stateCache.clear()
     }
     
     @discardableResult
@@ -74,7 +77,10 @@ public final class MockViewRefresher: ViewRefreshable {
     
     public func refresh() {
         self.refreshCount += 1
-        render?()
+
+        DispatchQueue.main.async {
+            self.render?()
+        } 
     }
     
     public func reset() {

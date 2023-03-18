@@ -57,7 +57,7 @@ public struct NodeKey: RecoilKey {
     }
 
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(name)
+        hasher.combine(fullKeyName)
         additionalHashRule?(&hasher)
         
         if let hashableNode = recoilNode {
