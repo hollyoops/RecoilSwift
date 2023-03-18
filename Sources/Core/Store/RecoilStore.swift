@@ -155,8 +155,10 @@ internal final class RecoilStore: Store {
         let key = node.key
         let box = node.makeLoadable()
         _ = box.observeValueChange { [weak self] newValue in
-            guard let val = newValue as? NodeStatus<T.T> else { return }
-            self?.nodeValueChanged(node: node, value: val)
+            DispatchQueue.main.async {
+                guard let val = newValue as? NodeStatus<T.T> else { return }
+                self?.nodeValueChanged(node: node, value: val)
+            }
         }
         states[key] = box
         return box

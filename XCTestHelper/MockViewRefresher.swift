@@ -1,3 +1,4 @@
+import Foundation
 import RecoilSwift
 
 public final class MockViewRefresher: ViewRefreshable {
@@ -10,7 +11,10 @@ public final class MockViewRefresher: ViewRefreshable {
     
     public func refresh() {
         self.refreshCount += 1
-        render?()
+        
+        DispatchQueue.main.async {
+            self.render?()
+        }
     }
     
     public func reset() {

@@ -85,8 +85,10 @@ final public class ViewRenderHelper {
     ) async -> XCTWaiter.Result {
         let timeout = timeout ?? scope.timeout
         
-        renderBody()
-        
+        DispatchQueue.main.async {
+            self.renderBody()
+        }
+
         let result = await XCTWaiter.fulfillment(of: [expectation], timeout: timeout)
         if result == .timedOut {
             XCTFail("Test render timed out. (file: \(file), line: \(line))")
