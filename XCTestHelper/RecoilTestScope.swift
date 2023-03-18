@@ -9,8 +9,7 @@ import XCTest
 public class RecoilTestScope {
     fileprivate var store: Store
     fileprivate let viewRefresher = MockViewRefresher()
-    fileprivate let caches = ScopedNodeCaches()
-    fileprivate let storeSubs = ScopedSubscriptions()
+    fileprivate let stateCache = ScopedStateCache()
     fileprivate let stateNotifier = PassthroughSubject<(NodeKey, Any), Error>()
     public let timeout: TimeInterval = 3
     
@@ -18,15 +17,16 @@ public class RecoilTestScope {
     
     public init() {
         self.store = RecoilStore()
+        self.stateCache.onValueChange = { [weak self] pair in
+            self?.stateNotifier.send(pair)
+            self?.refresh()
+        }
     }
     
     public var wrappedValue: ScopedRecoilContext {
         ScopedRecoilContext(store: store,
-                            subscriptions: storeSubs,
-                            caches: caches,
-                            refresher: viewRefresher) { [weak self] pair in
-            self?.stateNotifier.send(pair)
-        }
+                            cache: stateCache,
+                            refresher: viewRefresher)
     }
     
     public func refresh() {
@@ -35,8 +35,7 @@ public class RecoilTestScope {
     
     public func reset() {
         store = RecoilStore()
-        viewRefresher.reset()
-        caches.clear()
+        stateCache.clear()
     }
     
     @discardableResult
@@ -100,10 +99,11 @@ final public class ViewRenderHelper {
         let refresher = MockViewRefresher {
             self.renderBody()
         }
+        
         let ctx = ScopedRecoilContext(store: scope.store,
-                                      subscriptions: scope.storeSubs,
-                                      caches: scope.caches,
+                                      cache: scope.stateCache,
                                       refresher: refresher)
+        
         body(ctx, TestSuit(expectation: expectation))
     }
     

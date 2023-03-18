@@ -81,10 +81,10 @@ extension RecoilHook where State == Ref<T> {
     }
     
     func makeScopeContext(coordinator: Coordinator) -> ScopedRecoilContext {
-        ScopedRecoilContext(store: coordinator.environment.store,
-                            subscriptions: coordinator.state.storeSubs,
-                            caches: coordinator.state.caches,
-                            refresher: AnyViewRefreher(viewUpdator: coordinator.updateView))
+        ScopedRecoilContext(
+            store: coordinator.environment.store,
+            cache: coordinator.state.cache,
+            refresher: AnyViewRefreher(viewUpdator: coordinator.updateView))
     }
     
     func getStoredContext(coordinator: Coordinator) -> ScopedRecoilContext {
