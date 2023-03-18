@@ -13,9 +13,6 @@ internal final class Ref<Value> {
                 context: ScopedRecoilContext) {
         self.value = newValue
         self.ctx = context
-        cache.onValueChange = { [weak self] _ in
-            self?.ctx?.refresh()
-        }
     }
     
     func dispose() {

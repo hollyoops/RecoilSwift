@@ -58,17 +58,13 @@ extension ScopedStateCache: Subscriber {
 
 @available(iOS 14.0, *)
 @propertyWrapper
-public class RecoilScope: DynamicProperty {
+public struct RecoilScope: DynamicProperty {
     @Environment(\.store) private var store
     
     @StateObject private var viewRefersher: ViewRefresher = ViewRefresher()
     private let cache = ScopedStateCache()
 
-    public init() {
-        self.cache.onValueChange = { [weak self] _ in
-            self?.refresh()
-        }
-    }
+    public init() { }
 
     public var wrappedValue: ScopedRecoilContext {
         ScopedRecoilContext(store: store,

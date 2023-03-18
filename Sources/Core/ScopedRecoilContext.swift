@@ -10,6 +10,7 @@ public class ScopedRecoilContext {
         self.stateCache = cache
         self.store = store
         self.viewRefresher = refresher
+        cache.onValueChange = { [weak refresher] _ in refresher?.refresh() }
     }
     
     private var nodeAccessor: NodeAccessor {

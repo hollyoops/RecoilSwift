@@ -17,16 +17,19 @@ public class RecoilTestScope {
     
     public init() {
         self.store = RecoilStore()
+    }
+    
+    public var wrappedValue: ScopedRecoilContext {
+        let scope = ScopedRecoilContext(store: store,
+                            cache: stateCache,
+                            refresher: viewRefresher)
+        
         self.stateCache.onValueChange = { [weak self] pair in
             self?.stateNotifier.send(pair)
             self?.refresh()
         }
-    }
-    
-    public var wrappedValue: ScopedRecoilContext {
-        ScopedRecoilContext(store: store,
-                            cache: stateCache,
-                            refresher: viewRefresher)
+        
+        return scope
     }
     
     public func refresh() {
