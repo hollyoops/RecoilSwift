@@ -24,13 +24,13 @@ public typealias AtomFamilyAsyncGet<P, T> = (P) async throws -> T
 /// - Returns: A function which can be called with user-defined parameters and returns a selector. Each unique parameter value will return the same memoized selector instance.
 public func atomFamily<P: Hashable, T: Equatable>(
     _ getBody: @escaping AtomFamilyGet<P, T>,
+    funcName: String = #function,
     fileID: String = #fileID,
     line: Int = #line
 ) -> AtomFamily<P, T> {
     return { (param: P) -> RecoilParamNode<P, Atom<T>> in
-        
-        let keyName = sourceLocationKey(Atom<T>.self, fileName: fileID, line: line)
-        let key = NodeKey(name: keyName) { hasher in
+        let pos = SourcePosition(funcName: funcName, fileName: fileID, line: line)
+        let key = NodeKey(position: pos) { hasher in
             hasher.combine(param)
         }
         return RecoilParamNode(
@@ -46,12 +46,13 @@ public func atomFamily<P: Hashable, T: Equatable>(
 /// - Returns: A function which can be called with user-defined parameters and returns a asynchronous atom with combine. Each unique parameter value will return the same memoized atom instance.
 public func atomFamily<P: Hashable, T: Equatable, E: Error>(
     _ getBody: @escaping AtomFamilyCombineGet<P, T, E>,
+    funcName: String = #function,
     fileID: String = #fileID,
     line: Int = #line
 ) -> AsyncAtomFamily<P, T> {
     return { (param: P) -> RecoilParamNode<P, AsyncAtom<T>> in
-        let keyName = sourceLocationKey(AsyncAtom<T>.self, fileName: fileID, line: line)
-        let key = NodeKey(name: keyName) { hasher in
+        let pos = SourcePosition(funcName: funcName, fileName: fileID, line: line)
+        let key = NodeKey(position: pos) { hasher in
             hasher.combine(param)
         }
         
@@ -68,13 +69,14 @@ public func atomFamily<P: Hashable, T: Equatable, E: Error>(
 /// - Returns: A function which can be called with user-defined parameters and returns a asynchronous atom with ``async/await``. Each unique parameter value will return the same memoized atom instance.
 public func atomFamily<P: Hashable, T: Equatable>(
   _ getBody: @escaping AtomFamilyAsyncGet<P, T>,
+  funcName: String = #function,
   fileID: String = #fileID,
   line: Int = #line
 ) -> AsyncAtomFamily<P, T> {
     return { (param: P) -> RecoilParamNode<P, AsyncAtom<T>> in
         
-        let keyName = sourceLocationKey(AsyncAtom<T>.self, fileName: fileID, line: line)
-        let key = NodeKey(name: keyName) { hasher in
+        let pos = SourcePosition(funcName: funcName, fileName: fileID, line: line)
+        let key = NodeKey(position: pos) { hasher in
             hasher.combine(param)
         }
         return RecoilParamNode(

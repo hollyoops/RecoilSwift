@@ -39,17 +39,29 @@ final class NodeAccessorTests: XCTestCase {
 // MARK: - sync selector
 extension NodeAccessorTests {
     func test_should_throwCircleError_when_get_selector_value_given_states_is_self_reference() throws {
+        let info = RecoilError.CircularInfo(key: CircleDeps.selfReferenceState.key,
+                                            deps: [CircleDeps.selfReferenceState.key])
+        
         XCTAssertThrowsSpecificError(
             try accessor.get(CircleDeps.selfReferenceState),
-            RecoilError.circular
+            RecoilError.circular(info)
         )
+
+        XCTAssertEqual(info.stackMessaage, "selfReferenceState -> selfReferenceState")
     }
     
     func test_should_throwCircleError_when_get_value_given_stateA_and_stateB_is_circular_reference() throws {
+        let info = RecoilError.CircularInfo(
+            key: CircleDeps.stateA.key,
+            deps: [CircleDeps.stateA.key, CircleDeps.stateB.key]
+        )
+        
         XCTAssertThrowsSpecificError(
             try accessor.get(CircleDeps.stateA),
-            RecoilError.circular
+            RecoilError.circular(info)
         )
+
+        XCTAssertEqual(info.stackMessaage, "stateA -> stateB -> stateA")
     }
     
     func test_should_set_value_toAtom_when_call_set_method_for_syncNodes() throws {

@@ -59,7 +59,7 @@ internal struct NodeAccessorWrapper: StateAccessor {
         }
         
         guard !deps.contains(node.key) else {
-            throw RecoilError.circular
+            throw RecoilError.circular(.init(key: node.key, deps: deps))
         }
         
         let store = nodeAccessor.store

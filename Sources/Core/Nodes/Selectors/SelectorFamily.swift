@@ -16,13 +16,14 @@ public typealias SelectorFamilyAsyncGet<P, T> = (P, StateGetter) async throws ->
 /// - Returns: A function which can be called with user-defined parameters and returns a selector. Each unique parameter value will return the same memoized selector instance.
 public func selectorFamily<P: Hashable, T: Equatable>(
     _ getBody: @escaping SelectorFamilyGet<P, T>,
+    funcName: String = #function,
     fileID: String = #fileID,
     line: Int = #line
 ) -> SelectorFamily<P, T> {
     
     return { (param: P) -> RecoilParamNode<P, Selector<T>> in
-        let keyName = sourceLocationKey(Selector<T>.self, fileName: fileID, line: line)
-        let key = NodeKey(name: keyName) { hasher in
+        let pos = SourcePosition(funcName: funcName, fileName: fileID, line: line)
+        let key = NodeKey(position: pos) { hasher in
             hasher.combine(param)
         }
         let body = curry(getBody)(param)
@@ -37,13 +38,14 @@ public func selectorFamily<P: Hashable, T: Equatable>(
 
 public func selectorFamily<P: Hashable, T: Equatable, E: Error>(
     _ getBody: @escaping SelectorFamilyCombineGet<P, T, E>,
+    funcName: String = #function,
     fileID: String = #fileID,
     line: Int = #line
 ) -> AsyncSelectorFamily<P, T> {
     
     return { (param: P) -> RecoilParamNode<P, AsyncSelector<T>> in
-        let keyName = sourceLocationKey(AsyncSelector<T>.self, fileName: fileID, line: line)
-        let key = NodeKey(name: keyName) { hasher in
+        let pos = SourcePosition(funcName: funcName, fileName: fileID, line: line)
+        let key = NodeKey(position: pos) { hasher in
             hasher.combine(param)
         }
         return RecoilParamNode(
@@ -60,13 +62,14 @@ public func selectorFamily<P: Hashable, T: Equatable, E: Error>(
 
 public func selectorFamily<P: Hashable, T: Equatable>(
     _ getBody: @escaping SelectorFamilyAsyncGet<P, T>,
+    funcName: String = #function,
     fileID: String = #fileID,
     line: Int = #line
 ) -> AsyncSelectorFamily<P, T> {
     
     return { (param: P) -> RecoilParamNode<P, AsyncSelector<T>> in
-        let keyName = sourceLocationKey(AsyncSelector<T>.self, fileName: fileID, line: line)
-        let key = NodeKey(name: keyName) { hasher in
+        let pos = SourcePosition(funcName: funcName, fileName: fileID, line: line)
+        let key = NodeKey(position: pos) { hasher in
             hasher.combine(param)
         }
         let body = curry(getBody)(param)

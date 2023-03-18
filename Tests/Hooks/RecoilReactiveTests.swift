@@ -68,7 +68,7 @@ final class RecoilReactiveTests: XCTestCase {
     func test_should_returnError_when_useRecoilValueLoadable_given_selectorWithError() {
         let expectation = XCTestExpectation(description: "should return correct loading status")
         
-        let selectorWithError = AsyncSelector { accessor in
+        let selectorWithError = selector { accessor in
             let string = try await accessor.get(RemoteErrorState<String>(error: MyError.param))
             return string.uppercased()
         }

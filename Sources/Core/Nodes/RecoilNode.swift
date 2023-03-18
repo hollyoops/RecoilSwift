@@ -41,8 +41,3 @@ public protocol Writeable {
 public typealias RecoilMutableSyncNode = RecoilSyncNode & Writeable
 
 public typealias RecoilMutableAsyncNode = RecoilAsyncNode & Writeable
-
-enum RecoilError: Error {
-    case unknown
-    case circular
-}
