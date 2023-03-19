@@ -19,17 +19,27 @@ internal final class RecoilStore: Store {
     private var subscriberMap: [NodeKey: Set<KeyedSubscriber>] = [:]
     private let graph = Graph()
     
-    @MainActor
+    private let queue = DispatchQueue(label: "com.hollyoops.RecoilStore")
+    
+    private let queueValue = UUID()
+    private let queueKey = DispatchSpecificKey<UUID>()
+    
+    init() {
+        queue.setSpecific(key: queueKey, value: queueValue)
+    }
+    
     func safeGetLoadable<T: RecoilNode>(for node: T) -> BaseLoadable {
-        getLoadable(for: node.key) ?? register(node)
+        executeOnQueue {
+            return getLoadable(for: node.key) ?? register(node)
+        }
     }
     
-    @MainActor
     func getLoadable(for key: NodeKey) -> BaseLoadable? {
-        states[key]
+        executeOnQueue {
+            states[key]
+        }
     }
     
-    @MainActor
     func getLoadingStatus(for key: NodeKey) -> Bool {
         guard let loadable = getLoadable(for: key) else {
             return false
@@ -50,7 +60,6 @@ internal final class RecoilStore: Store {
         return false
     }
     
-    @MainActor
     func getErrors(for key: NodeKey) -> [Error] {
         var errors = [Error]()
         
@@ -75,50 +84,54 @@ internal final class RecoilStore: Store {
         return errors
     }
     
-    @MainActor
     func addNodeRelation(downstream: NodeKey, upstream: NodeKey) {
-        guard states.has(downstream), states.has(upstream) else {
-            dePrint("[Warning] Cannot make connect: \(downstream.name) -> \(upstream.name)")
+        executeOnQueue {
+            guard states.has(downstream), states.has(upstream) else {
+                dePrint("[Warning] Cannot make connect: \(downstream.name) -> \(upstream.name)")
 #if DEBUG
-            if !states.has(downstream) {
-                dePrint("[Warning] node not exist: \(downstream.name)")
+                if !states.has(downstream) {
+                    dePrint("[Warning] node not exist: \(downstream.name)")
+                }
+                
+                if !states.has(upstream) {
+                    dePrint("[Warning] Node not exist: \(upstream.name)")
+                }
+#endif
+                return
             }
             
-            if !states.has(upstream) {
-                dePrint("[Warning] Node not exist: \(upstream.name)")
+            guard !graph.isContainEdge(key: upstream, downstream: downstream) else {
+                return
             }
-#endif
-            return
+            
+            graph.addEdge(key: upstream, downstream: downstream)
         }
-        
-        guard !graph.isContainEdge(key: upstream, downstream: downstream) else {
-            return
-        }
-        
-        graph.addEdge(key: upstream, downstream: downstream)
     }
     
-    @MainActor
     func subscribe(for nodeKey: NodeKey, subscriber: Subscriber) -> Subscription {
-        var subscribers = subscriberMap[nodeKey] ?? []
-        let keyedSubscriber = KeyedSubscriber(subscriber: subscriber)
-        
-        if !subscribers.contains(keyedSubscriber) {
-            subscribers.insert(keyedSubscriber)
-            subscriberMap[nodeKey] = subscribers
-        }
-        
-        return Subscription { [weak self] in
-            DispatchQueue.main.async {
-                self?.subscriberMap[nodeKey]?.remove(keyedSubscriber)
-                // TODO: try to release
-                print("release")
-                self?.releaseNode(nodeKey)
+        return executeOnQueue {
+            var subscribers = subscriberMap[nodeKey] ?? []
+            let keyedSubscriber = KeyedSubscriber(subscriber: subscriber)
+            
+            if !subscribers.contains(keyedSubscriber) {
+                subscribers.insert(keyedSubscriber)
+                subscriberMap[nodeKey] = subscribers
+            }
+            
+            return Subscription { [weak self] in
+                self?.queue.sync {
+                    guard let self = self else { return }
+                    self.subscriberMap[nodeKey]?.remove(keyedSubscriber)
+                    // 如果这个键没有订阅者了，那么可以尝试释放相关的节点和状态
+                    if self.subscriberMap[nodeKey]?.isEmpty ?? false {
+                        self.subscriberMap.removeValue(forKey: nodeKey)
+                        self.releaseNode(nodeKey)
+                    }
+                }
             }
         }
     }
     
-    @MainActor
     private func releaseNode(_ nodeKey: NodeKey) {
         // check should remove or not
         let isNilOrEmpty = self.subscriberMap[nodeKey]?.isEmpty ?? true
@@ -134,44 +147,45 @@ internal final class RecoilStore: Store {
         }
     }
     
-    @MainActor
     func reset() {
-        self.states = [:]
-        self.subscriberMap = [:]
-        self.graph.reset()
+        queue.sync {
+            self.states = [:]
+            self.subscriberMap = [:]
+            self.graph.reset()
+        }
     }
     
-    @MainActor
     @discardableResult
     private func register<T: RecoilNode>(_ node: T) -> BaseLoadable {
-        let key = node.key
-        let box = node.makeLoadable()
-        _ = box.observeValueChange { [weak self] newValue in
+        return executeOnQueue {
+            let key = node.key
+            let box = node.makeLoadable()
+            _ = box.observeValueChange { [weak self] newValue in
                 guard let val = newValue as? NodeStatus<T.T> else { return }
                 self?.nodeValueChanged(node: node, value: val)
-            
+            }
+            states[key] = box
+            return box
         }
-        states[key] = box
-        return box
     }
     
-    @MainActor
     private func notifyChanged<Node: RecoilNode>(node: Node, value: NodeStatus<Node.T>) {
         guard let subscribers = subscriberMap[node.key] else {
             return
         }
-        subscribers.forEach { $0.valueDidChange(node: node, newValue: value) }
-    }
-    
-    @MainActor
-    private func nodeValueChanged<Node: RecoilNode>(node: Node, value: NodeStatus<Node.T>) {
-        let downstreams = graph.getNode(for: node.key)?.downstream ?? []
-        
-        for item in downstreams {
-            NodeAccessor(store: self).refresh(for: item)
+        subscribers.forEach {
+            $0.valueDidChange(node: node, newValue: value)
         }
-        
-        DispatchQueue.main.async {
+    }
+
+    private func nodeValueChanged<Node: RecoilNode>(node: Node, value: NodeStatus<Node.T>) {
+        executeOnQueue {
+            let downstreams = graph.getNode(for: node.key)?.downstream ?? []
+            
+            for item in downstreams {
+                NodeAccessor(store: self).refresh(for: item)
+            }
+            
             self.notifyChanged(node: node, value: value)
         }
     }
@@ -180,5 +194,17 @@ internal final class RecoilStore: Store {
 extension Dictionary {
     func has(_ key: Self.Key) -> Bool {
         self[key] != nil
+    }
+}
+
+extension RecoilStore {
+    func executeOnQueue<T>(_ operation: () -> T) -> T {
+        if DispatchQueue.getSpecific(key: queueKey) == queueValue {
+            return operation()
+        } else {
+            return queue.sync {
+                operation()
+            }
+        }
     }
 }

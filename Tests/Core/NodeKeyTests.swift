@@ -32,7 +32,7 @@ class NodeKeyTests: XCTestCase {
     }
     
     func test_should_returnCorrectHash_when_hashIsCalled_given_NodeKeyWithHashRule() {
-        let hashRule: NodeKey.HashCalculator = { hasher in
+        let hashRule: NodeKey.HashRuleBlock = { hasher in
             hasher.combine(10)
         }
         
@@ -46,7 +46,7 @@ class NodeKeyTests: XCTestCase {
     }
     
     func test_should_saveToMapCorrect_when_hashIsCalled_given_NodeKeyWithHashRule() {
-        let hashRule: NodeKey.HashCalculator = { hasher in
+        let hashRule: NodeKey.HashRuleBlock = { hasher in
             hasher.combine(10)
         }
         
@@ -64,7 +64,7 @@ class NodeKeyTests: XCTestCase {
     }
     
     func test_should_notEqual_when_hashIsCalled_given_NodeKeyWithHashRule() {
-        let hashRule: NodeKey.HashCalculator = { hasher in
+        let hashRule: NodeKey.HashRuleBlock = { hasher in
             hasher.combine("param")
         }
         
