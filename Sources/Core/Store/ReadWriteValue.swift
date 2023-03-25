@@ -54,7 +54,7 @@ internal struct NodeAccessorWrapper: StateAccessor {
     }
     
     private func buildRelation<Node: RecoilNode>(_ node: Node) throws {
-        guard needBuildDependencies, let nodeKey = deps.first else {
+        guard needBuildDependencies, let nodeKey = deps.last else {
             return
         }
         

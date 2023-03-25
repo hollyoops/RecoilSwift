@@ -24,6 +24,22 @@ struct ErrorDeps {
     }
 }
 
+struct SuccessDeps {
+    typealias Selector = RecoilSwift.Selector
+    
+    static var stateA: Selector<Int> {
+        selector { context in
+            try context.get(stateB) * 10
+        }
+    }
+    
+    static var stateB: Selector<Int> {
+        selector { context in
+            try context.get(MockAtoms.intState)
+        }
+    }
+}
+
 final class NodeAccessorTests: XCTestCase {
     @RecoilTestScope var scope
     
@@ -70,6 +86,14 @@ extension NodeAccessorTests {
         accessor.set(MockAtoms.intState, 12)
         
         XCTAssertEqual(try accessor.get(MockAtoms.intState), 12)
+    }
+    
+    func test_should_returnLatestValue_when_call_get_value_given_dependency_of_dependency_hasChanged() throws {
+        XCTAssertEqual(try accessor.get(SuccessDeps.stateA), 0)
+        
+        accessor.set(MockAtoms.intState, 12)
+        
+        XCTAssertEqual(try accessor.get(SuccessDeps.stateA), 120)
     }
     
     func test_should_get_error_when_get_value_given_self_states_hasError() throws {
