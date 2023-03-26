@@ -3,9 +3,13 @@ import Foundation
 protocol Store: AnyObject {
     func subscribe(for nodeKey: NodeKey, subscriber: Subscriber) -> Subscription
     
+    func subscribe(subscriber: Subscriber) -> Subscription
+    
     func safeGetLoadable<T: RecoilNode>(for node: T) -> BaseLoadable
     
     func getLoadable(for key: NodeKey) -> BaseLoadable?
+    
+    func getSnapshot() -> Snapshot
     
     func getLoadingStatus(for key: NodeKey) -> Bool
     
@@ -16,11 +20,11 @@ protocol Store: AnyObject {
 
 internal final class RecoilStore: Store {
     private var states: [NodeKey: BaseLoadable] = [:]
-    private var subscriberMap: [NodeKey: Set<KeyedSubscriber>] = [:]
     private let graph = Graph()
+    private var subscriberMap: [NodeKey: Set<KeyedSubscriber>] = [:]
+    private var storeSubscribers: Set<KeyedSubscriber> = []
     
     private let queue = DispatchQueue(label: "com.hollyoops.RecoilStore")
-    
     private let queueValue = UUID()
     private let queueKey = DispatchSpecificKey<UUID>()
     
@@ -38,6 +42,10 @@ internal final class RecoilStore: Store {
         executeOnQueue {
             states[key]
         }
+    }
+    
+    func getSnapshot() -> Snapshot {
+        Snapshot(graph: graph)
     }
     
     func getLoadingStatus(for key: NodeKey) -> Bool {
@@ -122,11 +130,28 @@ internal final class RecoilStore: Store {
                 self?.queue.sync {
                     guard let self = self else { return }
                     self.subscriberMap[nodeKey]?.remove(keyedSubscriber)
-                    // 如果这个键没有订阅者了，那么可以尝试释放相关的节点和状态
+                    
                     if self.subscriberMap[nodeKey]?.isEmpty ?? false {
                         self.subscriberMap.removeValue(forKey: nodeKey)
                         self.releaseNode(nodeKey)
                     }
+                }
+            }
+        }
+    }
+    
+    func subscribe(subscriber: Subscriber) -> Subscription {
+        let keyedSubscriber = KeyedSubscriber(subscriber: subscriber)
+        
+        return executeOnQueue {
+            if !storeSubscribers.contains(keyedSubscriber) {
+                storeSubscribers.insert(keyedSubscriber)
+            }
+            
+            return Subscription { [weak self] in
+                guard let self = self else { return }
+                _ = self.executeOnQueue {
+                    self.storeSubscribers.remove(keyedSubscriber)
                 }
             }
         }
@@ -169,12 +194,18 @@ internal final class RecoilStore: Store {
         }
     }
     
-    private func notifyChanged<Node: RecoilNode>(node: Node, value: NodeStatus<Node.T>) {
-        guard let subscribers = subscriberMap[node.key] else {
-            return
-        }
+    private func notifyNodeChanged<Node: RecoilNode>(node: Node, value: NodeStatus<Node.T>) {
+        guard let subscribers = subscriberMap[node.key] else { return }
+        
         subscribers.forEach {
             $0.valueDidChange(node: node, newValue: value)
+        }
+    }
+    
+    private func notifyStoreChanged() {
+        let snapshot = getSnapshot()
+        for subscriber in storeSubscribers {
+            subscriber.storeChange(snapshot: snapshot)
         }
     }
 
@@ -186,7 +217,8 @@ internal final class RecoilStore: Store {
                 NodeAccessor(store: self).refresh(for: item)
             }
             
-            self.notifyChanged(node: node, value: value)
+            self.notifyNodeChanged(node: node, value: value)
+            self.notifyStoreChanged()
         }
     }
 }

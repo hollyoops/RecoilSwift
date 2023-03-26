@@ -37,7 +37,10 @@ let package = Package(
             dependencies: [
                 .product(name: "Hooks", package: "SwiftUI-Hooks")
             ],
-            path: "Sources"
+            path: "Sources",
+            resources: [
+                .copy("Resources/graph-web")
+            ]
         ),
         .target(
             name: "RecoilSwiftXCTests",

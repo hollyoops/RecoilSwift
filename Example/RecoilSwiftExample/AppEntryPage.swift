@@ -25,13 +25,17 @@ struct AppEntryPage: View {
                 }
                 
                 Section(header: Text("Example with UIKIT")) {
-                    NavigationLink("Come Soon...") {
+                    NavigationLink("UIKit Example(Come Soon...)") {
                         EmptyView()
                     }
                 }
                 
                 Section(header: Text("DebugTool")) {
-                    NavigationLink("Come Soon...") {
+                    NavigationLink("Snapshot") {
+                        SnapshotTestView()
+                    }
+
+                    NavigationLink("Time travel(Come Soon...)") {
                         EmptyView()
                     }
                 }

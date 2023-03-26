@@ -15,6 +15,7 @@
 		EE023C7E26AD98A6002EBF0C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE023C7D26AD98A6002EBF0C /* Assets.xcassets */; };
 		EE023C8126AD98A6002EBF0C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE023C8026AD98A6002EBF0C /* Preview Assets.xcassets */; };
 		EE023C8426AD98A6002EBF0C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EE023C8226AD98A6002EBF0C /* LaunchScreen.storyboard */; };
+		EE1D2E252A1A367F005BFA60 /* SnapshotTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1D2E242A1A367F005BFA60 /* SnapshotTestView.swift */; };
 		EE27DB132A0FE1CC00D9F217 /* AppEntryPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE27DB122A0FE1CC00D9F217 /* AppEntryPage.swift */; };
 		EE321BE729DA5ADB00840FBF /* QuickDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE321BE629DA5ADB00840FBF /* QuickDemoView.swift */; };
 		EE7508E728234F1E001D306B /* ReactiveForm in Frameworks */ = {isa = PBXBuildFile; productRef = EE7508E628234F1E001D306B /* ReactiveForm */; };
@@ -63,6 +64,7 @@
 		EE023C8326AD98A6002EBF0C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EE023C8526AD98A6002EBF0C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EE16AA8F29D17EC00014AA7B /* BookListRecoil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BookListRecoil.swift; path = RecoilSwiftExample/Features/BookList/BookListRecoil.swift; sourceTree = SOURCE_ROOT; };
+		EE1D2E242A1A367F005BFA60 /* SnapshotTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotTestView.swift; sourceTree = "<group>"; };
 		EE27DB122A0FE1CC00D9F217 /* AppEntryPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppEntryPage.swift; sourceTree = "<group>"; };
 		EE321BE629DA5ADB00840FBF /* QuickDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickDemoView.swift; sourceTree = "<group>"; };
 		EE7508E828234F45001D306B /* RecoilSwift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = RecoilSwift; path = ..; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 				EE27DB0E2A0FDB9700D9F217 /* BookStore */,
 				EEBC589427DB4B7400987CD2 /* MoreUsage */,
 				EE27DB0D2A0FDB5900D9F217 /* UIKitExample */,
+				EE1D2E232A1A3658005BFA60 /* Snapshot */,
 				EE023C7726AD98A3002EBF0C /* AppDelegate.swift */,
 				EE321BE629DA5ADB00840FBF /* QuickDemoView.swift */,
 				EE27DB122A0FE1CC00D9F217 /* AppEntryPage.swift */,
@@ -172,6 +175,14 @@
 				EE023C8026AD98A6002EBF0C /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		EE1D2E232A1A3658005BFA60 /* Snapshot */ = {
+			isa = PBXGroup;
+			children = (
+				EE1D2E242A1A367F005BFA60 /* SnapshotTestView.swift */,
+			);
+			path = Snapshot;
 			sourceTree = "<group>";
 		};
 		EE27DB0D2A0FDB5900D9F217 /* UIKitExample */ = {
@@ -429,6 +440,7 @@
 			files = (
 				EE99DF9427DEC156007BD272 /* Quarter.swift in Sources */,
 				EEBC589627DB4B7400987CD2 /* MoreUsageView.swift in Sources */,
+				EE1D2E252A1A367F005BFA60 /* SnapshotTestView.swift in Sources */,
 				EEE848AB282ABA1C0021EB32 /* MainTabPage.swift in Sources */,
 				EEBC589827DB4B7400987CD2 /* LoadableExampleView.swift in Sources */,
 				EEBB993D2744D557007D2581 /* AllBooksView.swift in Sources */,
