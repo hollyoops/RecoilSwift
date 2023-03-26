@@ -5,7 +5,7 @@ struct CartContent: View {
     @RecoilScope var ctx
     
     var body: some View {
-        let items = useRecoilValue(Cart.allCartItemState)
+        let items = ctx.useRecoilValue(Cart.allCartItemState)
         
         Group {
             if items.isEmpty {
