@@ -1,11 +1,11 @@
 import SwiftUI
 import RecoilSwift
 
-struct FilterInfoView: HookView {
+struct FilterInfoView: View {
+    @RecoilScope var ctx
     
-    @MainActor
-    var hookBody: some View {
-        let selectedCategoryState = useRecoilState(BookList.selectedCategoryState)
+    var body: some View {
+        let selectedCategoryState = ctx.useRecoilState(BookList.selectedCategoryState)
         let value = selectedCategoryState.wrappedValue?.rawValue ??  "None"
         
         HStack {

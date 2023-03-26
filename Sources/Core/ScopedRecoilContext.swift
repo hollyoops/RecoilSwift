@@ -79,6 +79,24 @@ public class ScopedRecoilContext {
         return try await fn(context)
     }
     
+    public func useRecoilCallback<T, P>(_ fn: @escaping Callback1<P, T>) -> (P) -> T {
+        let context = RecoilCallbackContext(
+            accessor: nodeAccessor.accessor(deps: nil),
+            store: stateCache.store
+        )
+        
+        return { p in fn(context, p) }
+    }
+    
+    public func useRecoilCallback<T, P>(_ fn: @escaping AsyncCallback1<P, T>) -> (P) async throws -> T {
+        let context = RecoilCallbackContext(
+            accessor: nodeAccessor.accessor(deps: nil),
+            store: stateCache.store
+        )
+        
+        return { p in try await fn(context, p) }
+    }
+    
     public func useRecoilValueLoadable<Value: RecoilNode>(_ valueNode: Value) -> LoadableContent<Value.T> {
         subscribeChange(for: valueNode)
 //        let loadble = store?.safeGetLoadable(for: valueNode)

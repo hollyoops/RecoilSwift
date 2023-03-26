@@ -2,6 +2,14 @@ import RecoilSwift
 
 typealias HomeTab = Home.Tab
 
+struct SelectedTabState: SyncAtomNode {
+    func getValue() throws -> Home.Tab {
+        .list
+    }
+    
+    typealias T = Home.Tab
+}
+
 // MARK: - Atoms
 struct Home {
     enum Tab {
@@ -14,8 +22,11 @@ struct Home {
         atom(.list)
     }
     
-    static var tabBarVisibleState: Atom<Bool> {
-        atom(true)
+    static var filterVisisbleState: AsyncSelector<Bool> {
+        selector { ctx in
+            let books = try await ctx.get(BookList.currentBooks)
+            return !books.isEmpty
+        }
     }
 }
 

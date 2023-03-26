@@ -1,12 +1,11 @@
 import SwiftUI
 import RecoilSwift
 
-struct BooksContent: HookView {
-    
-    @MainActor
-    var hookBody: some View {
-        //    let callback = useRecoilCallback(AllBooks.getFromRemote)
-        let loadable = useRecoilValueLoadable(BookList.currentBooks)
+struct BooksContent: View {
+    @RecoilScope var ctx
+
+    var body: some View {
+        let loadable = ctx.useRecoilValueLoadable(BookList.currentBooks)
         
         return VStack {
             if loadable.isLoading {
@@ -23,9 +22,8 @@ struct BooksContent: HookView {
         }
     }
     
-    @MainActor
     private func allBooks(books: [Book]) -> some View {
-        let addToCart = useRecoilCallback(Cart.addToCart(context:newBook:))
+        let addToCart = ctx.useRecoilCallback(Cart.addToCart(context:newBook:))
         return List(books) { book in
             HStack {
                 VStack(alignment: .leading) {

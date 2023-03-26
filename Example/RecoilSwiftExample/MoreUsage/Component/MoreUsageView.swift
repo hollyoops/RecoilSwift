@@ -4,11 +4,11 @@ struct MoreUsageView: View {
   var body: some View {
     List {
       NavigationLink(
-        "Loadable Usage",
+        "Use Loadable with Hooks",
         destination: LoadableExampleView()
       )
     }
-    .navigationTitle("Examples")
+    .navigationTitle("Others")
   }
 }
 

@@ -15,7 +15,7 @@
 		EE023C7E26AD98A6002EBF0C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE023C7D26AD98A6002EBF0C /* Assets.xcassets */; };
 		EE023C8126AD98A6002EBF0C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE023C8026AD98A6002EBF0C /* Preview Assets.xcassets */; };
 		EE023C8426AD98A6002EBF0C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EE023C8226AD98A6002EBF0C /* LaunchScreen.storyboard */; };
-		EE16AA9029D17EC00014AA7B /* BookListRecoil.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE16AA8F29D17EC00014AA7B /* BookListRecoil.swift */; };
+		EE27DB132A0FE1CC00D9F217 /* AppEntryPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE27DB122A0FE1CC00D9F217 /* AppEntryPage.swift */; };
 		EE321BE729DA5ADB00840FBF /* QuickDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE321BE629DA5ADB00840FBF /* QuickDemoView.swift */; };
 		EE7508E728234F1E001D306B /* ReactiveForm in Frameworks */ = {isa = PBXBuildFile; productRef = EE7508E628234F1E001D306B /* ReactiveForm */; };
 		EE7508EB28235020001D306B /* RecoilSwift in Frameworks */ = {isa = PBXBuildFile; productRef = EE7508EA28235020001D306B /* RecoilSwift */; };
@@ -30,17 +30,14 @@
 		EE99DF9527DEC156007BD272 /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE99DF9027DEC156007BD272 /* Book.swift */; };
 		EE99DF9627DEC156007BD272 /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE99DF9127DEC156007BD272 /* Mocks.swift */; };
 		EE99DF9B27DEC1E2007BD272 /* HomeRecoil.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE99DF9A27DEC1E2007BD272 /* HomeRecoil.swift */; };
-		EEBB99392744D557007D2581 /* TabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99272744D557007D2581 /* TabBar.swift */; };
 		EEBB993B2744D557007D2581 /* AddBookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB992B2744D557007D2581 /* AddBookView.swift */; };
-		EEBB993C2744D557007D2581 /* AppEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB992C2744D557007D2581 /* AppEntryView.swift */; };
 		EEBB993D2744D557007D2581 /* AllBooksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB992E2744D557007D2581 /* AllBooksView.swift */; };
 		EEBB99412744D557007D2581 /* BookListRecoil.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBB99342744D557007D2581 /* BookListRecoil.swift */; };
 		EEBC589627DB4B7400987CD2 /* MoreUsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589527DB4B7400987CD2 /* MoreUsageView.swift */; };
 		EEBC589827DB4B7400987CD2 /* LoadableExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589727DB4B7400987CD2 /* LoadableExampleView.swift */; };
-		EEBC589A27DD0AEE00987CD2 /* RemoteControllView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC589927DD0AEE00987CD2 /* RemoteControllView.swift */; };
 		EEE1327A2A04F94100D30527 /* RecoilSwiftExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE132792A04F94100D30527 /* RecoilSwiftExampleTests.swift */; };
 		EEE132812A0503CA00D30527 /* RecoilSwiftXCTests in Frameworks */ = {isa = PBXBuildFile; productRef = EEE132802A0503CA00D30527 /* RecoilSwiftXCTests */; };
-		EEE848AB282ABA1C0021EB32 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE848AA282ABA1B0021EB32 /* MainTabView.swift */; };
+		EEE848AB282ABA1C0021EB32 /* MainTabPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE848AA282ABA1B0021EB32 /* MainTabPage.swift */; };
 		EEED4FA12822CEE60072D9AC /* FilterOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEED4FA02822CEE60072D9AC /* FilterOptionsView.swift */; };
 /* End PBXBuildFile section */
 
@@ -66,6 +63,7 @@
 		EE023C8326AD98A6002EBF0C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EE023C8526AD98A6002EBF0C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EE16AA8F29D17EC00014AA7B /* BookListRecoil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BookListRecoil.swift; path = RecoilSwiftExample/Features/BookList/BookListRecoil.swift; sourceTree = SOURCE_ROOT; };
+		EE27DB122A0FE1CC00D9F217 /* AppEntryPage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppEntryPage.swift; sourceTree = "<group>"; };
 		EE321BE629DA5ADB00840FBF /* QuickDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickDemoView.swift; sourceTree = "<group>"; };
 		EE7508E828234F45001D306B /* RecoilSwift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = RecoilSwift; path = ..; sourceTree = "<group>"; };
 		EE92C6982743C38200A003BF /* FilterInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterInfoView.swift; sourceTree = "<group>"; };
@@ -79,17 +77,14 @@
 		EE99DF9027DEC156007BD272 /* Book.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
 		EE99DF9127DEC156007BD272 /* Mocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
 		EE99DF9A27DEC1E2007BD272 /* HomeRecoil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRecoil.swift; sourceTree = "<group>"; };
-		EEBB99272744D557007D2581 /* TabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBar.swift; sourceTree = "<group>"; };
 		EEBB992B2744D557007D2581 /* AddBookView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddBookView.swift; sourceTree = "<group>"; };
-		EEBB992C2744D557007D2581 /* AppEntryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppEntryView.swift; sourceTree = "<group>"; };
 		EEBB992E2744D557007D2581 /* AllBooksView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AllBooksView.swift; sourceTree = "<group>"; };
 		EEBB99342744D557007D2581 /* BookListRecoil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BookListRecoil.swift; sourceTree = "<group>"; };
 		EEBC589527DB4B7400987CD2 /* MoreUsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreUsageView.swift; sourceTree = "<group>"; };
 		EEBC589727DB4B7400987CD2 /* LoadableExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadableExampleView.swift; sourceTree = "<group>"; };
-		EEBC589927DD0AEE00987CD2 /* RemoteControllView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControllView.swift; sourceTree = "<group>"; };
 		EEE132772A04F94100D30527 /* RecoilSwiftExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecoilSwiftExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEE132792A04F94100D30527 /* RecoilSwiftExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoilSwiftExampleTests.swift; sourceTree = "<group>"; };
-		EEE848AA282ABA1B0021EB32 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		EEE848AA282ABA1B0021EB32 /* MainTabPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabPage.swift; sourceTree = "<group>"; };
 		EEED4FA02822CEE60072D9AC /* FilterOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterOptionsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -154,9 +149,14 @@
 		EE023C7626AD98A3002EBF0C /* RecoilSwiftExample */ = {
 			isa = PBXGroup;
 			children = (
-				EEBB99252744D557007D2581 /* Features */,
+				EEBB992F2744D557007D2581 /* Common */,
+				EEBB992A2744D557007D2581 /* AddBook */,
+				EE27DB0E2A0FDB9700D9F217 /* BookStore */,
+				EEBC589427DB4B7400987CD2 /* MoreUsage */,
+				EE27DB0D2A0FDB5900D9F217 /* UIKitExample */,
 				EE023C7726AD98A3002EBF0C /* AppDelegate.swift */,
-				EEBB992C2744D557007D2581 /* AppEntryView.swift */,
+				EE321BE629DA5ADB00840FBF /* QuickDemoView.swift */,
+				EE27DB122A0FE1CC00D9F217 /* AppEntryPage.swift */,
 				EE023C7926AD98A3002EBF0C /* SceneDelegate.swift */,
 				EE023C7D26AD98A6002EBF0C /* Assets.xcassets */,
 				EE023C8226AD98A6002EBF0C /* LaunchScreen.storyboard */,
@@ -172,6 +172,23 @@
 				EE023C8026AD98A6002EBF0C /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		EE27DB0D2A0FDB5900D9F217 /* UIKitExample */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = UIKitExample;
+			sourceTree = "<group>";
+		};
+		EE27DB0E2A0FDB9700D9F217 /* BookStore */ = {
+			isa = PBXGroup;
+			children = (
+				EEBB99262744D557007D2581 /* Home */,
+				EE92C69C2743C59400A003BF /* Cart */,
+				EEBB992D2744D557007D2581 /* BookList */,
+			);
+			path = BookStore;
 			sourceTree = "<group>";
 		};
 		EE7508E928235020001D306B /* Frameworks */ = {
@@ -236,41 +253,25 @@
 			isa = PBXGroup;
 			children = (
 				EEBB992B2744D557007D2581 /* AddBookView.swift */,
-				EEBC589927DD0AEE00987CD2 /* RemoteControllView.swift */,
 			);
 			path = Component;
-			sourceTree = "<group>";
-		};
-		EEBB99252744D557007D2581 /* Features */ = {
-			isa = PBXGroup;
-			children = (
-				EEBB992F2744D557007D2581 /* Common */,
-				EEBB992D2744D557007D2581 /* BookList */,
-				EE92C69C2743C59400A003BF /* Cart */,
-				EEBB992A2744D557007D2581 /* RemoteControll */,
-				EEBB99262744D557007D2581 /* Home */,
-			);
-			path = Features;
 			sourceTree = "<group>";
 		};
 		EEBB99262744D557007D2581 /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				EEBB99272744D557007D2581 /* TabBar.swift */,
-				EEE848AA282ABA1B0021EB32 /* MainTabView.swift */,
+				EEE848AA282ABA1B0021EB32 /* MainTabPage.swift */,
 				EE99DF9A27DEC1E2007BD272 /* HomeRecoil.swift */,
-				EE321BE629DA5ADB00840FBF /* QuickDemoView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
 		};
-		EEBB992A2744D557007D2581 /* RemoteControll */ = {
+		EEBB992A2744D557007D2581 /* AddBook */ = {
 			isa = PBXGroup;
 			children = (
 				EE99DF9927DEC1E2007BD272 /* Component */,
-				EEBC589427DB4B7400987CD2 /* MoreUsage */,
 			);
-			path = RemoteControll;
+			path = AddBook;
 			sourceTree = "<group>";
 		};
 		EEBB992D2744D557007D2581 /* BookList */ = {
@@ -428,19 +429,15 @@
 			files = (
 				EE99DF9427DEC156007BD272 /* Quarter.swift in Sources */,
 				EEBC589627DB4B7400987CD2 /* MoreUsageView.swift in Sources */,
-				EEE848AB282ABA1C0021EB32 /* MainTabView.swift in Sources */,
-				EEBB993C2744D557007D2581 /* AppEntryView.swift in Sources */,
+				EEE848AB282ABA1C0021EB32 /* MainTabPage.swift in Sources */,
 				EEBC589827DB4B7400987CD2 /* LoadableExampleView.swift in Sources */,
 				EEBB993D2744D557007D2581 /* AllBooksView.swift in Sources */,
-				EE16AA9029D17EC00014AA7B /* BookListRecoil.swift in Sources */,
 				EE321BE729DA5ADB00840FBF /* QuickDemoView.swift in Sources */,
 				EE99DF9B27DEC1E2007BD272 /* HomeRecoil.swift in Sources */,
-				EEBB99392744D557007D2581 /* TabBar.swift in Sources */,
 				EE92C69B2743C3C000A003BF /* BooksContent.swift in Sources */,
 				EE023C7826AD98A3002EBF0C /* AppDelegate.swift in Sources */,
 				EEBB993B2744D557007D2581 /* AddBookView.swift in Sources */,
 				EE99DF9227DEC156007BD272 /* AllBooksService.swift in Sources */,
-				EEBC589A27DD0AEE00987CD2 /* RemoteControllView.swift in Sources */,
 				EE99DF9527DEC156007BD272 /* Book.swift in Sources */,
 				EE99DF7D279B29BF007BD272 /* MoreUsageRecoil.swift in Sources */,
 				EEBB99412744D557007D2581 /* BookListRecoil.swift in Sources */,
@@ -451,6 +448,7 @@
 				EE99DF7F279B29E7007BD272 /* MoreUsageService.swift in Sources */,
 				EE99DF9327DEC156007BD272 /* AllBooksRecoil.swift in Sources */,
 				EE92C6992743C38200A003BF /* FilterInfoView.swift in Sources */,
+				EE27DB132A0FE1CC00D9F217 /* AppEntryPage.swift in Sources */,
 				EEED4FA12822CEE60072D9AC /* FilterOptionsView.swift in Sources */,
 				EE99DF9627DEC156007BD272 /* Mocks.swift in Sources */,
 				B770FC6627E06DFF00088B9F /* CartItem.swift in Sources */,
@@ -612,6 +610,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"RecoilSwiftExample/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = RecoilSwiftExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -632,6 +631,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"RecoilSwiftExample/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = RecoilSwiftExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
