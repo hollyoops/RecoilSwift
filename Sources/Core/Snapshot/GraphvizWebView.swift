@@ -1,7 +1,7 @@
 import SwiftUI
 import WebKit
 
-struct WebView: UIViewRepresentable {
+struct GraphvizWebView: UIViewRepresentable {
     let html: String
     var dotGraph: String
     @Binding var isGraphReady: Bool
@@ -31,10 +31,10 @@ struct WebView: UIViewRepresentable {
     }
     
     class Coordinator: NSObject, WKNavigationDelegate {
-        var parent: WebView
+        var parent: GraphvizWebView
         var initialLoadDone: Bool = false
 
-        init(_ parent: WebView) {
+        init(_ parent: GraphvizWebView) {
             self.parent = parent
         }
         

@@ -23,9 +23,9 @@ public struct SnapshotView: View {
             case .loading:
                 ProgressView("Init...")
             case .success(let html):
-                WebView(html: html, dotGraph: dotGraph, isGraphReady: $isGraphReady)
+                GraphvizWebView(html: html, dotGraph: dotGraph, isGraphReady: $isGraphReady)
             case .failure(let error):
-                GraphErrorView(error: error, retryAction: loadHTML)
+                SnapshotErrorView(error: error, retryAction: loadHTML)
             }
         }.onChange(of: latestSnapshot) {
             guard isGraphReady else { return }
@@ -63,7 +63,7 @@ public struct SnapshotView: View {
                                                 ofType: "html",
                                                 inDirectory: "graph-web"),
               let htmlCode = try? String(contentsOfFile: htmlPath, encoding: .utf8) else {
-            throw GraphViewError.notFound
+            throw SnapshotError.notFound
         }
         
         return htmlCode

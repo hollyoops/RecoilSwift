@@ -1,20 +1,20 @@
 import SwiftUI
 
-enum GraphViewError: LocalizedError {
+enum SnapshotError: LocalizedError {
     case notFound
     case loadFailed
     
     var errorDescription: String? {
         switch self {
         case .notFound:
-            return "File not found"
+            return "Resoruce file not found"
         case .loadFailed:
-            return "Failed to load file"
+            return "Failed to load resoruce file"
         }
     }
 }
 
-struct GraphErrorView: View {
+struct SnapshotErrorView: View {
     let error: Error
     let retryAction: () async -> Void
     
