@@ -13,14 +13,21 @@ internal final class ViewRefresher: ObservableObject, ViewRefreshable {
 internal final class ScopedStateCache {
     private var subscriptions: [NodeKey: Subscription] = [:]
     private var caches: [NodeKey: Any] = [:]
+    private(set) var snapshots: [Snapshot] = [] {
+        didSet {
+            onSnapshotChange?(snapshots)
+        }
+    }
+    private(set) var maxSnapshot: Int = 1
+    private var storeSub: Subscription?
     
     internal var onValueChange: (((NodeKey, Any)) -> Void)?
+    internal var onSnapshotChange: (([Snapshot]) -> Void)?
     
     /// TODO: This is leagcy design to remove it later
     private var cancellables: Set<AnyCancellable> = []
     
     deinit {
-        subscriptions.values.forEach { $0.unsubscribe() }
         self.clear()
     }
     
@@ -29,8 +36,15 @@ internal final class ScopedStateCache {
     }
     
     func subscribe<Node: RecoilNode>(for node: Node, in store: Store) {
+        if subscriptions.has(node.key) { return }
         let subscription = store.subscribe(for: node.key, subscriber: self)
         subscriptions[node.key] = subscription
+    }
+    
+    func subscribe(store: Store) {
+        guard storeSub == nil else { return }
+        storeSub = store.subscribe(subscriber: self)
+        snapshots = [store.getSnapshot()]
     }
     
     private func peekCache<Node: RecoilNode>(for node: Node) -> NodeStatus<Node.T>? {
@@ -38,6 +52,9 @@ internal final class ScopedStateCache {
     }
     
     func clear() {
+        subscriptions.values.forEach { $0.unsubscribe() }
+        storeSub?.unsubscribe()
+        storeSub = nil
         caches = [:]
         subscriptions = [:]
         cancellables.forEach { $0.cancel() }
@@ -46,6 +63,10 @@ internal final class ScopedStateCache {
 }
 
 extension ScopedStateCache: Subscriber {
+    func snapshotChanged(snapshot: Snapshot) {
+        snapshots = [snapshot]
+    }
+    
     func valueDidChange<Node: RecoilNode>(node: Node, newValue: NodeStatus<Node.T>) {
         if let value = peekCache(for: node), value == newValue {
             return

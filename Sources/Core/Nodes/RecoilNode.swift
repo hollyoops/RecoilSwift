@@ -7,13 +7,13 @@ public protocol RecoilNode<T> {
 }
 
 extension RecoilNode {
-    var key: NodeKey {
+    public var key: NodeKey {
         NodeKey(self)
     }
 }
 
 public protocol RecoilSyncNode: RecoilNode {
-    func compute(_ accessor: Getter) throws -> T
+    func getValue(_ accessor: StateGetter) throws -> T
 }
 
 public extension RecoilSyncNode {
@@ -23,7 +23,7 @@ public extension RecoilSyncNode {
 }
 
 public protocol RecoilAsyncNode: RecoilNode {
-    func compute(_ accessor: Getter) async throws -> T
+    func getValue(_ accessor: StateGetter) async throws -> T
 }
 
 public extension RecoilAsyncNode {
@@ -35,13 +35,9 @@ public extension RecoilAsyncNode {
 public protocol Writeable {
     associatedtype T: Equatable
     
-    func update(context: MutableContext, newValue: T)
+    func setValue(context: MutableContext, newValue: T)
 }
 
 public typealias RecoilMutableSyncNode = RecoilSyncNode & Writeable
 
 public typealias RecoilMutableAsyncNode = RecoilAsyncNode & Writeable
-
-enum RecoilError: Error {
-    case unknown
-}

@@ -1,4 +1,5 @@
 import Combine
+import SwiftUI
 
 /// Represents a scoped context for Recoil values, allowing binding and updates.
 public class ScopedRecoilContext {
@@ -19,18 +20,28 @@ public class ScopedRecoilContext {
     
     public func useRecoilValue<Value: RecoilSyncNode>(_ valueNode: Value) -> Value.T {
         subscribeChange(for: valueNode)
-        return nodeAccessor.get(valueNode)
+        do {
+            return try nodeAccessor.get(valueNode, deps: [])
+        } catch {
+            // TODO:
+            print(error)
+            fatalError(error.localizedDescription)
+        }
     }
     
     public func useRecoilValue<Value: RecoilAsyncNode>(_ valueNode: Value) -> Value.T? {
         useRecoilValueLoadable(valueNode).data
     }
     
-    public func useRecoilState<Value: RecoilMutableSyncNode>(_ stateNode: Value) -> BindableValue<Value.T> {
+    public func useRecoilState<Value: RecoilMutableSyncNode>(_ stateNode: Value) -> Binding<Value.T> {
+        Binding(useRecoilBinding(stateNode))
+    }
+    
+    public func useRecoilBinding<Value: RecoilMutableSyncNode>(_ stateNode: Value) -> BindableValue<Value.T> {
         subscribeChange(for: stateNode)
         return BindableValue(
               get: {
-                  self.nodeAccessor.get(stateNode)
+                  try! self.nodeAccessor.get(stateNode, deps: []) // TODO:
               },
               set: { newState in
                   self.nodeAccessor.set(stateNode, newState)
@@ -42,7 +53,7 @@ public class ScopedRecoilContext {
         subscribeChange(for: stateNode)
         return BindableValue(
               get: {
-                  self.nodeAccessor.get(stateNode)
+                  self.nodeAccessor.getOrNil(stateNode, deps: [])
               },
               set: { newState in
                   guard let newState else { return }
@@ -53,11 +64,37 @@ public class ScopedRecoilContext {
     
     public func useRecoilCallback<T>(_ fn: @escaping Callback<T>) -> T {
         let context = RecoilCallbackContext(
-            get: nodeAccessor.getter(),
-            set: nodeAccessor.setter(),
+            accessor: nodeAccessor.accessor(deps: nil),
             store: stateCache.store
         )
         return fn(context)
+    }
+    
+    public func useRecoilCallback<T>(_ fn: @escaping AsyncCallback<T>) async throws -> T {
+        let context = RecoilCallbackContext(
+            accessor: nodeAccessor.accessor(deps: nil),
+            store: stateCache.store
+        )
+        
+        return try await fn(context)
+    }
+    
+    public func useRecoilCallback<T, P>(_ fn: @escaping Callback1<P, T>) -> (P) -> T {
+        let context = RecoilCallbackContext(
+            accessor: nodeAccessor.accessor(deps: nil),
+            store: stateCache.store
+        )
+        
+        return { p in fn(context, p) }
+    }
+    
+    public func useRecoilCallback<T, P>(_ fn: @escaping AsyncCallback1<P, T>) -> (P) async throws -> T {
+        let context = RecoilCallbackContext(
+            accessor: nodeAccessor.accessor(deps: nil),
+            store: stateCache.store
+        )
+        
+        return { p in try await fn(context, p) }
     }
     
     public func useRecoilValueLoadable<Value: RecoilNode>(_ valueNode: Value) -> LoadableContent<Value.T> {

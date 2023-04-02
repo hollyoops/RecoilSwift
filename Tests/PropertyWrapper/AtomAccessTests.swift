@@ -5,15 +5,15 @@ import RecoilSwiftXCTests
 
 final class AtomAccessTests: XCTestCase {
     struct TestModule  {
-        static var stringAtom: Atom<String>!
+        static var stringAtom: Atom<String> {
+            atom { "rawValue" }
+        }
     }
     
     @RecoilTestScope var scope
     
     override func setUp() {
         _scope.reset()
-        
-        TestModule.stringAtom = atom { "rawValue" }
     }
     
     func test_should_atom_value_when_useRecoilValue_given_stringAtom() async {
@@ -26,7 +26,7 @@ final class AtomAccessTests: XCTestCase {
     }
     
     func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() {
-        var value = scope.useRecoilState(TestModule.stringAtom)
+        let value = scope.useRecoilState(TestModule.stringAtom)
         XCTAssertEqual(value.wrappedValue, "rawValue")
         
         value.wrappedValue = "newValue"
@@ -36,15 +36,15 @@ final class AtomAccessTests: XCTestCase {
     }
     
     func test_should_refreshView_when_useRecoilState_given_after_stateChange() async throws {
-        var value = scope.useRecoilState(TestModule.stringAtom)
+        let value = scope.useRecoilState(TestModule.stringAtom)
         
-        XCTAssertEqual(_scope.viewRefreshCount, 0)
+        XCTAssertEqual(_scope.viewRefreshCount, 1)
         
         try await _scope.waitNextStateChange {
             value.wrappedValue = "newValue"
         }
         
-        XCTAssertEqual(_scope.viewRefreshCount, 1)
+        XCTAssertEqual(_scope.viewRefreshCount, 2)
     }
     
     func test_should_refreshView_when_useRecoilLoadable_given_after_stateChange() {

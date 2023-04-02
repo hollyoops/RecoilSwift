@@ -10,9 +10,9 @@ A selector is a pure function that accepts atoms or other selectors as input. Wh
 
 ## Readonly Selector
 ```swift
-let currentBooksSel = selector { get -> [Book] in
-    let books = get(allBookStore)
-      if let category = get(selectedCategoryState) {
+let currentBooksSel = selector { accessor -> [Book] in
+    let books = accessor.get(allBookStore)
+      if let category = accessor.get(selectedCategoryState) {
           return books.filter { $0.category == category }
       }
     return books
@@ -27,12 +27,12 @@ A bi-directional selector receives the incoming value as a parameter and can use
 let tempFahrenheitState = atom(32)
 let tempCelsiusSelector = selector(
       get: { get in
-        let fahrenheit = get(tempFahrenheitState)
+        let fahrenheit = accessor.get(tempFahrenheitState)
         return (fahrenheit - 32) * 5 / 9
       },
       set: { context, newValue in
         let newFahrenheit = (newValue * 9) / 5 + 32
-        context.set(tempFahrenheitState, newFahrenheit)
+        context.accessor.set(tempFahrenheitState, newFahrenheit)
       }
 )
 

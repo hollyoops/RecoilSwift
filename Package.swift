@@ -22,11 +22,11 @@ let package = Package(
     ],
     
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        .package(
-            url: "https://github.com/hollyoops/SwiftUI-Hooks",
-            from: "0.0.3"
-        )
+      // Dependencies declare other packages that this package depends on.
+      .package(
+        url: "https://github.com/hollyoops/SwiftUI-Hooks",
+        from: "0.0.4"
+      )
     ],
     
     targets: [
@@ -37,7 +37,10 @@ let package = Package(
             dependencies: [
                 .product(name: "Hooks", package: "SwiftUI-Hooks")
             ],
-            path: "Sources"
+            path: "Sources",
+            resources: [
+                .copy("Resources/graph-web")
+            ]
         ),
         .target(
             name: "RecoilSwiftXCTests",

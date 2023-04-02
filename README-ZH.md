@@ -83,12 +83,12 @@ pod 'RecoilSwift'
 let allBooksState = atom { [Book]() }
 
 // 创建了一个只读的Selector，它实现了一定的业务逻辑。这里的逻辑是对书籍进行按照分类过滤
-let currentBooksSelector = selector { get -> [Book] in
+let currentBooksSelector = selector { accessor -> [Book] in
  // 注意： 下面这个简单的 `get` 方法，是从其他的`atom/selector`中获取数据
  // 其实它还和`allBooksState`建立了上下游关系。当allBooksState数据发生变化,
  // 当前selector会自动重新计算。这让不同状态可以组合，重用，非常强大!
-    let books = get(allBooksState)
-    if let category = get(selectedCategoryState) {
+    let books = accessor.get(allBooksState)
+    if let category = accessor.get(selectedCategoryState) {
         return books.filter { $0.category == category }
     }
     return books

@@ -33,7 +33,7 @@ public struct RecoilState<Node: RecoilMutableSyncNode>: DynamicProperty {
     }
     
     public var projectedValue: Binding<Node.T> {
-        Binding(context.useRecoilState(node))
+        context.useRecoilState(node)
     }
 }
 

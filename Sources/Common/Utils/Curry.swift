@@ -14,10 +14,22 @@ func curryFirst<A, B>(_ f: @escaping (A) -> B) -> (A) -> () -> B {
    { a in { () in f(a) } }
 }
 
+func curryFirst<A, B>(_ f: @escaping (A) async throws -> B) -> (A) -> () async throws -> B {
+   { a in { () in try await f(a) } }
+}
+
 func curryFirst<A, B, C>(_ f: @escaping (A, B) -> C) -> (A) -> (B) -> C {
    { a in { b in f(a, b) } }
 }
 
+func curryFirst<A, B, C>(_ f: @escaping (A, B) async throws -> C) -> (A) -> (B) async throws ->  C  {
+    { a in { b in try await f(a, b) } }
+}
+
 func curryFirst<A, B, C, D>(_ f: @escaping (A, B, C) -> D) -> (A) -> (B, C) -> D {
    { a in { b, c in f(a, b, c) } }
+}
+
+func curryFirst<A, B, C, D>(_ f: @escaping (A, B, C) async throws -> D) -> (A) -> (B, C) async throws -> D {
+   { a in { b, c in try await f(a, b, c) } }
 }

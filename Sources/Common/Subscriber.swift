@@ -1,9 +1,17 @@
 /// A class that represents the subscription returned by the store when subscribing.
 protocol Subscriber: AnyObject {
     func valueDidChange<Node: RecoilNode>(node: Node, newValue: NodeStatus<Node.T>)
+    
+    func storeChange(snapshot: Snapshot)
 }
 
-class KeyedSubscriber: Hashable, Subscriber {
+extension Subscriber {
+    func valueDidChange<Node: RecoilNode>(node: Node, newValue: NodeStatus<Node.T>) { }
+    
+    func storeChange(snapshot: Snapshot) { }
+}
+
+class KeyedSubscriber: Hashable {
     let id: ObjectIdentifier
     private let subscriber: Subscriber
     
@@ -11,17 +19,23 @@ class KeyedSubscriber: Hashable, Subscriber {
         self.id = ObjectIdentifier(subscriber)
         self.subscriber = subscriber
     }
-    
-    func valueDidChange<Node: RecoilNode>(node: Node, newValue: NodeStatus<Node.T>) {
-        subscriber.valueDidChange(node: node, newValue: newValue)
-    }
-    
+
     static func == (lhs: KeyedSubscriber, rhs: KeyedSubscriber) -> Bool {
         return lhs.id == rhs.id
     }
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+}
+
+extension KeyedSubscriber: Subscriber {
+    func valueDidChange<Node: RecoilNode>(node: Node, newValue: NodeStatus<Node.T>) {
+        subscriber.valueDidChange(node: node, newValue: newValue)
+    }
+    
+    func storeChange(snapshot: Snapshot) {
+        subscriber.storeChange(snapshot: snapshot)
     }
 }
 

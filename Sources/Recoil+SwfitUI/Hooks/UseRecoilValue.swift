@@ -10,9 +10,9 @@ import Hooks
 /// if the state is async state, it return will `'value?'`, otherwise it return `'value'`
 @MainActor
 public func useRecoilValue<P: Equatable, Return: RecoilSyncNode>(
-    _ value: ParametricRecoilValue<P, Return>
+    _ value: RecoilParamNode<P, Return>
 ) -> Return.T {
-    let hook = RecoilValueHook(node: value.recoilValue,
+    let hook = RecoilValueHook(node: value.node,
                                 updateStrategy: .preserved(by: value.param))
     
     return useHook(hook)
@@ -20,9 +20,9 @@ public func useRecoilValue<P: Equatable, Return: RecoilSyncNode>(
 
 @MainActor
 public func useRecoilValue<P: Equatable, Return: RecoilAsyncNode>(
-    _ value: ParametricRecoilValue<P, Return>
+    _ value: RecoilParamNode<P, Return>
 ) -> Return.T? {
-    let hook = RecoilAsyncValueHook(node: value.recoilValue,
+    let hook = RecoilAsyncValueHook(node: value.node,
                                 updateStrategy: .preserved(by: value.param))
     
     return useHook(hook)
@@ -50,9 +50,9 @@ public func useRecoilValue<Value: RecoilAsyncNode>(_ initialState: Value) -> Val
 /// if the state is async state, it return will `'Binding<value?>'`, otherwise it return `'Binding<value>'`
 @MainActor
 public func useRecoilState<P: Equatable, Return: RecoilMutableSyncNode>(
-    _ value: ParametricRecoilValue<P, Return>
+    _ value: RecoilParamNode<P, Return>
 ) -> Binding<Return.T> {
-    let hook = RecoilStateHook(node: value.recoilValue,
+    let hook = RecoilStateHook(node: value.node,
                                updateStrategy: .preserved(by: value.param))
     
     return useHook(hook)
@@ -76,10 +76,12 @@ protocol RecoilHook: Hook {
 }
 
 extension RecoilHook where State == Ref<T> {
+    @MainActor
     func makeState() -> Ref<T> {
         Ref(initialState: initialValue)
     }
     
+    @MainActor
     func makeScopeContext(coordinator: Coordinator) -> ScopedRecoilContext {
         ScopedRecoilContext(
             store: coordinator.environment.store,
@@ -87,6 +89,7 @@ extension RecoilHook where State == Ref<T> {
             refresher: AnyViewRefreher(viewUpdator: coordinator.updateView))
     }
     
+    @MainActor
     func getStoredContext(coordinator: Coordinator) -> ScopedRecoilContext {
         let refState = coordinator.state
         let ctx = refState.ctx ?? makeScopeContext(coordinator: coordinator)
@@ -98,12 +101,14 @@ extension RecoilHook where State == Ref<T> {
         return ctx
     }
     
+    @MainActor
     func updateState(coordinator: Coordinator) {
         let refState = coordinator.state
         refState.update(newValue: initialValue,
                         context: makeScopeContext(coordinator: coordinator))
     }
 
+    @MainActor
     func dispose(state: Ref<T>) {
         state.dispose()
     }
@@ -118,6 +123,7 @@ private struct RecoilValueHook<Node: RecoilSyncNode>: RecoilHook {
         self.updateStrategy = updateStrategy
     }
 
+    @MainActor
     func value(coordinator: Coordinator) -> T.T {
         let ctx = getStoredContext(coordinator: coordinator)
         return ctx.useRecoilValue(initialValue)
@@ -132,7 +138,8 @@ private struct RecoilAsyncValueHook<Node: RecoilAsyncNode>: RecoilHook {
         self.initialValue = node
         self.updateStrategy = updateStrategy
     }
-
+    
+    @MainActor
     func value(coordinator: Coordinator) -> Node.T? {
         let ctx = getStoredContext(coordinator: coordinator)
         return ctx.useRecoilValue(initialValue)
@@ -148,20 +155,9 @@ private struct RecoilStateHook<Node: RecoilMutableSyncNode>: RecoilHook {
         self.updateStrategy = updateStrategy
     }
     
+    @MainActor
     func value(coordinator: Coordinator) -> Binding<Node.T> {
         let ctx = getStoredContext(coordinator: coordinator)
-        let bindableValue = ctx.useRecoilState(initialValue)
-        return Binding(
-            get: bindableValue.get,
-            set: { newState in
-                assertMainThread()
-
-                guard !coordinator.state.isDisposed else {
-                    return
-                }
-
-                bindableValue.set(newState)
-            }
-        )
+        return ctx.useRecoilState(initialValue)
     }
 }

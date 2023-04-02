@@ -1,0 +1,24 @@
+<html>
+   <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <style>
+         svg {
+         width: 100%;
+         height: auto;
+         }
+      </style>
+   </head>
+   <body>
+      <script type="application/javascript">
+         {VIZ_JS_CODE}
+      </script>
+<!--      <script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/1.8.2/viz-lite.js"></script>-->
+      <script type="application/javascript">
+         function graphvizRender(dot) {
+             var result = Viz(dot, "svg");
+             document.body.innerHTML = result;
+         }
+         graphvizRender(`{DOT_GRAPH_STRING}`);
+      </script>
+   </body>
+</html>

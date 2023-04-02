@@ -60,6 +60,8 @@ internal class Graph {
         fixUpstreams()
     }
     
+    func allNodes() -> [NodeKey: Node] { nodes }
+    
     func addEdge(key: NodeKey, downstream downKey: NodeKey) {
         if !nodes.has(downKey) {
             nodes[downKey] = Node(downKey)

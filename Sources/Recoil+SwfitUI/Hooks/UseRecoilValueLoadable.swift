@@ -21,7 +21,7 @@ public struct LoadableContent<DataType: Equatable> {
     }
     
     public var data: DataType? {
-        store.getData(for: key, dataType: DataType.self)
+        store.getLoadable(for: key)?.anyData as? DataType
     }
     
     public var isLoading: Bool {
@@ -60,9 +60,9 @@ public struct LoadableContent<DataType: Equatable> {
 /// - Returns: return a loadable object that contains loading informations
 @MainActor
 public func useRecoilValueLoadable<P: Equatable, Return: RecoilNode>(
-    _ value: ParametricRecoilValue<P, Return>
+    _ value: RecoilParamNode<P, Return>
 ) -> LoadableContent<Return.T> {
-    let hook = RecoilLoadableValueHook(node: value.recoilValue,
+    let hook = RecoilLoadableValueHook(node: value.node,
                                        updateStrategy: .preserved(by: value.param))
     
     return useHook(hook)
@@ -86,6 +86,7 @@ private struct RecoilLoadableValueHook<Node: RecoilNode>: RecoilHook {
         self.updateStrategy = updateStrategy
     }
     
+    @MainActor
     func value(coordinator: Coordinator) -> LoadableContent<Node.T> {
         let ctx = getStoredContext(coordinator: coordinator)
         return ctx.useRecoilValueLoadable(initialValue)

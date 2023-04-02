@@ -1,5 +1,6 @@
 import SwiftUI
 import XCTest
+import RecoilSwiftXCTests
 
 @testable import RecoilSwift
 
@@ -8,13 +9,15 @@ final class AtomReadWriteTests: XCTestCase {
         static var stringAtom = atom { "rawValue" }
     }
     
+    @RecoilTestScope var scope
+    
     @MainActor
     override func setUp() {
-        RecoilTest.shared.reset()
+        _scope.reset()
     }
     
     func test_should_return_rawValue_when_read_only_atom_given_stringAtom() {
-        let tester = HookTester {
+        let tester = HookTester(scope: _scope) {
             useRecoilValue(TestModule.stringAtom)
         }
         
@@ -22,7 +25,7 @@ final class AtomReadWriteTests: XCTestCase {
     }
     
     func test_should_return_newValue_when_read_write_atom_given_stringAtom_and_newValue() {
-        let tester = HookTester {
+        let tester = HookTester(scope: _scope) {
             useRecoilState(TestModule.stringAtom)
         }
         

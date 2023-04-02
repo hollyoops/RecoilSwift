@@ -4,36 +4,78 @@ public protocol RecoilKey: Hashable {
 
 public extension RecoilKey { }
 
+public struct SourcePosition: Hashable {
+    public let tokenName: String
+    public let fileName: String
+    public let line: Int
+    
+    init(funcName: String, fileName: String, line: Int) {
+        self.tokenName = funcName
+        self.fileName = fileName
+        self.line = line
+    }
+}
+
+internal struct CustomHashCalculator {
+    typealias HashCalculationBlock = (inout Hasher) -> Void
+    
+    let calculateHash: HashCalculationBlock
+    let hashValue: Int
+    
+    init(calculateHash: @escaping HashCalculationBlock) {
+        self.calculateHash = calculateHash
+        
+        var hasher = Hasher()
+        calculateHash(&hasher)
+        self.hashValue = hasher.finalize()
+    }
+}
+
 public struct NodeKey: RecoilKey {
-    public typealias HashCalculator = (inout Hasher) -> Void
+    public typealias HashRuleBlock = (inout Hasher) -> Void
     
     public let name: String
-    public let recoilNode: AnyHashable?
-    public let additionalHashRule: HashCalculator?
+    public let position: SourcePosition?
+    public let extraHashValue: Int?
     
-    init<Node: RecoilNode>(_ node: Node, hashRule: HashCalculator? = nil) {
-        self.name = String(describing: Node.Type.self)
-        
-        if let hashableNode = node as? (any Hashable) {
-            self.recoilNode = AnyHashable(hashableNode)
-        } else {
-            self.recoilNode = nil
-        }
-        
-        self.additionalHashRule = hashRule
+    public var fullKeyName: String {
+        guard let pos = position else { return name }
+        return "\(name)_\(pos.fileName)_\(pos.line)"
     }
     
-    init(name: String, hashRule: HashCalculator? = nil) {
-        self.name = name
-        self.recoilNode = nil
-        self.additionalHashRule = hashRule
+    init<Node: RecoilNode>(_ node: Node) {
+        self.name = String(describing: Node.self)
+        
+        if let hashableNode = node as? (any Hashable) {
+            self.extraHashValue = hashableNode.hashValue
+        } else {
+            self.extraHashValue = nil
+        }
+        
+        self.position = nil
+    }
+    
+    init(position: SourcePosition, hashRule: HashRuleBlock? = nil) {
+        self.name = position.tokenName
+        self.position = position
+        self.extraHashValue = hashRule.map { CustomHashCalculator(calculateHash: $0).hashValue }
+    }
+    
+    init(_ uniqueName: String, hashRule: HashRuleBlock? = nil) {
+        self.name = uniqueName
+        self.position = nil
+        self.extraHashValue = hashRule.map { CustomHashCalculator(calculateHash: $0).hashValue }
     }
 
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(name)
-        additionalHashRule?(&hasher)
-        if let hashableNode = recoilNode {
+        hasher.combine(fullKeyName)
+        
+        if let hashableNode = extraHashValue {
             hasher.combine(hashableNode)
+        }
+        
+        if let pos = position {
+            hasher.combine(pos)
         }
     }
     
