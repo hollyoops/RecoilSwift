@@ -30,7 +30,7 @@ public func atomFamily<P: Hashable, T: Equatable>(
 ) -> AtomFamily<P, T> {
     return { (param: P) -> RecoilParamNode<P, Atom<T>> in
         let pos = SourcePosition(funcName: funcName, fileName: fileID, line: line)
-        let key = NodeKey(position: pos) { hasher in
+        let key = NodeKey(position: pos, type: .atom) { hasher in
             hasher.combine(param)
         }
         return RecoilParamNode(
@@ -52,7 +52,7 @@ public func atomFamily<P: Hashable, T: Equatable, E: Error>(
 ) -> AsyncAtomFamily<P, T> {
     return { (param: P) -> RecoilParamNode<P, AsyncAtom<T>> in
         let pos = SourcePosition(funcName: funcName, fileName: fileID, line: line)
-        let key = NodeKey(position: pos) { hasher in
+        let key = NodeKey(position: pos, type: .atom) { hasher in
             hasher.combine(param)
         }
         
@@ -76,7 +76,7 @@ public func atomFamily<P: Hashable, T: Equatable>(
     return { (param: P) -> RecoilParamNode<P, AsyncAtom<T>> in
         
         let pos = SourcePosition(funcName: funcName, fileName: fileID, line: line)
-        let key = NodeKey(position: pos) { hasher in
+        let key = NodeKey(position: pos, type: .atom) { hasher in
             hasher.combine(param)
         }
         return RecoilParamNode(

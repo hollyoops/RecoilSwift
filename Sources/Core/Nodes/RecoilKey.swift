@@ -32,11 +32,17 @@ internal struct CustomHashCalculator {
 }
 
 public struct NodeKey: RecoilKey {
+    public enum NodeType {
+        case atom
+        case selector
+    }
+    
     public typealias HashRuleBlock = (inout Hasher) -> Void
     
     public let name: String
     public let position: SourcePosition?
     public let extraHashValue: Int?
+    public let nodeType: NodeType
     
     public var fullKeyName: String {
         guard let pos = position else { return name }
@@ -52,19 +58,22 @@ public struct NodeKey: RecoilKey {
             self.extraHashValue = nil
         }
         
+        self.nodeType = node.nodeType
         self.position = nil
     }
     
-    init(position: SourcePosition, hashRule: HashRuleBlock? = nil) {
+    init(position: SourcePosition, type: NodeType, hashRule: HashRuleBlock? = nil) {
         self.name = position.tokenName
         self.position = position
         self.extraHashValue = hashRule.map { CustomHashCalculator(calculateHash: $0).hashValue }
+        self.nodeType = type
     }
     
-    init(_ uniqueName: String, hashRule: HashRuleBlock? = nil) {
+    init(_ uniqueName: String, type: NodeType,  hashRule: HashRuleBlock? = nil) {
         self.name = uniqueName
         self.position = nil
         self.extraHashValue = hashRule.map { CustomHashCalculator(calculateHash: $0).hashValue }
+        self.nodeType = type
     }
 
     public func hash(into hasher: inout Hasher) {
@@ -88,4 +97,14 @@ func sourceLocationKey<T>(_ type: T.Type,
                        fileName: String,
                        line: Int) -> String {
     "\(type)_\(fileName)_\(line)"
+}
+
+private extension RecoilNode {
+    var nodeType: NodeKey.NodeType {
+        let isSyncAtom = (self as? (any SyncAtomNode)).isSome
+        let isAsyncAtom = (self as? (any AsyncAtomNode)).isSome
+        let isAtom = isSyncAtom || isAsyncAtom
+        
+        return isAtom ? .atom : .selector
+    }
 }

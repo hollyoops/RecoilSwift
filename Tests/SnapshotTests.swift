@@ -5,39 +5,41 @@ import XCTest
 class SnapshotTests: XCTestCase {
     func test_should_return_dot_graph_when_have_a_node() {
         let graph = Graph() {
-          GraphNode("StateA")
+            GraphNode(NodeKey("StateA", type: .atom))
         }
         
         let snapshot = Snapshot(graph: graph)
         
         let expected = """
         digraph Store {
-        StateA;
+        node [style="filled"];
+        StateA [fillcolor="gold" color="darkgoldenrod"];
         }
         """
-
+        
         XCTAssertEqual(snapshot.generateDotGraph(), expected)
     }
     
     func test_should_return_dot_graph_when_have_multiple_nodes() {
         let graph = Graph() {
-          GraphNode("StateA") { "StateB" }
-          GraphNode("StateB") { "StateC" }
-          GraphNode("StateC")
+            GraphNode("StateA") { "StateB" }
+            GraphNode("StateB") { "StateC" }
+            GraphNode("StateC")
         }
         
         let snapshot = Snapshot(graph: graph)
         
         let expected = """
         digraph Store {
-        StateA;
-        StateA -> StateB;
-        StateB;
-        StateB -> StateC;
-        StateC;
+        node [style="filled"];
+        StateA [fillcolor="peru" color="sienna"];
+        StateA -> StateB [color="saddlebrown"];
+        StateB [fillcolor="peru" color="sienna"];
+        StateB -> StateC [color="saddlebrown"];
+        StateC [fillcolor="peru" color="sienna"];
         }
         """
-
+        
         XCTAssertEqual(snapshot.generateDotGraph(isSortNodeByName: true), expected)
     }
     
@@ -47,7 +49,7 @@ class SnapshotTests: XCTestCase {
         let snapshot = Snapshot(graph: graph)
         
         let expected = "digraph Empty { label=\"Empty Store\"; }"
-
+        
         XCTAssertEqual(snapshot.generateDotGraph(isSortNodeByName: true), expected)
     }
 }

@@ -16,16 +16,19 @@ public class Snapshot {
             return Self.emptyDotGraph
         }
         
+        let atomColor = "[fillcolor=\"gold\" color=\"darkgoldenrod\"]"
+        let selectorColor = "[fillcolor=\"peru\" color=\"sienna\"]"
         let nodesStrings = nodes.flatMap { node in
             let nodeName = node.key.name
+            let color = node.key.nodeType == .atom ? atomColor : selectorColor
             let nodeString = """
-                \(nodeName);
+                \(nodeName) \(color);
                 """
 
             let edgesStrings = node.downstream.map { downstreamNodeKey in
                 let downstreamNodeName = downstreamNodeKey.name
                 return """
-                \(nodeName) -> \(downstreamNodeName);
+                \(nodeName) -> \(downstreamNodeName) [color="saddlebrown"];
                 """
             }
 
@@ -34,6 +37,7 @@ public class Snapshot {
 
         let allLines = """
             digraph Store {
+            node [style="filled"];
             \(nodesStrings.joined(separator: "\n"))
             }
             """

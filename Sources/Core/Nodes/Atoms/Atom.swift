@@ -26,7 +26,7 @@ public func atom<T: Equatable>(_ value: T,
                                funcName: String = #function,
                                fileID: String = #fileID,
                                line: Int = #line) -> Atom<T> {
-    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line))
+    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line), type: .atom)
     return Atom(key: key, value)
 }
 
@@ -38,7 +38,7 @@ public func atom<T: Equatable>(_ fn: @escaping () throws -> T,
                                funcName: String = #function,
                                fileID: String = #fileID,
                                line: Int = #line) -> Atom<T> {
-    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line))
+    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line), type: .atom)
     return Atom(key: key, get: fn)
 }
 
@@ -51,7 +51,7 @@ public func atom<T: Equatable, E: Error>(_ fn: @escaping AtomCombineGet<T, E>,
                                          funcName: String = #function,
                                          fileID: String = #fileID,
                                          line: Int = #line) -> AsyncAtom<T> {
-    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line))
+    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line), type: .atom)
     return AsyncAtom(key: key, get: fn)
 }
 
@@ -64,7 +64,7 @@ public func atom<T: Equatable>(_ fn: @escaping AtomAsyncGet<T>,
                                funcName: String = #function,
                                fileID: String = #fileID,
                                line: Int = #line) -> AsyncAtom<T> {
-    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line))
+    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line), type: .atom)
     return AsyncAtom(key: key, get: fn)
 }
 

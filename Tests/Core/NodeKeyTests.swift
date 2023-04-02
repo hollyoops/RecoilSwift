@@ -11,7 +11,7 @@ class NodeKeyTests: XCTestCase {
 
     func test_should_returnCorrectFullKeyName_when_fullKeyNameIsCalled_given_NodeKey() {
         let pos = SourcePosition(funcName: "test", fileName: "test.swift", line: 10)
-        let key = NodeKey(position: pos)
+        let key = NodeKey(position: pos, type: .selector)
         XCTAssertEqual(key.fullKeyName, "test_test.swift_10")
     }
     

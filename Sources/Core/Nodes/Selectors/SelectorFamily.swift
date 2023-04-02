@@ -23,7 +23,7 @@ public func selectorFamily<P: Hashable, T: Equatable>(
     
     return { (param: P) -> RecoilParamNode<P, Selector<T>> in
         let pos = SourcePosition(funcName: funcName, fileName: fileID, line: line)
-        let key = NodeKey(position: pos) { hasher in
+        let key = NodeKey(position: pos, type: .selector) { hasher in
             hasher.combine(param)
         }
         let body = curry(getBody)(param)
@@ -45,7 +45,7 @@ public func selectorFamily<P: Hashable, T: Equatable, E: Error>(
     
     return { (param: P) -> RecoilParamNode<P, AsyncSelector<T>> in
         let pos = SourcePosition(funcName: funcName, fileName: fileID, line: line)
-        let key = NodeKey(position: pos) { hasher in
+        let key = NodeKey(position: pos, type: .selector) { hasher in
             hasher.combine(param)
         }
         return RecoilParamNode(
@@ -69,7 +69,7 @@ public func selectorFamily<P: Hashable, T: Equatable>(
     
     return { (param: P) -> RecoilParamNode<P, AsyncSelector<T>> in
         let pos = SourcePosition(funcName: funcName, fileName: fileID, line: line)
-        let key = NodeKey(position: pos) { hasher in
+        let key = NodeKey(position: pos, type: .selector) { hasher in
             hasher.combine(param)
         }
         return RecoilParamNode(

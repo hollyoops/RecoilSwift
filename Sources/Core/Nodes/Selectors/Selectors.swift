@@ -22,7 +22,8 @@ public func selector<T: Equatable>(_ getBody: @escaping SyncGet<T>,
                                    funcName: String = #function,
                                    fileID: String = #fileID,
                                    line: Int = #line) -> Selector<T> {
-    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line))
+    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line),
+                      type: .selector)
     return Selector(key: key, body: getBody)
 }
 
@@ -35,7 +36,8 @@ public func selector<T: Equatable, E: Error>(_ getBody: @escaping CombineGet<T, 
                                              funcName: String = #function,
                                              fileID: String = #fileID,
                                              line: Int = #line) -> AsyncSelector<T> {
-    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line))
+    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line),
+                      type: .selector)
     return AsyncSelector(key: key, get: getBody)
 }
 
@@ -48,7 +50,8 @@ public func selector<T: Equatable>(_ getBody: @escaping AsyncGet<T>,
                                    funcName: String = #function,
                                    fileID: String = #fileID,
                                    line: Int = #line) -> AsyncSelector<T> {
-    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line))
+    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line),
+                      type: .selector)
     return AsyncSelector(key: key, get: getBody)
 }
 
@@ -62,7 +65,8 @@ public func selector<T: Equatable>(get getBody: @escaping SyncGet<T>,
                                    funcName: String = #function,
                                    fileID: String = #fileID,
                                    line: Int = #line) -> MutableSelector<T> {
-    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line))
+    let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line),
+                      type: .selector)
     return MutableSelector(key: key, get: getBody, set: setBody)
 }
 

@@ -38,6 +38,12 @@ extension GraphNodeBuilder {
     }
 }
 
+extension NodeKey {
+    init(_ uniqueName: String, hashRule: HashRuleBlock? = nil) {
+        self.init(uniqueName, type: .selector, hashRule: hashRule)
+    }
+}
+
 extension DFSCircularChecker {
     func canAddEdge(graph: Graph,
                     forKey key: String,
