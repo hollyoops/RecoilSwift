@@ -25,8 +25,12 @@ struct AppEntryPage: View {
                 }
                 
                 Section(header: Text("Example with UIKIT")) {
-                    NavigationLink("UIKit Example(Come Soon...)") {
-                        EmptyView()
+                    Button(action: {
+                        let books = BooksViewController()
+                        let viewController = UINavigationController(rootViewController: books)
+                        UIApplication.present(viewController, animated: true)
+                    }) {
+                        Text("Show BooksViewController")
                     }
                 }
                 
