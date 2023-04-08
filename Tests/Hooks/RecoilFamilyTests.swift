@@ -8,40 +8,54 @@ final class RecoilFamilyTests: XCTestCase {
     @RecoilTestScope var scope
     
     struct TestModule  {
-        static var myNumberState = atom { 2 }
-        
-        static var threeTimesNumberState = atomFamily { (multiplier: Int) -> Int in
-            3 * multiplier;
+        static var myNumberState: Atom<Int> {
+            atom { 2 }
         }
-        
-        static let myMultipliedState = selectorFamily { (multiplier: Int, accessor: StateGetter) -> Int in
-            accessor.getUnsafe(myNumberState) * multiplier;
+            
+        static var threeTimesNumberState: AtomFamily<Int, Int> {
+            atomFamily { (multiplier: Int) -> Int in
+                3 * multiplier;
+            }
         }
-        
-        static let getBookByType = atomFamily { (type: String) -> AnyPublisher<[String], Error> in
-            MockAPI.makeCombine(
-                result: .success(["\(type)-Book1", "\(type)-Book2"]),
-                delay: TestConfig.mock_async_wait_seconds
-            )
+            
+        static var myMultipliedState: SelectorFamily<Int, Int> {
+            selectorFamily { (multiplier: Int, accessor: StateGetter) -> Int in
+                accessor.getUnsafe(myNumberState) * multiplier;
+            }
         }
-        
-        static let getBookByCategory = selectorFamily { (category: String, accessor: StateGetter) -> AnyPublisher<[String], Error> in
-            MockAPI.makeCombine(
-                result: .success(["\(category):Book1", "\(category):Book2"]),
-                delay: TestConfig.mock_async_wait_seconds
-            )
+            
+        static var getBookByType: AsyncAtomFamily<String, [String]> {
+            atomFamily { (type: String) -> AnyPublisher<[String], Error> in
+                MockAPI.makeCombine(
+                    result: .success(["\(type)-Book1", "\(type)-Book2"]),
+                    delay: TestConfig.mock_async_wait_seconds
+                )
+            }
         }
-        
-        static let fetchBookByType = atomFamily { (type: String) async -> [String] in
-            await MockAPI.makeAsync(
-                value: ["\(type)-Book1", "\(type)-Book2"],
-                delay: TestConfig.mock_async_wait_nanoseconds)
+            
+        static var getBookByCategory: AsyncSelectorFamily<String, [String]> {
+            selectorFamily { (category: String, accessor: StateGetter) -> AnyPublisher<[String], Error> in
+                MockAPI.makeCombine(
+                    result: .success(["\(category):Book1", "\(category):Book2"]),
+                    delay: TestConfig.mock_async_wait_seconds
+                )
+            }
         }
-        
-        static let fetchBookByCategory = selectorFamily { (category: String, accessor: StateGetter) async -> [String] in
-            await MockAPI.makeAsync(
-                value: ["\(category):Book1", "\(category):Book2"],
-                delay: TestConfig.mock_async_wait_nanoseconds)
+            
+        static var fetchBookByType: AsyncAtomFamily<String, [String]> {
+            atomFamily { (type: String) async -> [String] in
+                await MockAPI.makeAsync(
+                    value: ["\(type)-Book1", "\(type)-Book2"],
+                    delay: TestConfig.mock_async_wait_nanoseconds)
+            }
+        }
+            
+        static var fetchBookByCategory: AsyncSelectorFamily<String, [String]> {
+            selectorFamily { (category: String, accessor: StateGetter) async -> [String] in
+                await MockAPI.makeAsync(
+                    value: ["\(category):Book1", "\(category):Book2"],
+                    delay: TestConfig.mock_async_wait_nanoseconds)
+            }
         }
     }
     

@@ -65,7 +65,7 @@ class BooksViewController: UIViewController, UITableViewDataSource, UITableViewD
                                                             style: .plain,
                                                             target: self,
                                                             action: #selector(didTapFilterButton))
-        navigationItem.title = "Book Catalogue"
+        navigationItem.title = "Book Catalogue(UIKit)"
     }
     
     @objc func didTapFilterButton() {

@@ -35,11 +35,11 @@ struct AppEntryPage: View {
                 }
                 
                 Section(header: Text("DebugTool")) {
-                    NavigationLink("Snapshot") {
+                    NavigationLink("States Snapshot") {
                         SnapshotTestView()
                     }
 
-                    NavigationLink("Time travel(Come Soon...)") {
+                    NavigationLink("Time Travel (Come Soon...)") {
                         EmptyView()
                     }
                 }

@@ -5,12 +5,12 @@ public struct MainTabPage: View {
     @RecoilScope var ctx
     
     public var body: some View {
-        let selectedTab = ctx.useRecoilBinding(SelectedTabState())
+        let selectedTab = ctx.useRecoilState(SelectedTabState())
         let shouldShowFilter = ctx.useRecoilValue(Home.filterVisisbleState)
         let badgeText = ctx.useRecoilValue(Cart.cartItemBadgeState)
        
         ZStack(alignment: .bottom) {
-            TabView(selection: .constant(selectedTab.wrappedValue)) {
+            TabView(selection: selectedTab) {
                 AllBooksView()
                     .tag(HomeTab.list)
                     .tabItem {

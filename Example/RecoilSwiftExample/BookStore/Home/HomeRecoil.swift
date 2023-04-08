@@ -24,7 +24,7 @@ struct Home {
     
     static var filterVisisbleState: AsyncSelector<Bool> {
         selector { ctx in
-            let books = try await ctx.get(BookList.currentBooks)
+            let books = try await ctx.get(AllBooks.allBookState)
             return !books.isEmpty
         }
     }

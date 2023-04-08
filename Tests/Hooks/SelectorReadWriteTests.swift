@@ -4,25 +4,6 @@ import XCTest
 @testable import RecoilSwift
 
 final class SelectorReadWriteTests: XCTestCase {
-    struct TestModule  {
-        static var namesState = atom { ["", "Ella", "Chris", "", "Paul"] }
-        static let filteredNamesState = selector { accessor -> [String] in
-            accessor.getUnsafe(namesState).filter { $0 != "" }
-        }
-        
-        static let tempFahrenheitState: Atom<Int> = atom(32)
-        static let tempCelsiusSelector: MutableSelector<Int> = selector(
-            get: { context in
-                let fahrenheit = context.getUnsafe(tempFahrenheitState)
-                return (fahrenheit - 32) * 5 / 9
-            },
-            set: { context, newValue in
-                let newFahrenheit = (newValue * 9) / 5 + 32
-                context.accessor.set(tempFahrenheitState, newFahrenheit)
-            }
-        )
-    }
-    
     @RecoilTestScope var scope
     
     var accessor: StateAccessor {
@@ -37,17 +18,21 @@ final class SelectorReadWriteTests: XCTestCase {
 // MARK: - sync selector
 extension SelectorReadWriteTests {
     func test_should_return_filtered_names_when_using_filtered_names_selector_given_names_state() {
+        let expectation = XCTestExpectation(description: "filtered names")
         let tester = HookTester(scope: _scope) {
-            useRecoilValue(TestModule.filteredNamesState)
+            let value = useRecoilValue(RemoteNames.filteredNames)
+            if value == ["Ella", "Chris", "Paul"] {
+                expectation.fulfill()
+            }
         }
         
-        XCTAssertEqual(tester.value, ["Ella", "Chris", "Paul"])
+        wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
     }
     
     func test_should_return_correct_values_when_using_writable_selector_given_tempCelsiusSelector_and_tempFahrenheitState() {
         let expectation = XCTestExpectation(description: "save Value")
         let tester = HookTester(scope: _scope) {
-            let value = useRecoilState(TestModule.tempCelsiusSelector)
+            let value = useRecoilState(TempCelsiusSelector())
             if value.wrappedValue == 30 {
                 expectation.fulfill()
             }
@@ -58,7 +43,7 @@ extension SelectorReadWriteTests {
         
         tester.value.wrappedValue = 30
         
-        XCTAssertEqual(accessor.getUnsafe(TestModule.tempFahrenheitState), 86)
+        XCTAssertEqual(accessor.getUnsafe(TempFahrenheitState()), 86)
         wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
     }
 }
