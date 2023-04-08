@@ -1,5 +1,7 @@
 # RecoilHooks
 
+Because the `useRecoilXXX` series API is based on Hooks. so it should follow all the [rule of hooks](https://github.com/ra1028/SwiftUI-Hooks#rules-of-hooks)
+
 ## useRecoilValue(state)
 
 Returns the value of the given Recoil state. This hook will implicitly subscribe the component to the given state. 
@@ -12,23 +14,20 @@ This is the recommended hook to use when a component intends to read state witho
 
 
 ```swift
-let namesState = atom { ["", "Ella", "Chris", "", "Paul"] }
-let filteredNamesState = selector { accessor -> [String] in
-   get(namesState).filter { $0 != ""}
-}
+struct YourView: HookView {
+    var hookBody: some View {
+        let names = useRecoilValue(namesState);
+        let filteredNames = useRecoilValue(filteredNamesState);
 
-func nameDisplay() -> some View {
-  let names = useRecoilValue(namesState);
-  let filteredNames = useRecoilValue(filteredNamesState);
+        return VStack {
+            Text("Original names: \(names.join(","))")
+            Text("Filtered names: \(filteredNames.wrappedValue.join(","))")
 
-  return VStack {
-    Text("Original names: \(names.join(","))")
-    Text("Filtered names: \(filteredNames.wrappedValue.join(","))")
-
-    Button("Reset to original") {
-        filteredNames.wrappedValue = names
+            Button("Reset to original") {
+                filteredNames.wrappedValue = names
+            }
+        }
     }
-  }
 }
 ```
 

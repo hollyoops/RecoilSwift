@@ -10,13 +10,15 @@ A selector is a pure function that accepts atoms or other selectors as input. Wh
 
 ## Readonly Selector
 ```swift
-let currentBooksSel = selector { accessor -> [Book] in
-    let books = accessor.get(allBookStore)
-      if let category = accessor.get(selectedCategoryState) {
-          return books.filter { $0.category == category }
-      }
-    return books
+struct BookList {
+    static var currentValue: AsyncSelector<[Book]> {
+        selector { accessor -> [Book] in
+            let books = try accessor.get(AllBooks.list)
+            return books
+        }
+    }
 }
+
 ```
 
 ## Writeable Selector
@@ -24,21 +26,30 @@ let currentBooksSel = selector { accessor -> [Book] in
 A bi-directional selector receives the incoming value as a parameter and can use that to propagate the changes back upstream along the data-flow graph. 
 
 ```swift
-let tempFahrenheitState = atom(32)
-let tempCelsiusSelector = selector(
-      get: { get in
-        let fahrenheit = accessor.get(tempFahrenheitState)
+struct TempFahrenheitState: SyncAtomNode {
+    typealias T = Int
+    func getValue() throws -> Int {
+        32
+    }
+}
+
+struct TempCelsiusSelector: SyncSelectorNode, Writeable {
+    typealias T = Int
+
+    func getValue(_ accessor: StateGetter) throws -> Int {
+        let fahrenheit = accessor.getUnsafe(TempFahrenheitState())
         return (fahrenheit - 32) * 5 / 9
-      },
-      set: { context, newValue in
+    }
+
+    func setValue(context: MutableContext, newValue: Int) {
         let newFahrenheit = (newValue * 9) / 5 + 32
-        context.accessor.set(tempFahrenheitState, newFahrenheit)
-      }
-)
+        context.accessor.set(TempFahrenheitState(), newFahrenheit)
+    }
+}
 
 func celsiusView() -> some View {
     // Writable Selector have to wrapped as Recoil state
-    let tempCelsius = useRecoilState(tempCelsiusSelector)
+    let tempCelsius = ctx.useRecoilState(TempCelsiusSelector())
     
     Text("Current \(tempCelsius)")
 
@@ -55,39 +66,49 @@ func celsiusView() -> some View {
 You can use use `async/await` or `Combine` to execute async task in iOS. For instance: 
 
 ```swift
-let remoteCategoriesSelector = selector { (get: Getter) async -> [String] in
-    await someAPI()
-    ...
+struct BookList {
+    static var currentBooks: AsyncSelector<[Book]> {
+        selector { accessor -> [Book] in
+            let books = try await accessor.get(AllBooks.allBookState)
+            if let category = try accessor.get(selectedCategoryState) {
+                return books.filter { $0.category == category }
+            }
+            return books
+        }
+    }
 }
+
 ```
 
 Use combine
 
 ```swift
-let remoteCategoriesSelector = selector { (get: Getter) -> AnyPublisher<[String], Error> in
+static var remoteCategoriesSelector: AsyncSelector<[Book]> {
+  selector { (get: Getter) -> AnyPublisher<[String], Error> in
     Deferred {
         Future { promise in
            ...
         }
     }.eraseToAnyPublisher()
+  }
 }
 ```
 
 run the async tasks
 ```swift
-func someView() -> some View {
-  HookScope {
-    var hookBody: some View {
-      let remoteCategories = useRecoilValue(remoteCategoriesSelector)
+struct SomeView: View {
+    @RecoilScope var ctx
+    var body: some View {
+      let remoteCategories = ctx.useRecoilValue(remoteCategoriesSelector)
 
        if let categories = remoteCategories else {
            categoriesView()
        }
     }
-  }
 }
 ```
  
 ## Customized Parameter Selector
 
 Check the [selectorFamily](Utils.md#Selector-Family)
+## How to test with RecoilSwift

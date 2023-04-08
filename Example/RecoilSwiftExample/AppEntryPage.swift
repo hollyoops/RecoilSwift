@@ -3,7 +3,7 @@ import RecoilSwift
 
 struct AppEntryPage: View {
     var body: some View {
-        RecoilRoot {
+        RecoilRoot(shakeToDebug: true) {
             content
         }
     }

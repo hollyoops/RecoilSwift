@@ -21,11 +21,13 @@ Loadables also contain helper methods for accessing the current state.
 ## useRecoilValueLoadable
 
 ```swift
-// In some function
-func someView() -> some View {
-    HookScope { // when your view is not implement with RecoilView, you have to use `HookScope`
-        let id = useRecoilValue(selectedCategoryState)
-        let loadable = useRecoilValueLoadable(fetchRemoteDataById(id))
+@RecoilScope var ctx
+
+struct YourView: View {
+// In some function 
+    var body: some View {
+        let id = ctx.useRecoilValue(selectedCategoryState)
+        let loadable = ctx.useRecoilValueLoadable(fetchRemoteDataById(id))
         
         // This body will be render after task completed
         return VStack {
