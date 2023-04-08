@@ -1,5 +1,6 @@
 import Combine
 import SwiftUI
+import Foundation
 
 /// Represents a scoped context for Recoil values, allowing binding and updates.
 public class ScopedRecoilContext {
@@ -11,7 +12,11 @@ public class ScopedRecoilContext {
         self.stateCache = cache
         self.store = store
         self.viewRefresher = refresher
-        cache.onValueChange = { [weak refresher] _ in refresher?.refresh() }
+        cache.onValueChange = { [weak refresher] _ in
+            DispatchQueue.main.async {
+                refresher?.refresh()
+            }
+        }
     }
     
     private var nodeAccessor: NodeAccessor {
