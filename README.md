@@ -1,7 +1,7 @@
 # RecoilSwift
 
-[![Version](https://img.shields.io/cocoapods/v/RecoilSwift.svg?style=flat)](https://cocoapods.org/pods/RecoilSwift)
-[![License](https://img.shields.io/cocoapods/l/RecoilSwift.svg?style=flat)](https://cocoapods.org/pods/RecoilSwift)
+[![Version](https://img.shields.io/github/v/tag/hollyoops/recoilswift?label=version&style=flat)](https://github.com/hollyoops/recoilswift)
+[![License](https://img.shields.io/github/license/hollyoops/recoilswift?style=flat)](https://github.com/hollyoops/recoilswift)
 [![Main workflow](https://github.com/hollyoops/RecoilSwift/actions/workflows/main.yml/badge.svg)](https://github.com/hollyoops/RecoilSwift/actions/workflows/main.yml)
 [![codecov](https://codecov.io/gh/hollyoops/RecoilSwift/branch/master/graph/badge.svg?token=AZ9YSL9H0H)](https://codecov.io/gh/hollyoops/RecoilSwift)
 
