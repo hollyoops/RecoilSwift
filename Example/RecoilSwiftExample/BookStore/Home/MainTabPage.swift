@@ -7,7 +7,7 @@ public struct MainTabPage: View {
     public var body: some View {
         let selectedTab = ctx.useRecoilState(SelectedTabState())
         let shouldShowFilter = ctx.useRecoilValue(Home.filterVisisbleState)
-        let badgeText = ctx.useRecoilValue(Cart.cartItemBadgeState)
+        let badgeText = try? ctx.useRecoilValue(Cart.cartItemBadgeState)
        
         ZStack(alignment: .bottom) {
             TabView(selection: selectedTab) {

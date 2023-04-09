@@ -5,13 +5,13 @@ struct CartContent: View {
     @RecoilScope var ctx
     
     var body: some View {
-        let items = ctx.useRecoilValue(Cart.allCartItemState)
+        let itemsState = try? ctx.useRecoilValue(Cart.allCartItemState)
         
         Group {
-            if items.isEmpty {
-                emptyView()
-            } else {
+            if let items = itemsState, !items.isEmpty {
                 cartList(items)
+            } else {
+                emptyView()
             }
         }
     }

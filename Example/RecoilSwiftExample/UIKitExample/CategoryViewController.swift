@@ -48,7 +48,7 @@ class CategoryViewController: UITableViewController {
 
 extension CategoryViewController: RecoilUIScope {
     func refresh() {
-        let selectedCategoryState = ctx.useRecoilValue(BookList.selectedCategoryState)
+        let selectedCategoryState = try? ctx.useRecoilValue(BookList.selectedCategoryState)
         self.selectedCategory = selectedCategoryState
         tableView.reloadData()
     }

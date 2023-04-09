@@ -11,7 +11,7 @@ import Hooks
 @MainActor
 public func useRecoilValue<P: Equatable, Return: RecoilSyncNode>(
     _ value: RecoilParamNode<P, Return>
-) -> Return.T {
+) -> Return.T? {
     let hook = RecoilValueHook(node: value.node,
                                 updateStrategy: .preserved(by: value.param))
     
@@ -34,7 +34,7 @@ public func useRecoilValue<P: Equatable, Return: RecoilAsyncNode>(
 /// - Returns: return a readable inner value that wrapped in recoil state.
 /// if the state is async state, it return will `'value?'`, otherwise it return `'value'`
 @MainActor
-public func useRecoilValue<Value: RecoilSyncNode>(_ initialState: Value) -> Value.T {
+public func useRecoilValue<Value: RecoilSyncNode>(_ initialState: Value) -> Value.T? {
     useHook(RecoilValueHook(node: initialState))
 }
 
@@ -124,9 +124,9 @@ private struct RecoilValueHook<Node: RecoilSyncNode>: RecoilHook {
     }
 
     @MainActor
-    func value(coordinator: Coordinator) -> T.T {
+    func value(coordinator: Coordinator) -> Node.T? {
         let ctx = getStoredContext(coordinator: coordinator)
-        return ctx.useRecoilValue(initialValue)
+        return try? ctx.useRecoilValue(initialValue)
     }
 }
 

@@ -5,7 +5,7 @@ public enum AnyPublisherError: Error {
     case finishedWithoutValue
 }
 
-extension AnyPublisher {
+public extension AnyPublisher {
     func async() async throws -> Output {
         let cancellableActor = CancellableActor()
         return try await withTaskCancellationHandler(operation: {

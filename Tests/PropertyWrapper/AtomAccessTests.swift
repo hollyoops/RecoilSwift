@@ -18,20 +18,20 @@ final class AtomAccessTests: XCTestCase {
     
     func test_should_atom_value_when_useRecoilValue_given_stringAtom() async {
         let view = ViewRenderHelper { ctx, sut in
-            let value = ctx.useRecoilValue(TestModule.stringAtom)
+            let value = try? ctx.useRecoilValue(TestModule.stringAtom)
             sut.expect(value).equalTo("rawValue")
         }
         
         await view.waitForRender()
     }
     
-    func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() {
+    func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() throws {
         let value = scope.useRecoilState(TestModule.stringAtom)
         XCTAssertEqual(value.wrappedValue, "rawValue")
         
         value.wrappedValue = "newValue"
         
-        let newValue = scope.useRecoilValue(TestModule.stringAtom)
+        let newValue = try scope.useRecoilValue(TestModule.stringAtom)
         XCTAssertEqual(newValue, "newValue")
     }
     

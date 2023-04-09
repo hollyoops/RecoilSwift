@@ -23,15 +23,9 @@ public class ScopedRecoilContext {
         NodeAccessor(store: self.unsafeStore)
     }
     
-    public func useRecoilValue<Value: RecoilSyncNode>(_ valueNode: Value) -> Value.T {
+    public func useRecoilValue<Value: RecoilSyncNode>(_ valueNode: Value) throws -> Value.T {
         subscribeChange(for: valueNode)
-        do {
-            return try nodeAccessor.get(valueNode, deps: [])
-        } catch {
-            // TODO:
-            print(error)
-            fatalError(error.localizedDescription)
-        }
+        return try nodeAccessor.get(valueNode, deps: [])
     }
     
     public func useRecoilValue<Value: RecoilAsyncNode>(_ valueNode: Value) -> Value.T? {
