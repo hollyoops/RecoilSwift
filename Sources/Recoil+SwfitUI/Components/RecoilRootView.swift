@@ -13,6 +13,7 @@ public struct RecoilRoot<Content: View>: View {
     }
     /// The content and behavior of the view.
     public var body: some View {
+#if canImport(UIKit)
         ZStack {
             // Your view content here
             content.environment(
@@ -32,6 +33,12 @@ public struct RecoilRoot<Content: View>: View {
                 // Fallback on earlier versions
             }
         }
+#else
+        content.environment(
+            \.store,
+             globalStore
+        )
+#endif
     }
 }
 

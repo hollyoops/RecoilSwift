@@ -1,4 +1,6 @@
 import SwiftUI
+
+#if os(iOS)
 import WebKit
 
 struct GraphvizWebView: UIViewRepresentable {
@@ -48,3 +50,15 @@ struct GraphvizWebView: UIViewRepresentable {
         }
     }
 }
+#else
+struct GraphvizWebView: View {
+    let html: String
+    var dotGraph: String
+    @Binding var isGraphReady: Bool
+    
+    var body: some View {
+        // Return a placeholder view for macOS
+        Text("GraphvizWebView is not available on macOS")
+    }
+}
+#endif

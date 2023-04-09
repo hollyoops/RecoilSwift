@@ -16,16 +16,15 @@ jobs:
       - name: Setup Xcode version
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest
-      - name: Build & Unit Tests
-        uses: sersoft-gmbh/xcodebuild-action@v2
-        with:
-          spm-package: ./
-          scheme: RecoilSwift-Package
-          destination: platform=iOS Simulator,name=iPhone 14,OS=16.4
-          enable-code-coverage: true
-          action: test
+          xcode-version: latest 
+      - name: Build
+        run: swift build
+      - name: Run tests
+        run: |
+          swift test --enable-code-coverage
+          xcrun llvm-cov export --format="lcov" .build/debug/RecoilSwiftPackageTests.xctest/Contents/MacOS/RecoilSwiftPackageTests --instr-profile .build/debug/codecov/default.profdata > info.lcov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./info.lcov

@@ -19,10 +19,10 @@ protocol Store: AnyObject {
 }
 
 internal final class RecoilStore: Store {
-    private var states: [NodeKey: BaseLoadable] = [:]
-    private let graph = Graph()
-    private var subscriberMap: [NodeKey: Set<KeyedSubscriber>] = [:]
-    private var storeSubscribers: Set<KeyedSubscriber> = []
+    internal let graph = Graph()
+    private(set) var states: [NodeKey: BaseLoadable] = [:]
+    private(set) var subscriberMap: [NodeKey: Set<KeyedSubscriber>] = [:]
+    private(set) var storeSubscribers: Set<KeyedSubscriber> = []
     
     private let queue = DispatchQueue(label: "com.hollyoops.RecoilStore")
     private let queueValue = UUID()

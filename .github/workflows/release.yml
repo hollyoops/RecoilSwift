@@ -1,23 +1,30 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - "*"
+ push:
+    branches: [master]
 
 jobs:
   doc:
-    runs-on: macos-latest
-
-    env:
-      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-      NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+    runs-on: macos-13
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Setup Xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest 
+      - name: Install Jazzy
+        run: gem install jazzy
+      - name: Generate Documentation
+        run: jazzy --clean
       - name: Install Netlify CLI
         run: yarn global add netlify-cli
       - name: Build documentation
         run: netlify build
       - name: Deploy documentation to Netlify
         run: netlify deploy --prod --message ${GITHUB_SHA}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

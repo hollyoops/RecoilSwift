@@ -1,3 +1,5 @@
+#if canImport(UIKit)
+
 import SwiftUI
 
 public extension Notification.Name {
@@ -30,3 +32,5 @@ public extension View {
         self.modifier(ShakeDetector(onShake: action))
     }
 }
+
+#endif

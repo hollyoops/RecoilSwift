@@ -1,3 +1,5 @@
+#if canImport(UIKit)
+
 import UIKit
 
 public protocol RecoilUIScope: ViewRefreshable {
@@ -33,3 +35,5 @@ extension RecoilUIScope where Self: UIView {
                             refresher: self)
     }
 }
+
+#endif

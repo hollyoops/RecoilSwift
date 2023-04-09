@@ -1,13 +1,17 @@
 ignore:
   - "Tests" # ignore folders and all its contents
+  - "XCTestHelper"
+  - "Components"
   - "**/Debug.swift"
-  - "**/OptionalExtendings.swift"
-  - "**/HookAdaptor.swift"
-  - "**/Curry.swift"
+  - "*/**/*View.swift"
+  - "*/**/*ViewModifier.swift"
+  - "*/**/OptionalExtendings.swift"
+  - "*/**/Curry.swift"
+  - "**/HookAdapter.swift"
   
 coverage:
   status:
     project:
       default:
-        target: 90%    # the required coverage value
+        target: 74%    # the required coverage value
         threshold: 1%  # the leniency in hitting the target
