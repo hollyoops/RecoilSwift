@@ -303,7 +303,7 @@ Please note that a View using the Hooks API should either inherit from the `Hook
 **More detail please checkout [here](./Docs/Hooks.md)**
 
 ### UIKit Usage
-
+---
 You can also use RecoilSwift in UIKit, and even mix it with SwiftUI. All you need to do is make your `UIViewController` or `UIView` inherit from the `RecoilUIScope` protocol.
 
 ```swift
@@ -362,9 +362,76 @@ extension BooksViewController: RecoilUIScope {
 
 **Please check [here](./Docs/UIKit.md)**
 
-### How to test states
+### How to Test State in RecoilSwift
 ---
-  **Please check [here](./Docs/Tests.md)**
+In RecoilSwift, you can utilize `@RecoilTestScope` to test your state.
+
+```swift
+final class AtomAccessTests: XCTestCase {
+    /// 1. Initialize scope
+    @RecoilTestScope var scope
+    override func setUp() {
+        _scope.reset()
+    }
+    
+    func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() {
+        /// Subscribe to the state using `useRecoilXXX` API
+        let value = scope.useRecoilState(TestModule.stringAtom)
+        XCTAssertEqual(value.wrappedValue, "rawValue")
+        
+        value.wrappedValue = "newValue"
+
+        /// Use `useRecoilValue` API to subscribe and fetch the latest state value 
+        let newValue = scope.useRecoilValue(TestModule.stringAtom)
+        XCTAssertEqual(newValue, "newValue")
+    }
+}
+```
+
+Sometimes, you might want to conduct a more thorough end-to-end testing. For instance, you may want to simulate the rendering of a view. In this case, you can use `ViewRenderHelper` for an end-to-end testing from view to state.
+`ViewRenderHelper` is able to simulate multiple renderings of the view.
+
+```swift
+/// 1. Import the testing framework
+import RecoilSwiftXCTests
+
+final class AtomAccessWithViewRenderTests: XCTestCase {
+    // ...
+    func test_should_atom_value_when_useRecoilValue_given_stringAtom() async {
+        /// The callback of `ViewRenderHelper` might be triggered multiple times,
+        let view = ViewRenderHelper { ctx, sut in
+            let value = ctx.useRecoilValue(TestModule.stringAtom)
+            /// Once `expect` meets the expectation, the test will be considered successful, otherwise, the test will fail when time out
+            sut.expect(value).equalTo("rawValue")
+        }
+        
+        /// Simulate the view rendering
+        await view.waitForRender()
+    }
+}
+```
+
+<details><summary>**Click to see how to test Hook API with `HookTester`**</summary>
+
+```swift
+final class AtomReadWriteTests: XCTestCase {
+    @RecoilTestScope var scope
+    override func setUp() {
+        _scope.reset()
+    }
+    
+    func test_should_return_rawValue_when_read_only_atom_given_stringAtom() {
+        /// Note: You need to define HookTest and pass in Scope
+        let tester = HookTester(scope: _scope) {
+            useRecoilValue(TestModule.stringAtom)
+        }
+        
+        XCTAssertEqual(tester.value, "rawValue")
+    }
+}    
+```
+
+</details>
 
 ## Demo
 

@@ -298,7 +298,7 @@ struct YourView: HookView {
 **请查看 [这里](./Docs/Hooks.md)**
 
 ### UIKit 用法
-
+---
 你也可以在 UIKit 中使用 RecoilSwift，甚至在 UIKit 和 SwiftUI 中混合使用。你唯一需要做的就是让你的 `UIViewController` 或 `UIView` 继承 `RecoilUIScope` 协议。
 
 ```swift
@@ -355,9 +355,76 @@ extension BooksViewController: RecoilUIScope {
 
 </details>
 
-### 在RecoilSwift中，如何测试状态 
+### 如何在RecoilSwift中进行状态测试 
 ---
-**请查看 [这里](./Docs/Tests.md)**  
+在RecoilSwift中，您可以借助`@RecoilTestScope`来进行状态测试。
+
+```swift
+final class AtomAccessTests: XCTestCase {
+    /// 1. 初始化scope
+    @RecoilTestScope var scope
+    override func setUp() {
+        _scope.reset()
+    }
+    
+    func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() {
+        /// 通过 `useRecoilXXX` API 订阅状态
+        let value = scope.useRecoilState(TestModule.stringAtom)
+        XCTAssertEqual(value.wrappedValue, "rawValue")
+        
+        value.wrappedValue = "newValue"
+
+        /// 通过 `useRecoilValue` API 订阅并获取状态的最新值 
+        let newValue = scope.useRecoilValue(TestModule.stringAtom)
+        XCTAssertEqual(newValue, "newValue")
+    }
+}
+```
+
+有时，您可能需要进行更全面的端到端测试。例如，您可能希望模拟View的渲染，此时，可以借助`ViewRenderHelper`进行从视图到状态的端到端测试。
+`ViewRenderHelper` 能够模拟视图的多次渲染，
+
+```swift
+/// 1. 引入测试框架
+import RecoilSwiftXCTests
+
+final class AtomAccessWithViewRenderTests: XCTestCase {
+    // ...
+    func test_should_atom_value_when_useRecoilValue_given_stringAtom() async {
+        /// `ViewRenderHelper` 的回调可能会被多次触发，
+        let view = ViewRenderHelper { ctx, sut in
+            let value = ctx.useRecoilValue(TestModule.stringAtom)
+            /// 一旦`expect` 的期望得到满足，测试即视为成功，否则在超时时，测试将失败
+            sut.expect(value).equalTo("rawValue")
+        }
+        
+        /// 模拟视图渲染
+        await view.waitForRender()
+    }
+}
+```
+
+<details><summary>**点击查看如何使用`HookTester`进行Hook API测试**</summary>
+
+```swift
+final class AtomReadWriteTests: XCTestCase {
+    @RecoilTestScope var scope
+    override func setUp() {
+        _scope.reset()
+    }
+    
+    func test_should_return_rawValue_when_read_only_atom_given_stringAtom() {
+        /// 注意：需要定义HookTest，并将Scope传入
+        let tester = HookTester(scope: _scope) {
+            useRecoilValue(TestModule.stringAtom)
+        }
+        
+        XCTAssertEqual(tester.value, "rawValue")
+    }
+}    
+```
+
+</details>
 
 ## Demo
 
