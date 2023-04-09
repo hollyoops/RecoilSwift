@@ -39,17 +39,31 @@ class RecoilStoreTests: XCTestCase {
         subscription.unsubscribe()
         XCTAssertNil(store.getLoadable(for: nodeKey))
     }
+    
+    func test_should_add_node_and_remove_node_in_graph_when_node_is_unsubscribe() {
+        let store = RecoilStore()
+        XCTAssertEqual(store.graph.allNodes().count, 0)
+        
+        // Add Node
+        _ = store.safeGetLoadable(for: MockAtoms.intState)
+        XCTAssertEqual(store.graph.allNodes().count, 1)
+        
+        // Remove Node
+        let nodeKey = MockAtoms.intState.key
+        let subscription = store.subscribe(for: nodeKey, subscriber: MockSubscriber())
+        subscription.unsubscribe()
+        XCTAssertEqual(store.graph.allNodes().count, 0)
+    }
 
     func test_should_subscribe_when_subscribeIsCalled_given_validSubscriber() {
         let mockSubscriber = MockSubscriber()
-        let subscription = store.subscribe(subscriber: mockSubscriber)
+        let _ = store.subscribe(subscriber: mockSubscriber)
         _ = scope.useRecoilState(MockAtoms.intState)
         XCTAssertEqual(mockSubscriber.storeChangedCallCount, 1)
     }
     
     func test_should_remove_store_subscriber_when_unsubscribe_is_called() {
         let store = RecoilStore()
-        let nodeKey = MockAtoms.intState.key
         
         let subscription = store.subscribe(subscriber: MockSubscriber())
         XCTAssertEqual(store.storeSubscribers.count, 1)

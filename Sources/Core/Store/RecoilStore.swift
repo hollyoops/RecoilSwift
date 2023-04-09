@@ -190,6 +190,7 @@ internal final class RecoilStore: Store {
                 self?.nodeValueChanged(node: node, value: val)
             }
             states[key] = box
+            graph.add(key: key)
             return box
         }
     }
