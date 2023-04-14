@@ -4,23 +4,23 @@ import XCTest
 class RecoilStoreTests: XCTestCase {
     var store: Store!
 
-    @RecoilTestScope var scope
+    @RecoilTestScope var recoil
     
     override func setUp() {
         super.setUp()
-        store = _scope.store
+        store = _recoil.store
     }
     
     override func tearDown() {
         store = nil
-        _scope.reset()
+        _recoil.reset()
         super.tearDown()
     }
     
     func test_should_subscribe_when_subscribeIsCalled_given_validNodeKeyAndSubscriber() {
         let mockSubscriber = MockSubscriber()
         let subscription = store.subscribe(for: MockAtoms.intState.key, subscriber: mockSubscriber)
-        let obj = scope.useRecoilState(MockAtoms.intState)
+        let obj = recoil.useBinding(MockAtoms.intState)
         obj.wrappedValue = 1
         
         XCTAssertEqual(mockSubscriber.changedNodeKey, MockAtoms.intState.key)
@@ -58,7 +58,7 @@ class RecoilStoreTests: XCTestCase {
     func test_should_subscribe_when_subscribeIsCalled_given_validSubscriber() {
         let mockSubscriber = MockSubscriber()
         let _ = store.subscribe(subscriber: mockSubscriber)
-        _ = scope.useRecoilState(MockAtoms.intState)
+        _ = recoil.useBinding(MockAtoms.intState)
         XCTAssertEqual(mockSubscriber.storeChangedCallCount, 1)
     }
     

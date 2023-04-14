@@ -137,11 +137,11 @@ struct CartState {
 
 ```swift
 struct YourView: View { 
-    @RecoilScope var ctx
+    @RecoilScope var recoil
 
     var body: some View { 
      // 当 `numberOfProductBadge` 的值发生改变，`View` 会自动重新渲染，拿到最新的值
-     let badge = ctx.useRecoilValue(CartState.numberOfProductBadge)
+     let badge = recoil.useValue(CartState.numberOfProductBadge)
       
       Text(badge)
     }
@@ -179,10 +179,10 @@ struct NumberOfProductBadge: SyncAtomNode, Hashable {
 
 ```swift
 struct YourView: View { 
-    @RecoilScope var ctx
+    @RecoilScope var recoil
 
     var body: some View { 
-     let badge = ctx.useRecoilValue(NumberOfProductBadge())
+     let badge = recoil.useValue(NumberOfProductBadge())
       
       Text(badge)
     }
@@ -204,9 +204,9 @@ var remoteDataById: AsyncSelectorFamily<String, String> {
 }
 
 struct YourView: View { 
-  @RecoilScope var ctx
+  @RecoilScope var recoil
   var body: some View {
-    let loadable = ctx.useRecoilValueLoadable(remoteDataById(id))
+    let loadable = recoil.useLoadable(remoteDataById(id))
         
     return VStack {
         if loadable.isLoading {
@@ -245,7 +245,7 @@ struct RemoteData: AsyncSelectorNode, Hashable {
 
 ```swift
 var body: some View {
-    let loadable = ctx.useRecoilValueLoadable(RemoteData(id))
+    let loadable = recoil.useLoadable(RemoteData(id))
     ...
 }
 ```
@@ -309,7 +309,7 @@ extension BooksViewController: RecoilUIScope {
   func refresh() {
 
     /// 3. 获取并订阅状态的值
-    let value = ctx.useRecoilValue(MyState())
+    let value = recoil.useValue(MyState())
 
     // 4. 将状态的值绑定到 UI 上
     valueLabel.text = value
@@ -324,7 +324,7 @@ extension BooksViewController: RecoilUIScope {
 ```swift
 extension BooksViewController: RecoilUIScope {
     func refresh() {
-        let booksLoader = ctx.useRecoilValueLoadable(BookList.currentBooks)
+        let booksLoader = recoil.useLoadable(BookList.currentBooks)
         
         if let error = booksLoader.errors.first {
             loadingSpinner.stopAnimating()
@@ -362,20 +362,20 @@ extension BooksViewController: RecoilUIScope {
 ```swift
 final class AtomAccessTests: XCTestCase {
     /// 1. 初始化scope
-    @RecoilTestScope var scope
+    @RecoilTestScope var recoil
     override func setUp() {
-        _scope.reset()
+        _recoil.reset()
     }
     
     func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() {
         /// 通过 `useRecoilXXX` API 订阅状态
-        let value = scope.useRecoilState(TestModule.stringAtom)
+        let value = recoil.useBinding(TestModule.stringAtom)
         XCTAssertEqual(value.wrappedValue, "rawValue")
         
         value.wrappedValue = "newValue"
 
         /// 通过 `useRecoilValue` API 订阅并获取状态的最新值 
-        let newValue = scope.useRecoilValue(TestModule.stringAtom)
+        let newValue = recoil.useValue(TestModule.stringAtom)
         XCTAssertEqual(newValue, "newValue")
     }
 }
@@ -390,10 +390,10 @@ import RecoilSwiftXCTests
 
 final class AtomAccessWithViewRenderTests: XCTestCase {
     // ...
-    func test_should_atom_value_when_useRecoilValue_given_stringAtom() async {
+    func test_should_atom_value_when_useValue_given_stringAtom() async {
         /// `ViewRenderHelper` 的回调可能会被多次触发，
-        let view = ViewRenderHelper { ctx, sut in
-            let value = ctx.useRecoilValue(TestModule.stringAtom)
+        let view = ViewRenderHelper { recoil, sut in
+            let value = recoil.useValue(TestModule.stringAtom)
             /// 一旦`expect` 的期望得到满足，测试即视为成功，否则在超时时，测试将失败
             sut.expect(value).equalTo("rawValue")
         }
@@ -408,14 +408,14 @@ final class AtomAccessWithViewRenderTests: XCTestCase {
 
 ```swift
 final class AtomReadWriteTests: XCTestCase {
-    @RecoilTestScope var scope
+    @RecoilTestScope var recoil
     override func setUp() {
-        _scope.reset()
+        _recoil.reset()
     }
     
     func test_should_return_rawValue_when_read_only_atom_given_stringAtom() {
         /// 注意：需要定义HookTest，并将Scope传入
-        let tester = HookTester(scope: _scope) {
+        let tester = HookTester(scope: _recoil) {
             useRecoilValue(TestModule.stringAtom)
         }
         

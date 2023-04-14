@@ -2,11 +2,11 @@ import SwiftUI
 import RecoilSwift
 
 struct FilterInfoView: View {
-    @RecoilScope var ctx
+    @RecoilScope var recoil
     
     var body: some View {
-        let selectedCategoryState = ctx.useRecoilState(BookList.selectedCategoryState)
-        let value = selectedCategoryState.wrappedValue?.rawValue ??  "None"
+        let selectedCategoryState = recoil.useBinding(BookList.selectedCategoryState)
+        let value = selectedCategoryState.wrappedValue??.rawValue ??  "None"
         
         HStack {
             Text(verbatim: "Selected Category: ")

@@ -86,7 +86,7 @@ class BooksViewController: UIViewController, UITableViewDataSource, UITableViewD
 
 extension BooksViewController: RecoilUIScope {
     func refresh() {
-        let booksLoader = ctx.useRecoilValueLoadable(BookList.currentBooks)
+        let booksLoader = recoil.useLoadable(BookList.currentBooks)
         
         if let error = booksLoader.errors.first {
             loadingSpinner.stopAnimating()

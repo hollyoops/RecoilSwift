@@ -2,10 +2,10 @@ import SwiftUI
 import RecoilSwift
 
 struct BooksContent: View {
-    @RecoilScope var ctx
+    @RecoilScope var recoil
 
     var body: some View {
-        let loadable = ctx.useRecoilValueLoadable(BookList.currentBooks)
+        let loadable = recoil.useLoadable(BookList.currentBooks)
         
         return VStack {
             if loadable.isLoading {
@@ -23,7 +23,7 @@ struct BooksContent: View {
     }
     
     private func allBooks(books: [Book]) -> some View {
-        let addToCart = ctx.useRecoilCallback(Cart.addToCart(context:newBook:))
+        let addToCart = recoil.useCallback(Cart.addToCart(context:newBook:))
         return List(books) { book in
             HStack {
                 VStack(alignment: .leading) {

@@ -23,45 +23,37 @@ public class ScopedRecoilContext {
         NodeAccessor(store: self.unsafeStore)
     }
     
-    public func useRecoilValue<Value: RecoilSyncNode>(_ valueNode: Value) throws -> Value.T {
+    public func useValue<Value: RecoilNode>(_ valueNode: Value) -> Value.T? {
         subscribeChange(for: valueNode)
-        return try nodeAccessor.get(valueNode, deps: [])
+        return useLoadable(valueNode).data
     }
     
-    public func useRecoilValue<Value: RecoilAsyncNode>(_ valueNode: Value) -> Value.T? {
-        useRecoilValueLoadable(valueNode).data
+    public func useBinding<Value: RecoilNode & Writeable>(_ node: Value) -> Binding<Value.T?> {
+        subscribeChange(for: node)
+        return Binding(
+            get: {
+                self.nodeAccessor.getOrNil(node, deps: [])
+            },
+            set: { newState in
+                guard let newState else { return }
+                self.nodeAccessor.set(node, newState)
+            }
+        )
     }
     
-    public func useRecoilState<Value: RecoilMutableSyncNode>(_ stateNode: Value) -> Binding<Value.T> {
-        Binding(useRecoilBinding(stateNode))
+    public func useLoadable<Value: RecoilNode>(_ valueNode: Value) -> LoadableContent<Value.T> {
+        subscribeChange(for: valueNode)
+        return LoadableContent(node: valueNode, store: unsafeStore)
     }
     
-    public func useRecoilBinding<Value: RecoilMutableSyncNode>(_ stateNode: Value) -> BindableValue<Value.T> {
+    public func useUpdate<Value: RecoilNode & Writeable>(_ stateNode: Value) -> (Value.T) -> Void {
         subscribeChange(for: stateNode)
-        return BindableValue(
-              get: {
-                  try! self.nodeAccessor.get(stateNode, deps: []) // TODO:
-              },
-              set: { newState in
-                  self.nodeAccessor.set(stateNode, newState)
-              }
-          )
+        return { newState in
+            self.nodeAccessor.set(stateNode, newState)
+        }
     }
-    
-    public func useRecoilState<Value: RecoilMutableAsyncNode>(_ stateNode: Value) -> BindableValue<Value.T?> {
-        subscribeChange(for: stateNode)
-        return BindableValue(
-              get: {
-                  self.nodeAccessor.getOrNil(stateNode, deps: [])
-              },
-              set: { newState in
-                  guard let newState else { return }
-                  self.nodeAccessor.set(stateNode, newState)
-              }
-          )
-    }
-    
-    public func useRecoilCallback<T>(_ fn: @escaping Callback<T>) -> T {
+
+    public func useCallback<T>(_ fn: @escaping Callback<T>) -> T {
         let context = RecoilCallbackContext(
             accessor: nodeAccessor.accessor(deps: nil),
             store: stateCache.store
@@ -69,7 +61,7 @@ public class ScopedRecoilContext {
         return fn(context)
     }
     
-    public func useRecoilCallback<T>(_ fn: @escaping AsyncCallback<T>) async throws -> T {
+    public func useCallback<T>(_ fn: @escaping AsyncCallback<T>) async throws -> T {
         let context = RecoilCallbackContext(
             accessor: nodeAccessor.accessor(deps: nil),
             store: stateCache.store
@@ -78,7 +70,7 @@ public class ScopedRecoilContext {
         return try await fn(context)
     }
     
-    public func useRecoilCallback<T, P>(_ fn: @escaping Callback1<P, T>) -> (P) -> T {
+    public func useCallback<T, P>(_ fn: @escaping Callback1<P, T>) -> (P) -> T {
         let context = RecoilCallbackContext(
             accessor: nodeAccessor.accessor(deps: nil),
             store: stateCache.store
@@ -87,22 +79,13 @@ public class ScopedRecoilContext {
         return { p in fn(context, p) }
     }
     
-    public func useRecoilCallback<T, P>(_ fn: @escaping AsyncCallback1<P, T>) -> (P) async throws -> T {
+    public func useCallback<T, P>(_ fn: @escaping AsyncCallback1<P, T>) -> (P) async throws -> T {
         let context = RecoilCallbackContext(
             accessor: nodeAccessor.accessor(deps: nil),
             store: stateCache.store
         )
         
         return { p in try await fn(context, p) }
-    }
-    
-    public func useRecoilValueLoadable<Value: RecoilNode>(_ valueNode: Value) -> LoadableContent<Value.T> {
-        subscribeChange(for: valueNode)
-//        let loadble = store?.safeGetLoadable(for: valueNode)
-//        if loadble == .invalid {
-//            loadble.compute(/*excutatble_info*/)
-//        }
-        return LoadableContent(node: valueNode, store: unsafeStore)
     }
     
     private var unsafeStore: Store {
@@ -120,5 +103,38 @@ public class ScopedRecoilContext {
 
     func refresh() {
         viewRefresher.refresh()
+    }
+}
+
+extension ScopedRecoilContext {
+    public func useUnsafeValue<Value: RecoilSyncNode>(_ valueNode: Value) -> Value.T {
+        try! useThrowingValue(valueNode)
+    }
+    
+    public func useThrowingValue<Value: RecoilSyncNode>(_ valueNode: Value) throws -> Value.T {
+        subscribeChange(for: valueNode)
+        return try nodeAccessor.get(valueNode, deps: [])
+    }
+    
+    public func useUnsafeBinding<Value: RecoilMutableSyncNode>(_ stateNode: Value) -> Binding<Value.T> {
+        Binding(
+              get: {
+                  try! self.nodeAccessor.get(stateNode, deps: [])
+              },
+              set: { newState in
+                  self.nodeAccessor.set(stateNode, newState)
+              }
+          )
+    }
+    
+    public func useThrowingBinding<Value: RecoilMutableSyncNode>(_ stateNode: Value) -> ThrowingBinding<Value.T> {
+        ThrowingBinding(
+              get: {
+                  try self.nodeAccessor.get(stateNode, deps: [])
+              },
+              set: { newState in
+                  self.nodeAccessor.set(stateNode, newState)
+              }
+          )
     }
 }

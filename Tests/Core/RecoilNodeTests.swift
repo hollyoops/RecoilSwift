@@ -8,7 +8,7 @@ class RecoilNodeTests: XCTestCase {
         XCTAssertEqual(key.name, "TempFahrenheitState")
     }
     
-    func test_should_returnCorrectKey_when_keyIsCalled_given_ScopedRecoilNode() {
+    func test_should_returnCorrectKey_when_keyIsCalled_given_recoildRecoilNode() {
         let key = RemoteNames.names.key
         XCTAssertEqual(key.name,
                        "names",

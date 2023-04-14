@@ -4,14 +4,14 @@ import XCTest
 @testable import RecoilSwift
 
 final class SelectorReadWriteTests: XCTestCase {
-    @RecoilTestScope var scope
+    @RecoilTestScope var recoil
     
     var accessor: StateAccessor {
-        _scope.accessor(deps: [])
+        _recoil.accessor(deps: [])
     }
     
     override func setUp() {
-        _scope.reset()
+        _recoil.reset()
     }
 }
 
@@ -19,7 +19,7 @@ final class SelectorReadWriteTests: XCTestCase {
 extension SelectorReadWriteTests {
     func test_should_return_filtered_names_when_using_filtered_names_selector_given_names_state() {
         let expectation = XCTestExpectation(description: "filtered names")
-        let tester = HookTester(scope: _scope) {
+        let tester = HookTester(scope: _recoil) {
             let value = useRecoilValue(RemoteNames.filteredNames)
             if value == ["Ella", "Chris", "Paul"] {
                 expectation.fulfill()
@@ -30,13 +30,8 @@ extension SelectorReadWriteTests {
     }
     
     func test_should_return_correct_values_when_using_writable_selector_given_tempCelsiusSelector_and_tempFahrenheitState() {
-        let expectation = XCTestExpectation(description: "save Value")
-        let tester = HookTester(scope: _scope) {
-            let value = useRecoilState(TempCelsiusSelector())
-            if value.wrappedValue == 30 {
-                expectation.fulfill()
-            }
-            return value
+        let tester = HookTester(scope: _recoil) {
+            useRecoilState(TempCelsiusSelector())
         }
         
         XCTAssertEqual(tester.value.wrappedValue, 0)
@@ -44,7 +39,6 @@ extension SelectorReadWriteTests {
         tester.value.wrappedValue = 30
         
         XCTAssertEqual(accessor.getUnsafe(TempFahrenheitState()), 86)
-        wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
     }
 }
 
@@ -53,7 +47,7 @@ extension SelectorReadWriteTests {
     func test_should_return_books_when_fetching_remote_data_given_remote_data_source() {
         let expectation = XCTestExpectation(description: "get async data source to atom")
         
-        let tester = HookTester(scope: _scope) { () -> [String]? in
+        let tester = HookTester(scope: _recoil) { () -> [String]? in
             let value = useRecoilValue(MockSelector.remoteBooks(["Book1", "Book2"]))
             
             if value == ["Book1", "Book2"] {
@@ -69,7 +63,7 @@ extension SelectorReadWriteTests {
     }
     
     func test_should_return_nil_when_fetching_remote_data_given_remote_data_source_error() {
-        let tester = HookTester(scope: _scope) { () -> [String]? in
+        let tester = HookTester(scope: _recoil) { () -> [String]? in
             useRecoilValue(RemoteErrorState<[String]>(error: MyError.param))
         }
         

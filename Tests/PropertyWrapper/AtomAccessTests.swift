@@ -10,45 +10,67 @@ final class AtomAccessTests: XCTestCase {
         }
     }
     
-    @RecoilTestScope var scope
+ @RecoilTestScope var recoil
     
     override func setUp() {
-        _scope.reset()
+        _recoil.reset()
     }
     
-    func test_should_atom_value_when_useRecoilValue_given_stringAtom() async {
-        let view = ViewRenderHelper { ctx, sut in
-            let value = try? ctx.useRecoilValue(TestModule.stringAtom)
+    func test_should_atom_value_when_useValue_given_stringAtom() async {
+        let view = ViewRenderHelper { recoil, sut in
+            let value = try? recoil.useThrowingValue(TestModule.stringAtom)
             sut.expect(value).equalTo("rawValue")
         }
         
         await view.waitForRender()
     }
     
-    func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() throws {
-        let value = scope.useRecoilState(TestModule.stringAtom)
+    func test_should_returnUpdatedValue_when_useThrowingBinding_given_stringAtom() throws {
+        var binding = recoil.useThrowingBinding(TestModule.stringAtom)
+        XCTAssertEqual(try binding.wrappedValue, "rawValue")
+        XCTAssertEqual(binding.value, "rawValue")
+        XCTAssertEqual(binding.unsafeValue, "rawValue")
+        
+        binding.value = "newValue"
+        
+        let newValue = try recoil.useThrowingValue(TestModule.stringAtom)
+        XCTAssertEqual(newValue, "newValue")
+    }
+    
+    func test_should_returnUpdatedValue_when_useUnsafeBinding_given_stringAtom() throws {
+        let binding = recoil.useUnsafeBinding(TestModule.stringAtom)
+        XCTAssertEqual(binding.wrappedValue, "rawValue")
+        
+        binding.wrappedValue = "newValue"
+        
+        let newValue = recoil.useUnsafeValue(TestModule.stringAtom)
+        XCTAssertEqual(newValue, "newValue")
+    }
+    
+    func test_should_returnUpdatedValue_when_useBinding_given_stringAtom() throws {
+        let value = recoil.useBinding(TestModule.stringAtom)
         XCTAssertEqual(value.wrappedValue, "rawValue")
         
         value.wrappedValue = "newValue"
         
-        let newValue = try scope.useRecoilValue(TestModule.stringAtom)
+        let newValue = try recoil.useThrowingValue(TestModule.stringAtom)
         XCTAssertEqual(newValue, "newValue")
     }
     
-    func test_should_refreshView_when_useRecoilState_given_after_stateChange() async throws {
-        let value = scope.useRecoilState(TestModule.stringAtom)
+    func test_should_refreshView_when_useBinding_given_after_stateChange() async throws {
+        let value = recoil.useBinding(TestModule.stringAtom)
         
-        XCTAssertEqual(_scope.viewRefreshCount, 1)
+        XCTAssertEqual(_recoil.viewRefreshCount, 1)
         
-        try await _scope.waitNextStateChange {
+        try await _recoil.waitNextStateChange {
             value.wrappedValue = "newValue"
         }
         
-        XCTAssertEqual(_scope.viewRefreshCount, 2)
+        XCTAssertEqual(_recoil.viewRefreshCount, 2)
     }
     
-    func test_should_refreshView_when_useRecoilLoadable_given_after_stateChange() {
-        let value = scope.useRecoilValueLoadable(TestModule.stringAtom)
+    func test_should_refreshView_when_useLoadable_given_after_stateChange() {
+        let value = recoil.useLoadable(TestModule.stringAtom)
 
         XCTAssertEqual(value.data, "rawValue")
     }

@@ -2,10 +2,10 @@ import SwiftUI
 import RecoilSwift
 
 struct CartContent: View {
-    @RecoilScope var ctx
+    @RecoilScope var recoil
     
     var body: some View {
-        let itemsState = try? ctx.useRecoilValue(Cart.allCartItemState)
+        let itemsState = try? recoil.useThrowingValue(Cart.allCartItemState)
         
         Group {
             if let items = itemsState, !items.isEmpty {
@@ -24,9 +24,9 @@ struct CartContent: View {
     }
     
     private func cartList(_ items: [CartItem]) -> some View {
-        let increaseCount = ctx.useRecoilCallback(Cart.increasItemCount(context:item:))
-        let decreaseCount = ctx.useRecoilCallback(Cart.decreasItemCount(context:item:))
-        let deleteItem = ctx.useRecoilCallback(Cart.deleteItem(context:atIndex:))
+        let increaseCount = recoil.useCallback(Cart.increasItemCount(context:item:))
+        let decreaseCount = recoil.useCallback(Cart.decreasItemCount(context:item:))
+        let deleteItem = recoil.useCallback(Cart.deleteItem(context:atIndex:))
         
         return List {
             ForEach(items) { item in

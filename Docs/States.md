@@ -71,7 +71,7 @@ struct TempCelsiusSelector: SyncSelectorNode, Writeable {
 
 func celsiusView() -> some View {
     // Writable Selector have to wrapped as Recoil state
-    let tempCelsius = ctx.useRecoilState(TempCelsiusSelector())
+    let tempCelsius = recoil.useBinding(TempCelsiusSelector())
     
     Text("Current \(tempCelsius)")
 
@@ -119,9 +119,9 @@ static var remoteCategoriesSelector: AsyncSelector<[Book]> {
 run the async tasks
 ```swift
 struct SomeView: View {
-    @RecoilScope var ctx
+    @RecoilScope var recoil
     var body: some View {
-      let remoteCategories = ctx.useRecoilValue(remoteCategoriesSelector)
+      let remoteCategories = recoil.useValue(remoteCategoriesSelector)
 
        if let categories = remoteCategories else {
            categoriesView()

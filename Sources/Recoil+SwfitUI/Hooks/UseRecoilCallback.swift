@@ -75,8 +75,8 @@ private struct RecoilCallbackHook<T>: RecoilHook {
 
     @MainActor
     func value(coordinator: Coordinator) -> T {
-        let ctx = getStoredContext(coordinator: coordinator)
-        return ctx.useRecoilCallback(initialValue)
+        let recoil = getStoredContext(coordinator: coordinator)
+        return recoil.useCallback(initialValue)
     }
 }
 

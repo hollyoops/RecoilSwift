@@ -2,12 +2,12 @@ import SwiftUI
 import RecoilSwift
 
 public struct MainTabPage: View {
-    @RecoilScope var ctx
+    @RecoilScope var recoil
     
     public var body: some View {
-        let selectedTab = ctx.useRecoilState(SelectedTabState())
-        let shouldShowFilter = ctx.useRecoilValue(Home.filterVisisbleState)
-        let badgeText = try? ctx.useRecoilValue(Cart.cartItemBadgeState)
+        let selectedTab = recoil.useBinding(SelectedTabState())
+        let shouldShowFilter = recoil.useValue(Home.filterVisisbleState)
+        let badgeText = try? recoil.useThrowingValue(Cart.cartItemBadgeState)
        
         ZStack(alignment: .bottom) {
             TabView(selection: selectedTab) {

@@ -17,7 +17,7 @@ extension XCTestCase {
 }
 
 final class CallbackTests: XCTestCase {
-    @RecoilTestScope var scope
+    @RecoilTestScope var recoil
     
     struct TestModule  {
         static var numberState: Atom<Int> {
@@ -56,18 +56,18 @@ final class CallbackTests: XCTestCase {
     }
     
     var accessor: StateAccessor {
-        _scope.accessor(deps: [])
+        _recoil.accessor(deps: [])
     }
     
     override func setUp() {
-        _scope.reset()
+        _recoil.reset()
     }
 }
 
 // MARK: - Sync
 extension CallbackTests {
     func test_should_return12_when_add_given_number10() {
-        let tester = HookTester(scope: _scope) {
+        let tester = HookTester(scope: _recoil) {
             useRecoilCallback(TestModule.add(context:number:))
         }
         
@@ -78,7 +78,7 @@ extension CallbackTests {
     }
     
     func test_should_return60_when_addThenMultiple_given_number10_and_multiple5() {
-        let tester = HookTester(scope: _scope) {
+        let tester = HookTester(scope: _recoil) {
             useRecoilCallback(TestModule.addThenMultiple(context:number:multiple:))
         }
         
@@ -89,7 +89,7 @@ extension CallbackTests {
     }
     
     func test_should_return16_when_square_given_twice_invocation() {
-        let tester = HookTester(scope: _scope) {
+        let tester = HookTester(scope: _recoil) {
             useRecoilCallback(TestModule.square(context:))
         }
         
@@ -103,7 +103,7 @@ extension CallbackTests {
 // MARK: - Async
 extension CallbackTests {
     func test_should_return1002_when_addByRemote_given_wait_half_second() {
-        let tester = HookTester(scope: _scope) {
+        let tester = HookTester(scope: _recoil) {
             useRecoilCallback(TestModule.addByRemote)
         }
         

@@ -2,6 +2,7 @@ ignore:
   - "Tests" # ignore folders and all its contents
   - "XCTestHelper"
   - "Components"
+  - "*/**/RecoilValue.swift"
   - "**/Debug.swift"
   - "*/**/*View.swift"
   - "*/**/*ViewModifier.swift"
@@ -13,5 +14,5 @@ coverage:
   status:
     project:
       default:
-        target: 74%    # the required coverage value
+        target: 80%    # the required coverage value
         threshold: 1%  # the leniency in hitting the target

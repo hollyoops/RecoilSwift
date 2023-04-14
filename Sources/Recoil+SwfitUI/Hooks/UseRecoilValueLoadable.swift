@@ -88,7 +88,7 @@ private struct RecoilLoadableValueHook<Node: RecoilNode>: RecoilHook {
     
     @MainActor
     func value(coordinator: Coordinator) -> LoadableContent<Node.T> {
-        let ctx = getStoredContext(coordinator: coordinator)
-        return ctx.useRecoilValueLoadable(initialValue)
+        let recoil = getStoredContext(coordinator: coordinator)
+        return recoil.useLoadable(initialValue)
     }
 }

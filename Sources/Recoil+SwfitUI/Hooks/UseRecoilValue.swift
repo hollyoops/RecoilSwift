@@ -125,8 +125,8 @@ private struct RecoilValueHook<Node: RecoilSyncNode>: RecoilHook {
 
     @MainActor
     func value(coordinator: Coordinator) -> Node.T? {
-        let ctx = getStoredContext(coordinator: coordinator)
-        return try? ctx.useRecoilValue(initialValue)
+        let recoil = getStoredContext(coordinator: coordinator)
+        return try? recoil.useThrowingValue(initialValue)
     }
 }
 
@@ -141,8 +141,8 @@ private struct RecoilAsyncValueHook<Node: RecoilAsyncNode>: RecoilHook {
     
     @MainActor
     func value(coordinator: Coordinator) -> Node.T? {
-        let ctx = getStoredContext(coordinator: coordinator)
-        return ctx.useRecoilValue(initialValue)
+        let recoil = getStoredContext(coordinator: coordinator)
+        return recoil.useValue(initialValue)
     }
 }
 
@@ -157,7 +157,7 @@ private struct RecoilStateHook<Node: RecoilMutableSyncNode>: RecoilHook {
     
     @MainActor
     func value(coordinator: Coordinator) -> Binding<Node.T> {
-        let ctx = getStoredContext(coordinator: coordinator)
-        return ctx.useRecoilState(initialValue)
+        let recoil = getStoredContext(coordinator: coordinator)
+        return recoil.useUnsafeBinding(initialValue)
     }
 }

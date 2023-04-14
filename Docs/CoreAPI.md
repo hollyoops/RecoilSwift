@@ -21,13 +21,13 @@ Loadables also contain helper methods for accessing the current state.
 ## useRecoilValueLoadable
 
 ```swift
-@RecoilScope var ctx
+@RecoilScope var recoil
 
 struct YourView: View {
 // In some function 
     var body: some View {
-        let id = ctx.useRecoilValue(selectedCategoryState)
-        let loadable = ctx.useRecoilValueLoadable(fetchRemoteDataById(id))
+        let id = recoil.useValue(selectedCategoryState)
+        let loadable = recoil.useLoadable(fetchRemoteDataById(id))
         
         // This body will be render after task completed
         return VStack {

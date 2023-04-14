@@ -1,51 +1,62 @@
 import SwiftUI
 
+@available(iOS 14.0, *)
 @propertyWrapper
-public struct RecoilValue<Node: RecoilSyncNode>: DynamicProperty {
-    private var context: ScopedRecoilContext
+public struct RecoilScopedState<Node: RecoilNode>: DynamicProperty {
+    @Environment(\.store) private var store
+    
+    @StateObject private var viewRefersher: ViewRefresher = ViewRefresher()
+    private let cache = ScopedStateCache()
     private var node: Node
     
-    public init(_ node: Node, context: ScopedRecoilContext) {
+    public init(_ node: Node) {
         self.node = node
-        self.context = context
     }
     
-    public var wrappedValue: Node.T {
-        context.useRecoilValue(node)
+    public var wrappedValue: Node.T? {
+        projectedValue.data
+    }
+    
+    public var projectedValue: LoadableContent<Node.T> {
+        context.useLoadable(node)
+    }
+    
+    private var context: ScopedRecoilContext {
+        ScopedRecoilContext(store: store,
+                            cache: cache,
+                            refresher: viewRefersher)
     }
 }
 
-@propertyWrapper
-public struct RecoilState<Node: RecoilMutableSyncNode>: DynamicProperty {
-    private var context: ScopedRecoilContext
-    private var node: Node
-    
-    public init(_ node: Node, context: ScopedRecoilContext) {
-        self.node = node
-        self.context = context
-    }
-    
-    public var wrappedValue: Node.T {
-        get { projectedValue.wrappedValue }
-        nonmutating set {
-            projectedValue.wrappedValue = newValue
+@available(iOS 14.0, *)
+extension RecoilScopedState where Node: RecoilSyncNode {
+    public var value: Node.T {
+        get throws {
+            try context.useThrowingValue(node)
         }
     }
     
-    public var projectedValue: Binding<Node.T> {
-        context.useRecoilState(node)
+    public var unsafeValue: Node.T {
+        do {
+           return try context.useThrowingValue(node)
+        } catch {
+            // TODO:
+            print(error)
+            fatalError(error.localizedDescription)
+        }
     }
 }
 
-@propertyWrapper
-public struct RecoilValueLoadable<Node: RecoilNode>: DynamicProperty {
-    private var context: ScopedRecoilContext
-    private var node: Node
-    public let wrappedValue: LoadableContent<Node.T>
-    
-    public init(_ node: Node, context: ScopedRecoilContext) {
-        self.node = node
-        self.context = context
-        self.wrappedValue = context.useRecoilValueLoadable(node)
+@available(iOS 14.0, *)
+extension RecoilScopedState where Node: RecoilMutableSyncNode {
+    public var binding: ThrowingBinding<Node.T> {
+        context.useThrowingBinding(node)
     }
 }
+
+//@available(iOS 14.0, *)
+//extension RecoilScopedState where Node: RecoilMutableAsyncNode {
+//    public var binding: Binding<Node.T?> {
+//        context.useBinding(node)
+//    }
+//}

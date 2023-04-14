@@ -34,12 +34,23 @@ public struct ThrowingBinding<Value> {
         self.set = set
     }
     
-    public var value: Value {
+    public var value: Value? {
+        get { try? get() }
+        set {
+            guard let v = newValue else { return }
+            set(v)
+        }
+    }
+    
+    public var wrappedValue: Value {
         get throws { try get() }
     }
     
-    public func setValue(_ newValue: Value) {
-        set(newValue)
+    public var unsafeValue: Value {
+        get { value! }
+        set {
+            set(newValue)
+        }
     }
 }
 

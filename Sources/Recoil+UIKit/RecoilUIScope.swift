@@ -3,7 +3,7 @@
 import UIKit
 
 public protocol RecoilUIScope: ViewRefreshable {
-    var ctx: ScopedRecoilContext { get }
+    var recoil: ScopedRecoilContext { get }
 }
 
 private struct RecoilUIScopeKeys {
@@ -21,7 +21,7 @@ private func stateCache<T: RecoilUIScope & NSObjectProtocol>(for object: T) -> S
 }
 
 extension RecoilUIScope where Self: UIViewController {
-    public var ctx: ScopedRecoilContext {
+    public var recoil: ScopedRecoilContext {
         ScopedRecoilContext(store: globalStore,
                             cache: stateCache(for: self),
                             refresher: self)
@@ -29,7 +29,7 @@ extension RecoilUIScope where Self: UIViewController {
 }
 
 extension RecoilUIScope where Self: UIView {
-    public var ctx: ScopedRecoilContext {
+    public var recoil: ScopedRecoilContext {
         ScopedRecoilContext(store: globalStore,
                             cache: stateCache(for: self),
                             refresher: self)

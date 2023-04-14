@@ -2,10 +2,10 @@ import SwiftUI
 import RecoilSwift
 
 struct AllBooksView: View {
-    @RecoilScope var ctx
+    @RecoilScope var recoil
     
     var body: some View {
-        let currentBooks = ctx.useRecoilValueLoadable(BookList.currentBooks).data ?? []
+        let currentBooks = recoil.useLoadable(BookList.currentBooks).data ?? []
         
         BooksContent()
             .navigationTitle("Book shop")

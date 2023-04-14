@@ -5,7 +5,7 @@ import Combine
 @testable import RecoilSwift
 
 final class RecoilFamilyTests: XCTestCase {
-    @RecoilTestScope var scope
+    @RecoilTestScope var recoil
     
     struct TestModule  {
         static var myNumberState: Atom<Int> {
@@ -60,7 +60,7 @@ final class RecoilFamilyTests: XCTestCase {
     }
     
     override func setUp() {
-        _scope.reset()
+        _recoil.reset()
     }
 }
 
@@ -69,7 +69,7 @@ extension RecoilFamilyTests {
     func test_atom_should_return_parameter_value_given_dynamic_multiple_number() {
         var dynamicMultipleNumber = 10
         
-        let tester = HookTester(scope: _scope) {
+        let tester = HookTester(scope: _recoil) {
             useRecoilValue(TestModule.threeTimesNumberState(dynamicMultipleNumber))
         }
         
@@ -83,7 +83,7 @@ extension RecoilFamilyTests {
     
     func test_should_fetch_computer_remote_data_given_book_type() {
         let expectation = XCTestExpectation(description: "Combine selector resolved")
-        let tester = HookTester(scope: _scope) { () -> [String]? in
+        let tester = HookTester(scope: _recoil) { () -> [String]? in
             let value = useRecoilValue(TestModule.getBookByType("Computer"))
             
             if value == ["Computer-Book1", "Computer-Book2"] {
@@ -100,7 +100,7 @@ extension RecoilFamilyTests {
     
     func test_should_fetch_async_parameter_selector_given_book_type() {
         let expectation = XCTestExpectation(description: "Async selector resolved.")
-        let tester = HookTester(scope: _scope) { () -> [String]? in
+        let tester = HookTester(scope: _recoil) { () -> [String]? in
             let value = useRecoilValue(TestModule.fetchBookByType("edu"))
             
             if value == ["edu-Book1", "edu-Book2"] {
@@ -121,7 +121,7 @@ extension RecoilFamilyTests {
     func test_should_return_parameter_value_given_dynamic_multiple_number_using_selector() {
         var dynamicMultipleNumber = 10
         
-        let tester = HookTester(scope: _scope) {
+        let tester = HookTester(scope: _recoil) {
             useRecoilValue(TestModule.myMultipliedState(dynamicMultipleNumber))
         }
         
@@ -135,7 +135,7 @@ extension RecoilFamilyTests {
     
     func test_should_combine_parameter_selector_given_book_category() {
         let expectation = XCTestExpectation(description: "Combine selector resolved")
-        let tester = HookTester(scope: _scope) { () -> [String]? in
+        let tester = HookTester(scope: _recoil) { () -> [String]? in
             let value = useRecoilValue(TestModule.getBookByCategory("Combine"))
             
             if value == ["Combine:Book1", "Combine:Book2"] {
@@ -152,7 +152,7 @@ extension RecoilFamilyTests {
     
     func test_should_fetch_async_parameter_selector_given_book_category() {
         let expectation = XCTestExpectation(description: "Async selector resolved.")
-        let tester = HookTester(scope: _scope) { () -> [String]? in
+        let tester = HookTester(scope: _recoil) { () -> [String]? in
             let value = useRecoilValue(TestModule.fetchBookByCategory("Async"))
             
             if value == ["Async:Book1", "Async:Book2"] {

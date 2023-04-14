@@ -41,14 +41,14 @@ struct SuccessDeps {
 }
 
 final class NodeAccessorTests: XCTestCase {
-    @RecoilTestScope var scope
+    @RecoilTestScope var recoil
     
     var accessor: StateAccessor {
-        _scope.accessor(deps: [])
+        _recoil.accessor(deps: [])
     }
     
     override func setUp() {
-        _scope.reset()
+        _recoil.reset()
     }
 }
 

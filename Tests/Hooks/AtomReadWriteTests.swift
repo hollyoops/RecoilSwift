@@ -9,15 +9,15 @@ final class AtomReadWriteTests: XCTestCase {
         static var stringAtom = atom { "rawValue" }
     }
     
-    @RecoilTestScope var scope
+    @RecoilTestScope var recoil
     
     @MainActor
     override func setUp() {
-        _scope.reset()
+        _recoil.reset()
     }
     
     func test_should_return_rawValue_when_read_only_atom_given_stringAtom() {
-        let tester = HookTester(scope: _scope) {
+        let tester = HookTester(scope: _recoil) {
             useRecoilValue(TestModule.stringAtom)
         }
         
@@ -25,7 +25,7 @@ final class AtomReadWriteTests: XCTestCase {
     }
     
     func test_should_return_newValue_when_read_write_atom_given_stringAtom_and_newValue() {
-        let tester = HookTester(scope: _scope) {
+        let tester = HookTester(scope: _recoil) {
             useRecoilState(TestModule.stringAtom)
         }
         

@@ -138,10 +138,10 @@ To use it in the UI:
 
 ```swift
 struct YourView: View { 
-    @RecoilScope var ctx
+    @RecoilScope var recoil
 
     var body: some View { 
-     let badge = ctx.useRecoilValue(CartState.numberOfProductBadge)
+     let badge = recoil.useValue(CartState.numberOfProductBadge)
       
       Text(badge)
     }
@@ -183,10 +183,10 @@ To use it in the UI:
 
 ```swift
 struct YourView: View { 
-    @RecoilScope var ctx
+    @RecoilScope var recoil
 
     var body: some View { 
-     let badge = ctx.useRecoilValue(NumberOfProductBadge())
+     let badge = recoil.useValue(NumberOfProductBadge())
       
       Text(badge)
     }
@@ -208,9 +208,9 @@ var remoteDataById: AsyncSelectorFamily<String, String> {
 }
 
 struct YourView: View { 
-  @RecoilScope var ctx
+  @RecoilScope var recoil
   var body: some View {
-    let loadable = ctx.useRecoilValueLoadable(remoteDataById(id))
+    let loadable = recoil.useLoadable(remoteDataById(id))
         
     return VStack {
         if loadable.isLoading {
@@ -250,7 +250,7 @@ Then use it like this:
 
 ```swift
 var body: some View {
-    let loadable = ctx.useRecoilValueLoadable(RemoteData(id))
+    let loadable = recoil.useLoadable(RemoteData(id))
     ...
 }
 ```
@@ -314,7 +314,7 @@ extension BooksViewController: RecoilUIScope {
   func refresh() {
 
     /// 3. Get and subscribe to the value of the state
-    let value = ctx.useRecoilValue(MyState())
+    let value = recoil.useValue(MyState())
 
     // 4. Bind the value of the state to the UI
     valueLabel.text = value
@@ -329,7 +329,7 @@ extension BooksViewController: RecoilUIScope {
 ```swift
 extension BooksViewController: RecoilUIScope {
     func refresh() {
-        let booksLoader = ctx.useRecoilValueLoadable(BookList.currentBooks)
+        let booksLoader = recoil.useLoadable(BookList.currentBooks)
         
         if let error = booksLoader.errors.first {
             loadingSpinner.stopAnimating()
@@ -369,20 +369,20 @@ In RecoilSwift, you can utilize `@RecoilTestScope` to test your state.
 ```swift
 final class AtomAccessTests: XCTestCase {
     /// 1. Initialize scope
-    @RecoilTestScope var scope
+    @RecoilTestScope var recoil
     override func setUp() {
-        _scope.reset()
+        _recoil.reset()
     }
     
     func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() {
         /// Subscribe to the state using `useRecoilXXX` API
-        let value = scope.useRecoilState(TestModule.stringAtom)
+        let value = recoil.useBinding(TestModule.stringAtom)
         XCTAssertEqual(value.wrappedValue, "rawValue")
         
         value.wrappedValue = "newValue"
 
         /// Use `useRecoilValue` API to subscribe and fetch the latest state value 
-        let newValue = scope.useRecoilValue(TestModule.stringAtom)
+        let newValue = recoil.useValue(TestModule.stringAtom)
         XCTAssertEqual(newValue, "newValue")
     }
 }
@@ -397,10 +397,10 @@ import RecoilSwiftXCTests
 
 final class AtomAccessWithViewRenderTests: XCTestCase {
     // ...
-    func test_should_atom_value_when_useRecoilValue_given_stringAtom() async {
+    func test_should_atom_value_when_useValue_given_stringAtom() async {
         /// The callback of `ViewRenderHelper` might be triggered multiple times,
-        let view = ViewRenderHelper { ctx, sut in
-            let value = ctx.useRecoilValue(TestModule.stringAtom)
+        let view = ViewRenderHelper { recoil, sut in
+            let value = recoil.useValue(TestModule.stringAtom)
             /// Once `expect` meets the expectation, the test will be considered successful, otherwise, the test will fail when time out
             sut.expect(value).equalTo("rawValue")
         }
@@ -415,14 +415,14 @@ final class AtomAccessWithViewRenderTests: XCTestCase {
 
 ```swift
 final class AtomReadWriteTests: XCTestCase {
-    @RecoilTestScope var scope
+    @RecoilTestScope var recoil
     override func setUp() {
-        _scope.reset()
+        _recoil.reset()
     }
     
     func test_should_return_rawValue_when_read_only_atom_given_stringAtom() {
         /// Note: You need to define HookTest and pass in Scope
-        let tester = HookTester(scope: _scope) {
+        let tester = HookTester(scope: _recoil) {
             useRecoilValue(TestModule.stringAtom)
         }
         

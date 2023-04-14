@@ -34,21 +34,21 @@ class CategoryViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedVal = Book.Category.allCases[indexPath.row]
-        var binding = ctx.useRecoilBinding(BookList.selectedCategoryState)
-        binding.wrappedValue = selectedVal
+        let updateCategory = recoil.useUpdate(BookList.selectedCategoryState)
+        updateCategory(selectedVal)
         navigationController?.popViewController(animated: true)
     }
     
     @objc func didTapResetButton() {
-        var binding = ctx.useRecoilBinding(BookList.selectedCategoryState)
-        binding.wrappedValue = nil
+        let updateCategory = recoil.useUpdate(BookList.selectedCategoryState)
+        updateCategory(nil)
         navigationController?.popViewController(animated: true)
     }
 }
 
 extension CategoryViewController: RecoilUIScope {
     func refresh() {
-        let selectedCategoryState = try? ctx.useRecoilValue(BookList.selectedCategoryState)
+        let selectedCategoryState = try? recoil.useThrowingValue(BookList.selectedCategoryState)
         self.selectedCategory = selectedCategoryState
         tableView.reloadData()
     }
