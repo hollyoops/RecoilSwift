@@ -2,6 +2,23 @@
 
 import PackageDescription
 
+var packageDeps: [PackageDescription.Package.Dependency] = []
+var targetDeps: [PackageDescription.Target.Dependency] = []
+
+var isHooksEnabled = true
+if isHooksEnabled {
+    packageDeps.append(
+        .package(
+            url: "https://github.com/hollyoops/SwiftUI-Hooks",
+            from: "0.0.4"
+        )
+    )
+    
+    targetDeps.append(
+        .product(name: "Hooks", package: "SwiftUI-Hooks")
+    )
+}
+
 let package = Package(
     name: "RecoilSwift",
     
@@ -22,22 +39,14 @@ let package = Package(
         )
     ],
     
-    dependencies: [
-      // Dependencies declare other packages that this package depends on.
-      .package(
-        url: "https://github.com/hollyoops/SwiftUI-Hooks",
-        from: "0.0.4"
-      )
-    ],
+    dependencies: [] + packageDeps,
     
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "RecoilSwift",
-            dependencies: [
-                .product(name: "Hooks", package: "SwiftUI-Hooks")
-            ],
+            dependencies: [] + targetDeps,
             path: "Sources",
             resources: [
                 .copy("Resources/graph-web")

@@ -1,3 +1,5 @@
+#if canImport(Hooks)
+
 import SwiftUI
 import XCTest
 import Combine
@@ -167,3 +169,5 @@ extension RecoilFamilyTests {
         wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
     }
 }
+
+#endif

@@ -1,3 +1,5 @@
+#if canImport(Hooks)
+
 import Hooks
 import SwiftUI
 import Foundation
@@ -43,3 +45,5 @@ public final class HookTester<Parameter, Value> {
         tester.dispose()
     }
 }
+
+#endif

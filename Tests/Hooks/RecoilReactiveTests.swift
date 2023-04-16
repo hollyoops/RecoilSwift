@@ -1,3 +1,5 @@
+#if canImport(Hooks)
+
 import SwiftUI
 import XCTest
 import Combine
@@ -70,7 +72,7 @@ final class RecoilReactiveTests: XCTestCase {
         let expectation = XCTestExpectation(description: "should return correct loading status")
         
         let selectorWithError = selector { accessor in
-            let string = try await accessor.get(MockAtom<String>(error: MyError.param))
+            let string = try await accessor.get(MockAtom<String>(error: TestError.param))
             return string.uppercased()
         }
         
@@ -88,3 +90,5 @@ final class RecoilReactiveTests: XCTestCase {
         wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
     }
 }
+
+#endif

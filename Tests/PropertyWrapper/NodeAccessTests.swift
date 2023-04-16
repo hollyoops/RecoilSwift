@@ -63,8 +63,8 @@ extension NodeAccessorTests {
     }
     
     func test_should_return_upstream_error_when_get_value_given_upstream_states_hasError() throws {
-        _recoil.stubState(node: MultipleTen.state, error: MyError.param)
-        XCTAssertThrowsSpecificError(try accessor.get(MultipleTen.state), MyError.param)
+        _recoil.stubState(node: MultipleTen.state, error: TestError.param)
+        XCTAssertThrowsSpecificError(try accessor.get(MultipleTen.state), TestError.param)
     }
     
     func test_should_return_upstream_value_when_get_value_given_upstream_stateError_map_to_value() throws {
@@ -74,13 +74,13 @@ extension NodeAccessorTests {
     
     func test_should_get_error_when_get_value_given_self_states_hasError() throws {
         XCTAssertThrowsSpecificError(
-            try accessor.get(MockAtom<String>(error: MyError.param)),
-            MyError.param
+            try accessor.get(MockAtom<String>(error: TestError.param)),
+            TestError.param
         )
         
         XCTAssertThrowsSpecificError(
-            try accessor.get(MockSelector<String>(error: MyError.param)),
-            MyError.param
+            try accessor.get(MockSelector<String>(error: TestError.param)),
+            TestError.param
         )
     }
 }
@@ -98,13 +98,13 @@ extension NodeAccessorTests {
     }
     
     func test_should_return_upstream_asyncError_when_get_value_given_upstream_states_hasError() async throws {
-        _recoil.stubState(node: AsyncMultipleTen.upstreamState, error: MyError.param)
+        _recoil.stubState(node: AsyncMultipleTen.upstreamState, error: TestError.param)
         
         do {
             _ = try await accessor.get(AsyncMultipleTen.state)
             XCTFail("should throw error")
         } catch {
-            XCTAssertEqual(error as? MyError, MyError.param)
+            XCTAssertEqual(error as? TestError, TestError.param)
         }
     }
     

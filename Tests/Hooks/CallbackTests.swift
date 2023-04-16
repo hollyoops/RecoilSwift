@@ -1,3 +1,5 @@
+#if canImport(Hooks)
+
 import SwiftUI
 import XCTest
 import Combine
@@ -115,3 +117,5 @@ extension CallbackTests {
         XCTAssertEqual(accessor.getUnsafe(TestModule.numberState), 1002)
     }
 }
+
+#endif

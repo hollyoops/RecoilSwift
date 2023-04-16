@@ -1,25 +1,20 @@
 #if canImport(Combine)
 import Combine
 #endif
-import Hooks
 
-public struct RecoilCallbackContext {
-    public let accessor: StateAccessor
-    public let store: (AnyCancellable) -> Void
-}
+#if canImport(Hooks)
+import Hooks
 
 /// A hook provide an API for your callbacks to work with Recoil state. Diffrent with other hooks, the hook don't load state, until you manually call it. Asynchronously read Recoil state without subscribing a component to re-render if the atom or selector is updated.
 /// - Parameters:
 ///   - fn: A function that you want to access the Recoil state
 /// - Returns: return a callback function that can trigger state update after call it
-public typealias Callback<R> = (RecoilCallbackContext) -> R
 @MainActor
 public func useRecoilCallback<Return>(_ fn: @escaping Callback<Return>) -> () -> Return {
     let hook = RecoilCallbackHook(callback: curryFirst(fn))
     return useHook(hook)
 }
 
-public typealias AsyncCallback<R> = (RecoilCallbackContext) async throws -> R
 @MainActor
 public func useRecoilCallback<Return>(_ fn: @escaping AsyncCallback<Return>) -> () async throws -> Return {
     let hook = RecoilCallbackHook(callback: curryFirst(fn))
@@ -30,14 +25,12 @@ public func useRecoilCallback<Return>(_ fn: @escaping AsyncCallback<Return>) -> 
 /// - Parameters:
 ///   - fn: A function that you want to access the Recoil state with one user-defined parameter
 /// - Returns: return a callback function that can trigger state update after call it
-public typealias Callback1<P, R> = (RecoilCallbackContext, P) -> R
 @MainActor
 public func useRecoilCallback<P, R>(_ fn: @escaping Callback1<P, R>) -> (P) -> R {
     let hook = RecoilCallbackHook(callback: curryFirst(fn))
     return useHook(hook)
 }
 
-public typealias AsyncCallback1<P, R> = (RecoilCallbackContext, P) async throws -> R
 @MainActor
 public func useRecoilCallback<P, R>(_ fn: @escaping AsyncCallback1<P, R>) -> (P) async throws -> R {
     let hook = RecoilCallbackHook(callback: curryFirst(fn))
@@ -48,14 +41,12 @@ public func useRecoilCallback<P, R>(_ fn: @escaping AsyncCallback1<P, R>) -> (P)
 /// - Parameters:
 ///   - fn: A function that you want to access the Recoil state with two user-defined parameters
 /// - Returns: return a callback function that can trigger state update after call it
-public typealias Callback2<P1, P2, R> = (RecoilCallbackContext, P1, P2) -> R
 @MainActor
 public func useRecoilCallback<P1, P2, R>(_ fn: @escaping Callback2<P1, P2, R>) -> (P1, P2) -> R {
     let hook = RecoilCallbackHook(callback: curryFirst(fn))
     return useHook(hook)
 }
 
-public typealias AsyncCallback2<P1, P2, R> = (RecoilCallbackContext, P1, P2) async throws -> R
 @MainActor
 public func useRecoilCallback<P1, P2, R>(_ fn: @escaping AsyncCallback2<P1, P2, R>) -> (P1, P2) async throws -> R {
     let hook = RecoilCallbackHook(callback: curryFirst(fn))
@@ -91,3 +82,5 @@ public extension AnyCancellable {
         }
     }
 }
+
+#endif

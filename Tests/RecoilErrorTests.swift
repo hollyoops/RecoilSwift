@@ -2,6 +2,12 @@ import XCTest
 
 @testable import RecoilSwift
 
+enum TestError: String, Error {
+    case unknown
+    case param
+    case someError
+}
+
 class RecoilErrorTests: XCTestCase {
 
     var circularInfo1: RecoilError.CircularInfo!

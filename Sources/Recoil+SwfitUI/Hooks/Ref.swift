@@ -1,3 +1,5 @@
+#if canImport(Hooks)
+
 internal final class Ref<Value> {
     private(set) var value: Value
     private(set) var isDisposed = false
@@ -19,3 +21,5 @@ internal final class Ref<Value> {
         isDisposed = true
     }
 }
+
+#endif

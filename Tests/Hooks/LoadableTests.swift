@@ -1,3 +1,5 @@
+#if canImport(Hooks)
+
 import SwiftUI
 import XCTest
 import Combine
@@ -5,10 +7,6 @@ import RecoilSwiftTestKit
 
 @testable import RecoilSwift
 
-enum MyError: String, Error {
-    case unknown
-    case param
-}
 
 typealias Selector = RecoilSwift.Selector
 
@@ -62,14 +60,14 @@ extension LoadableTests {
     
     func test_sync_loadable_should_be_rejected_when_using_my_multiplied_state_error() {
         let tester = HookTester(scope: _recoil) {
-            useRecoilValueLoadable(MockAtom<Int>(error: MyError.unknown))
+            useRecoilValueLoadable(MockAtom<Int>(error: TestError.unknown))
         }
         
         XCTAssertEqual(tester.value.isAsynchronous, false)
         
         XCTAssertEqual(tester.value.data, nil)
         
-        XCTAssertTrue(tester.value.containError(of: MyError.unknown))
+        XCTAssertTrue(tester.value.containError(of: TestError.unknown))
     }
 }
 
@@ -101,10 +99,10 @@ extension LoadableTests {
         
         let tester = HookTester(scope: _recoil) { () -> LoadableContent<[String]> in
             let loadable = useRecoilValueLoadable(
-                MockAsyncAtom<[String]>(error: MyError.param)
+                MockAsyncAtom<[String]>(error: TestError.param)
             )
             
-            if loadable.containError(of: MyError.param) {
+            if loadable.containError(of: TestError.param) {
                 expectation.fulfill()
             }
             
@@ -138,10 +136,10 @@ extension LoadableTests {
         
         let tester = HookTester(scope: _recoil) { () -> LoadableContent<[String]> in
             let loadable = useRecoilValueLoadable(
-                MockAsyncAtom<[String]>(error: MyError.param)
+                MockAsyncAtom<[String]>(error: TestError.param)
             )
             
-            if loadable.containError(of: MyError.param) {
+            if loadable.containError(of: TestError.param) {
                 expectation.fulfill()
             }
             
@@ -153,3 +151,5 @@ extension LoadableTests {
         wait(for: [expectation], timeout: TestConfig.expectation_wait_seconds)
     }
 }
+
+#endif

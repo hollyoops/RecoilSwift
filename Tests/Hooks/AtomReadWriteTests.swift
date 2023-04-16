@@ -1,3 +1,5 @@
+#if canImport(Hooks)
+
 import SwiftUI
 import XCTest
 import RecoilSwiftTestKit
@@ -36,3 +38,5 @@ final class AtomReadWriteTests: XCTestCase {
         XCTAssertEqual(tester.value.wrappedValue, "newValue")
     }
 }
+
+#endif

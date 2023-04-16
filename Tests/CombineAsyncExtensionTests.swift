@@ -57,7 +57,3 @@ class AnyPublisherExtensionTests: XCTestCase {
         await task.value
     }
 }
-
-enum TestError: Error {
-    case someError
-}

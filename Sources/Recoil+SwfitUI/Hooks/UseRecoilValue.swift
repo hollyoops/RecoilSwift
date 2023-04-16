@@ -1,6 +1,6 @@
-#if canImport(SwiftUI)
+#if canImport(Hooks)
 import SwiftUI
-#endif
+
 import Hooks
 
 /// A hook will subscribe the component to re-render if there are changing in the Recoil state.
@@ -161,3 +161,5 @@ private struct RecoilStateHook<Node: RecoilMutableSyncNode>: RecoilHook {
         return recoil.useUnsafeBinding(initialValue)
     }
 }
+
+#endif
