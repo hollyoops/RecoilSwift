@@ -7,6 +7,10 @@ on:
 jobs:
   doc:
     runs-on: macos-13
+    
+    env:
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
 
     steps:
       - name: Checkout Code
@@ -24,7 +28,4 @@ jobs:
       - name: Build documentation
         run: netlify build
       - name: Deploy documentation to Netlify
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: netlify deploy --prod --message ${GITHUB_SHA}
+        run: netlify deploy --prod --dir=./docs --message ${GITHUB_SHA}

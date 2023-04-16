@@ -303,7 +303,7 @@ Sometimes, you might want to conduct a more thorough end-to-end testing. For ins
 
 ```swift
 /// 1. Import the testing framework
-import RecoilSwiftXCTests
+import RecoilSwiftTestKit
 
 final class AtomAccessWithViewRenderTests: XCTestCase {
     // ...

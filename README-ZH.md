@@ -299,7 +299,7 @@ final class AtomAccessTests: XCTestCase {
 
 ```swift
 /// 1. 引入测试框架
-import RecoilSwiftXCTests
+import RecoilSwiftTestKit
 
 final class AtomAccessWithViewRenderTests: XCTestCase {
     // ...

@@ -1,6 +1,6 @@
 import XCTest
 import Combine
-import RecoilSwiftXCTests
+import RecoilSwiftTestKit
 
 @testable import RecoilSwift
 

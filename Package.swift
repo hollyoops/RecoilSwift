@@ -17,8 +17,8 @@ let package = Package(
             targets: ["RecoilSwift"]),
 
         .library(
-            name: "RecoilSwiftXCTests",
-            targets: ["RecoilSwiftXCTests"]
+            name: "RecoilSwiftTestKit",
+            targets: ["RecoilSwiftTestKit"]
         )
     ],
     
@@ -44,17 +44,17 @@ let package = Package(
             ]
         ),
         .target(
-            name: "RecoilSwiftXCTests",
+            name: "RecoilSwiftTestKit",
             dependencies: [
                 "RecoilSwift"
             ],
-            path: "XCTestHelper"
+            path: "TestKit"
         ),
         .testTarget(
             name: "RecoilSwiftTests",
             dependencies: [
                 "RecoilSwift",
-                "RecoilSwiftXCTests"
+                "RecoilSwiftTestKit"
             ],
             path: "Tests"
         )
