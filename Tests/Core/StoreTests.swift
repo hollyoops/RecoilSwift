@@ -1,4 +1,6 @@
 import XCTest
+import RecoilSwiftXCTests
+
 @testable import RecoilSwift
 
 class RecoilStoreTests: XCTestCase {
@@ -19,20 +21,20 @@ class RecoilStoreTests: XCTestCase {
     
     func test_should_subscribe_when_subscribeIsCalled_given_validNodeKeyAndSubscriber() {
         let mockSubscriber = MockSubscriber()
-        let subscription = store.subscribe(for: MockAtoms.intState.key, subscriber: mockSubscriber)
-        let obj = recoil.useBinding(MockAtoms.intState)
+        let subscription = store.subscribe(for: MockAtom(value: 0).key, subscriber: mockSubscriber)
+        let obj = recoil.useBinding(MockAtom(value: 0))
         obj.wrappedValue = 1
         
-        XCTAssertEqual(mockSubscriber.changedNodeKey, MockAtoms.intState.key)
+        XCTAssertEqual(mockSubscriber.changedNodeKey, MockAtom(value: 0).key)
         XCTAssertEqual(mockSubscriber.nodeChangedCallCount, 2)
     }
     
     func test_should_release_node_unsubscribe_is_called() {
         let store = RecoilStore()
         let mockSubscriber = MockSubscriber()
-        let nodeKey = MockAtoms.intState.key
+        let nodeKey = MockAtom(value: 0).key
         
-        _ = store.safeGetLoadable(for: MockAtoms.intState)
+        _ = store.safeGetLoadable(for: MockAtom(value: 0))
         XCTAssertNotNil(store.getLoadable(for: nodeKey))
         
         let subscription = store.subscribe(for: nodeKey, subscriber: mockSubscriber)
@@ -45,11 +47,11 @@ class RecoilStoreTests: XCTestCase {
         XCTAssertEqual(store.graph.allNodes().count, 0)
         
         // Add Node
-        _ = store.safeGetLoadable(for: MockAtoms.intState)
+        _ = store.safeGetLoadable(for: MockAtom(value: 0))
         XCTAssertEqual(store.graph.allNodes().count, 1)
         
         // Remove Node
-        let nodeKey = MockAtoms.intState.key
+        let nodeKey = MockAtom(value: 0).key
         let subscription = store.subscribe(for: nodeKey, subscriber: MockSubscriber())
         subscription.unsubscribe()
         XCTAssertEqual(store.graph.allNodes().count, 0)
@@ -58,7 +60,7 @@ class RecoilStoreTests: XCTestCase {
     func test_should_subscribe_when_subscribeIsCalled_given_validSubscriber() {
         let mockSubscriber = MockSubscriber()
         let _ = store.subscribe(subscriber: mockSubscriber)
-        _ = recoil.useBinding(MockAtoms.intState)
+        _ = recoil.useBinding(MockAtom(value: 0))
         XCTAssertEqual(mockSubscriber.storeChangedCallCount, 1)
     }
     

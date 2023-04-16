@@ -271,36 +271,112 @@ In the above diagram, the yellow items are `Atoms`, the brown ones are `Selector
 
 ## More Usage
 
-### Hooks API Usage
+### How to Test State in RecoilSwift
 ---
-RecoilSwift provides a set of APIs based on Hooks API, which closely resemble the official API. The Hook API functions are prefixed with `use`, such as `useRecoilXXX`. This approach is particularly suitable for frontend developers and has no learning curve.
-
-As it is based on the Hooks API, your View must adhere to the [Hooks guidelines](https://github.com/ra1028/SwiftUI-Hooks#rules-of-hooks).
+In RecoilSwift, you can utilize `@RecoilTestScope` to test your state.
 
 ```swift
-// 1. Inherit from the `HookView` protocol
-struct YourView: HookView {
-    // 2. Implement the `hookBody` property
-    var hookBody: some View {
-        // 3. Use the Hooks API to subscribe to states
-        let names = useRecoilValue(namesState)
-        let filteredNames = useRecoilValue(filteredNamesState)
+final class AtomAccessTests: XCTestCase {
+    /// 1. Initialize scope
+    @RecoilTestScope var recoil
+    override func setUp() {
+        _recoil.reset()
+    }
+    
+    func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() {
+        /// Subscribe to the state using `useRecoilXXX` API
+        let value = recoil.useBinding(TestModule.stringAtom)
+        XCTAssertEqual(value.wrappedValue, "rawValue")
+        
+        value.wrappedValue = "newValue"
 
-        return VStack {
-            Text("Original names: \(names.joined(separator: ","))")
-            Text("Filtered names: \(filteredNames.wrappedValue.joined(separator: ","))")
+        /// Use `useRecoilValue` API to subscribe and fetch the latest state value 
+        let newValue = recoil.useValue(TestModule.stringAtom)
+        XCTAssertEqual(newValue, "newValue")
+    }
+}
+```
+#### **View Render Test:**
 
-            Button("Reset to original") {
-                filteredNames.wrappedValue = names
-            }
+Sometimes, you might want to conduct a more thorough end-to-end testing. For instance, you may want to simulate the rendering of a view. In this case, you can use `ViewRenderHelper` for an end-to-end testing from view to state.
+`ViewRenderHelper` is able to simulate multiple renderings of the view.
+
+```swift
+/// 1. Import the testing framework
+import RecoilSwiftXCTests
+
+final class AtomAccessWithViewRenderTests: XCTestCase {
+    // ...
+    func test_should_atom_value_when_useValue_given_stringAtom() async {
+        /// The callback of `ViewRenderHelper` might be triggered multiple times,
+        let view = ViewRenderHelper { recoil, sut in
+            let value = recoil.useValue(TestModule.stringAtom)
+            /// Once `expect` meets the expectation, the test will be considered successful, otherwise, the test will fail when time out
+            sut.expect(value).equalTo("rawValue")
         }
+        
+        /// Simulate the view rendering
+        await view.waitForRender()
     }
 }
 ```
 
-Please note that a View using the Hooks API should either inherit from the `HookView` protocol and implement the `hookBody` property, or wrap your Hooks API code with `HookScope`. You can utilize a series of Hook APIs such as `useRecoilValue` to subscribe to states and update them as needed.
+<details><summary>**Click to see how to test Hook API with `HookTester`**</summary>
 
-**More detail please checkout [here](./Docs/Hooks.md)**
+```swift
+final class AtomReadWriteTests: XCTestCase {
+    @RecoilTestScope var recoil
+    override func setUp() {
+        _recoil.reset()
+    }
+    
+    func test_should_return_rawValue_when_read_only_atom_given_stringAtom() {
+        /// Note: You need to define HookTest and pass in Scope
+        let tester = HookTester(scope: _recoil) {
+            useRecoilValue(TestModule.stringAtom)
+        }
+        
+        XCTAssertEqual(tester.value, "rawValue")
+    }
+}    
+```
+
+</details>
+
+#### **Stub/Mock State:**
+
+Many times our Selector relies on other states. For example, in the code below, `state` depends on an upstream state (`state -> upstreamState`):
+
+```swift
+struct MultipleTen {
+    static var state: Selector<Int> {
+        selector { context in
+            try context.get(parentState) * 10
+        }
+    }
+    
+    static var upstreamState: Atom<Int> {
+        atom {  0 }
+    }
+}
+```
+
+However, during unit testing, we often don't want to test this `UpstreamState`. We want to stub/mock it. We can use the following code to stub/make states in a `RecoilTestScope`:
+
+```swift
+ func test_should_return_upstream_asyncError_when_get_value_given_upstream_states_hasError() async throws {
+        // stub  `upstreamState`  and make it return an error. You can also return other correct values with stub.
+        //  _recoil.stubState(node: AsyncMultipleTen.upstreamState, value: 100)
+        _recoil.stubState(node: AsyncMultipleTen.upstreamState, error: MyError.param)
+        
+        do {
+            _ = try await accessor.get(AsyncMultipleTen.state)
+            XCTFail("should throw error")
+        } catch {
+            XCTAssertEqual(error as? MyError, MyError.param)
+        }
+    }
+```
 
 ### UIKit Usage
 ---
@@ -362,76 +438,36 @@ extension BooksViewController: RecoilUIScope {
 
 **Please check [here](./Docs/UIKit.md)**
 
-### How to Test State in RecoilSwift
+### Hooks API Usage
 ---
-In RecoilSwift, you can utilize `@RecoilTestScope` to test your state.
+RecoilSwift provides a set of APIs based on Hooks API, which closely resemble the official API. The Hook API functions are prefixed with `use`, such as `useRecoilXXX`. This approach is particularly suitable for frontend developers and has no learning curve.
+
+As it is based on the Hooks API, your View must adhere to the [Hooks guidelines](https://github.com/ra1028/SwiftUI-Hooks#rules-of-hooks).
 
 ```swift
-final class AtomAccessTests: XCTestCase {
-    /// 1. Initialize scope
-    @RecoilTestScope var recoil
-    override func setUp() {
-        _recoil.reset()
-    }
-    
-    func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() {
-        /// Subscribe to the state using `useRecoilXXX` API
-        let value = recoil.useBinding(TestModule.stringAtom)
-        XCTAssertEqual(value.wrappedValue, "rawValue")
-        
-        value.wrappedValue = "newValue"
+// 1. Inherit from the `HookView` protocol
+struct YourView: HookView {
+    // 2. Implement the `hookBody` property
+    var hookBody: some View {
+        // 3. Use the Hooks API to subscribe to states
+        let names = useRecoilValue(namesState)
+        let filteredNames = useRecoilValue(filteredNamesState)
 
-        /// Use `useRecoilValue` API to subscribe and fetch the latest state value 
-        let newValue = recoil.useValue(TestModule.stringAtom)
-        XCTAssertEqual(newValue, "newValue")
+        return VStack {
+            Text("Original names: \(names.joined(separator: ","))")
+            Text("Filtered names: \(filteredNames.wrappedValue.joined(separator: ","))")
+
+            Button("Reset to original") {
+                filteredNames.wrappedValue = names
+            }
+        }
     }
 }
 ```
 
-Sometimes, you might want to conduct a more thorough end-to-end testing. For instance, you may want to simulate the rendering of a view. In this case, you can use `ViewRenderHelper` for an end-to-end testing from view to state.
-`ViewRenderHelper` is able to simulate multiple renderings of the view.
+Please note that a View using the Hooks API should either inherit from the `HookView` protocol and implement the `hookBody` property, or wrap your Hooks API code with `HookScope`. You can utilize a series of Hook APIs such as `useRecoilValue` to subscribe to states and update them as needed.
 
-```swift
-/// 1. Import the testing framework
-import RecoilSwiftXCTests
-
-final class AtomAccessWithViewRenderTests: XCTestCase {
-    // ...
-    func test_should_atom_value_when_useValue_given_stringAtom() async {
-        /// The callback of `ViewRenderHelper` might be triggered multiple times,
-        let view = ViewRenderHelper { recoil, sut in
-            let value = recoil.useValue(TestModule.stringAtom)
-            /// Once `expect` meets the expectation, the test will be considered successful, otherwise, the test will fail when time out
-            sut.expect(value).equalTo("rawValue")
-        }
-        
-        /// Simulate the view rendering
-        await view.waitForRender()
-    }
-}
-```
-
-<details><summary>**Click to see how to test Hook API with `HookTester`**</summary>
-
-```swift
-final class AtomReadWriteTests: XCTestCase {
-    @RecoilTestScope var recoil
-    override func setUp() {
-        _recoil.reset()
-    }
-    
-    func test_should_return_rawValue_when_read_only_atom_given_stringAtom() {
-        /// Note: You need to define HookTest and pass in Scope
-        let tester = HookTester(scope: _recoil) {
-            useRecoilValue(TestModule.stringAtom)
-        }
-        
-        XCTAssertEqual(tester.value, "rawValue")
-    }
-}    
-```
-
-</details>
+**More detail please checkout [here](./Docs/Hooks.md)**
 
 ## Demo
 

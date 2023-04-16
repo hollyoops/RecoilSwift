@@ -15,7 +15,7 @@ struct RemoteNames {
     }
 }
 
-struct CircleDeps {
+struct CircleRef {
     typealias Selector = RecoilSwift.Selector
     
     static var stateA: Selector<String> {
@@ -31,23 +31,26 @@ struct CircleDeps {
     }
 }
 
-struct MockAtoms {
-    static var intState: Atom<Int> {
+struct MultipleTen {
+    static var state: Selector<Int> {
+        selector { context in
+            try context.get(upstreamState) * 10
+        }
+    }
+    
+    static var upstreamState: Atom<Int> {
         atom { 0 }
     }
 }
 
-struct MockSelector {
-    static var remoteBooks: AsyncSelectorFamily<[String], [String]> {
-        selectorFamily { books, context in
-            try? await Task.sleep(nanoseconds: TestConfig.mock_async_wait_nanoseconds)
-            return books
+struct AsyncMultipleTen  {
+    static var state: AsyncSelector<Int> {
+        selector { context in
+            try await context.get(upstreamState) * 10
         }
     }
     
-    static var remoteBooksCombine: AsyncSelectorFamily<[String], [String]> {
-        selectorFamily { books, context in
-            MockAPI.makeCombine(result: .success(books), delay: TestConfig.mock_async_wait_seconds)
-        }
+    static var upstreamState: AsyncAtom<Int> {
+        atom { 0 }
     }
 }

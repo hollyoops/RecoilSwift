@@ -27,7 +27,7 @@ public func atom<T: Equatable>(_ value: T,
                                fileID: String = #fileID,
                                line: Int = #line) -> Atom<T> {
     let key = NodeKey(position: .init(funcName: funcName, fileName: fileID, line: line), type: .atom)
-    return Atom(key: key, value)
+    return Atom(key: key, value: value)
 }
 
 /// An atom represents state in Recoil. The ``atom()`` function returns a writeable ``RecoilState`` object.
@@ -75,7 +75,7 @@ public struct Atom<T: Equatable>: SyncAtomNode, Writeable {
     public let key: NodeKey
     public let get: () throws -> T
     
-    public init(key: NodeKey, _ value: T) {
+    public init(key: NodeKey, value: T) {
         self.key = key
         self.get = { value }
     }

@@ -1,6 +1,7 @@
 import SwiftUI
 import XCTest
 import Combine
+import RecoilSwiftXCTests
 
 @testable import RecoilSwift
 
@@ -69,7 +70,7 @@ final class RecoilReactiveTests: XCTestCase {
         let expectation = XCTestExpectation(description: "should return correct loading status")
         
         let selectorWithError = selector { accessor in
-            let string = try await accessor.get(RemoteErrorState<String>(error: MyError.param))
+            let string = try await accessor.get(MockAtom<String>(error: MyError.param))
             return string.uppercased()
         }
         

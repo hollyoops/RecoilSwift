@@ -266,36 +266,113 @@ var body: some View {
 
 ## 更多用法
 
-### Hooks API 用法
+### 如何在RecoilSwift中进行状态测试 
 ---
-RecoilSwift 提供了一套基于 Hooks API 的用法，Hooks 非常接近官方的 API，Hook API 以 `use` 开头，例如 `useRecoilXXX`。这种方式更适合前端开发者，没有任何学习门槛。
-
-由于基于 Hooks API，因此你的 View 必须满足 [Hooks 的规范](https://github.com/ra1028/SwiftUI-Hooks#rules-of-hooks)。
+在RecoilSwift中，您可以借助`@RecoilTestScope`来进行状态测试。
 
 ```swift
-/// 1. 继承 `HookView` 接口
-struct YourView: HookView {
-    /// 2. 实现 `hookBody`
-    var hookBody: some View {
-        /// 3. 使用 Hooks API，订阅状态
-        let names = useRecoilValue(namesState)
-        let filteredNames = useRecoilValue(filteredNamesState)
+final class AtomAccessTests: XCTestCase {
+    /// 1. 初始化scope
+    @RecoilTestScope var recoil
+    override func setUp() {
+        _recoil.reset()
+    }
+    
+    func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() {
+        /// 通过 `useRecoilXXX` API 订阅状态
+        let value = recoil.useBinding(TestModule.stringAtom)
+        XCTAssertEqual(value.wrappedValue, "rawValue")
+        
+        value.wrappedValue = "newValue"
 
-        return VStack {
-            Text("Original names: \(names.joined(separator: ","))")
-            Text("Filtered names: \(filteredNames.wrappedValue.joined(separator: ","))")
-
-            Button("Reset to original") {
-                filteredNames.wrappedValue = names
-            }
-        }
+        /// 通过 `useRecoilValue` API 订阅并获取状态的最新值 
+        let newValue = recoil.useValue(TestModule.stringAtom)
+        XCTAssertEqual(newValue, "newValue")
     }
 }
 ```
 
-请注意，使用 Hooks API 的 View 须继承 `HookView` 接口，并实现 `hookBody` 属性。或者用 `HookScope` 包裹住你的Hooks API代码的。你可以使用 `useRecoilValue` 等一系列`Hook API`来订阅状态，并根据需要更新状态。
+#### **测试View 渲染：**
 
-**请查看 [这里](./Docs/Hooks.md)**
+有时，您可能需要进行更全面的端到端测试。例如，您可能希望模拟View的渲染，此时，可以借助`ViewRenderHelper`进行从视图到状态的端到端测试。
+`ViewRenderHelper` 能够模拟视图的多次渲染，
+
+```swift
+/// 1. 引入测试框架
+import RecoilSwiftXCTests
+
+final class AtomAccessWithViewRenderTests: XCTestCase {
+    // ...
+    func test_should_atom_value_when_useValue_given_stringAtom() async {
+        /// `ViewRenderHelper` 的回调可能会被多次触发，
+        let view = ViewRenderHelper { recoil, sut in
+            let value = recoil.useValue(TestModule.stringAtom)
+            /// 一旦`expect` 的期望得到满足，测试即视为成功，否则在超时时，测试将失败
+            sut.expect(value).equalTo("rawValue")
+        }
+        
+        /// 模拟视图渲染
+        await view.waitForRender()
+    }
+}
+```
+
+<details><summary>**点击查看如何使用`HookTester`进行Hook API测试**</summary>
+
+```swift
+final class AtomReadWriteTests: XCTestCase {
+    @RecoilTestScope var recoil
+    override func setUp() {
+        _recoil.reset()
+    }
+    
+    func test_should_return_rawValue_when_read_only_atom_given_stringAtom() {
+        /// 注意：需要定义HookTest，并将Scope传入
+        let tester = HookTester(scope: _recoil) {
+            useRecoilValue(TestModule.stringAtom)
+        }
+        
+        XCTAssertEqual(tester.value, "rawValue")
+    }
+}    
+```
+
+</details>
+
+#### **Stub/Mock状态：**
+  
+很多时候我们的Selector， 会依赖其他状态。 比如下面的代码, `state` 依赖了一个上游的状态 (`state -> upstreamState`):
+
+```swift
+struct MultipleTen {
+    static var state: Selector<Int> {
+        selector { context in
+            try context.get(parentState) * 10
+        }
+    }
+    
+    static var upstreamState: Atom<Int> {
+        atom {  0 }
+    }
+}
+```
+
+但是我们在单元测试时候，很多时候我们不想要测试这个 `UpstreamState`. 我们想要stub/mock它。 我们可以通过下面的代码来`RecoilTestScope`的stub， 方法来`stub`状态:
+
+```swift
+ func test_should_return_upstream_asyncError_when_get_value_given_upstream_states_hasError() async throws {
+        // stub  `upstreamState`  让其返回错误， 你也可以stub返回其他的正确值
+        // _recoil.stubState(node: AsyncMultipleTen.upstreamState, value: 100)
+        _recoil.stubState(node: AsyncMultipleTen.upstreamState, error: MyError.param)
+        
+        do {
+            _ = try await accessor.get(AsyncMultipleTen.state)
+            XCTFail("should throw error")
+        } catch {
+            XCTAssertEqual(error as? MyError, MyError.param)
+        }
+    }
+```
 
 ### UIKit 用法
 ---
@@ -355,76 +432,37 @@ extension BooksViewController: RecoilUIScope {
 
 </details>
 
-### 如何在RecoilSwift中进行状态测试 
+### Hooks API 用法
 ---
-在RecoilSwift中，您可以借助`@RecoilTestScope`来进行状态测试。
+RecoilSwift 提供了一套基于 Hooks API 的用法，Hooks 非常接近官方的 API，Hook API 以 `use` 开头，例如 `useRecoilXXX`。这种方式更适合前端开发者，没有任何学习门槛。
+
+由于基于 Hooks API，因此你的 View 必须满足 [Hooks 的规范](https://github.com/ra1028/SwiftUI-Hooks#rules-of-hooks)。
 
 ```swift
-final class AtomAccessTests: XCTestCase {
-    /// 1. 初始化scope
-    @RecoilTestScope var recoil
-    override func setUp() {
-        _recoil.reset()
-    }
-    
-    func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() {
-        /// 通过 `useRecoilXXX` API 订阅状态
-        let value = recoil.useBinding(TestModule.stringAtom)
-        XCTAssertEqual(value.wrappedValue, "rawValue")
-        
-        value.wrappedValue = "newValue"
+/// 1. 继承 `HookView` 接口
+struct YourView: HookView {
+    /// 2. 实现 `hookBody`
+    var hookBody: some View {
+        /// 3. 使用 Hooks API，订阅状态
+        let names = useRecoilValue(namesState)
+        let filteredNames = useRecoilValue(filteredNamesState)
 
-        /// 通过 `useRecoilValue` API 订阅并获取状态的最新值 
-        let newValue = recoil.useValue(TestModule.stringAtom)
-        XCTAssertEqual(newValue, "newValue")
+        return VStack {
+            Text("Original names: \(names.joined(separator: ","))")
+            Text("Filtered names: \(filteredNames.wrappedValue.joined(separator: ","))")
+
+            Button("Reset to original") {
+                filteredNames.wrappedValue = names
+            }
+        }
     }
 }
 ```
 
-有时，您可能需要进行更全面的端到端测试。例如，您可能希望模拟View的渲染，此时，可以借助`ViewRenderHelper`进行从视图到状态的端到端测试。
-`ViewRenderHelper` 能够模拟视图的多次渲染，
+请注意，使用 Hooks API 的 View 须继承 `HookView` 接口，并实现 `hookBody` 属性。或者用 `HookScope` 包裹住你的Hooks API代码的。你可以使用 `useRecoilValue` 等一系列`Hook API`来订阅状态，并根据需要更新状态。
 
-```swift
-/// 1. 引入测试框架
-import RecoilSwiftXCTests
+**请查看 [这里](./Docs/Hooks.md)**
 
-final class AtomAccessWithViewRenderTests: XCTestCase {
-    // ...
-    func test_should_atom_value_when_useValue_given_stringAtom() async {
-        /// `ViewRenderHelper` 的回调可能会被多次触发，
-        let view = ViewRenderHelper { recoil, sut in
-            let value = recoil.useValue(TestModule.stringAtom)
-            /// 一旦`expect` 的期望得到满足，测试即视为成功，否则在超时时，测试将失败
-            sut.expect(value).equalTo("rawValue")
-        }
-        
-        /// 模拟视图渲染
-        await view.waitForRender()
-    }
-}
-```
-
-<details><summary>**点击查看如何使用`HookTester`进行Hook API测试**</summary>
-
-```swift
-final class AtomReadWriteTests: XCTestCase {
-    @RecoilTestScope var recoil
-    override func setUp() {
-        _recoil.reset()
-    }
-    
-    func test_should_return_rawValue_when_read_only_atom_given_stringAtom() {
-        /// 注意：需要定义HookTest，并将Scope传入
-        let tester = HookTester(scope: _recoil) {
-            useRecoilValue(TestModule.stringAtom)
-        }
-        
-        XCTAssertEqual(tester.value, "rawValue")
-    }
-}    
-```
-
-</details>
 
 ## Demo
 

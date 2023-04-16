@@ -1,6 +1,7 @@
 import SwiftUI
 import XCTest
 import Combine
+import RecoilSwiftXCTests
 
 @testable import RecoilSwift
 
@@ -61,7 +62,7 @@ extension LoadableTests {
     
     func test_sync_loadable_should_be_rejected_when_using_my_multiplied_state_error() {
         let tester = HookTester(scope: _recoil) {
-            useRecoilValueLoadable(ErrorState<Int>(error: MyError.unknown))
+            useRecoilValueLoadable(MockAtom<Int>(error: MyError.unknown))
         }
         
         XCTAssertEqual(tester.value.isAsynchronous, false)
@@ -79,7 +80,7 @@ extension LoadableTests {
         
         let tester = HookTester(scope: _recoil) { () -> LoadableContent<[String]> in
             let loadable = useRecoilValueLoadable(
-                MockSelector.remoteBooksCombine(["Book1", "Book2"])
+                MockAsyncSelector(value: ["Book1", "Book2"])
             )
             
             if loadable.data == ["Book1", "Book2"] {
@@ -100,7 +101,7 @@ extension LoadableTests {
         
         let tester = HookTester(scope: _recoil) { () -> LoadableContent<[String]> in
             let loadable = useRecoilValueLoadable(
-                RemoteErrorState<[String]>(error: MyError.param)
+                MockAsyncAtom<[String]>(error: MyError.param)
             )
             
             if loadable.containError(of: MyError.param) {
@@ -118,7 +119,7 @@ extension LoadableTests {
     func test_async_loadable_should_be_fulfilled_when_using_fetch_book() {
         let expectation = XCTestExpectation(description: "Async selector resolved.")
         let tester = HookTester(scope: _recoil) { () -> LoadableContent<[String]> in
-            let loadable = useRecoilValueLoadable(MockSelector.remoteBooks(["Book1", "Book2"]))
+            let loadable = useRecoilValueLoadable(MockAsyncSelector(value: ["Book1", "Book2"]))
             
             if loadable.data == ["Book1", "Book2"] {
                 expectation.fulfill()
@@ -137,7 +138,7 @@ extension LoadableTests {
         
         let tester = HookTester(scope: _recoil) { () -> LoadableContent<[String]> in
             let loadable = useRecoilValueLoadable(
-                RemoteErrorState<[String]>(error: MyError.param)
+                MockAsyncAtom<[String]>(error: MyError.param)
             )
             
             if loadable.containError(of: MyError.param) {

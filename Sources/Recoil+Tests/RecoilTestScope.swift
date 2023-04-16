@@ -4,7 +4,7 @@ import Combine
 
 @propertyWrapper
 public class RecoilTestScope {
-    internal var store: Store
+    internal var store: RecoilStoreProxy
     internal let viewRefresher = MockViewRefresher()
     internal let stateCache = ScopedStateCache()
     internal let stateNotifier = PassthroughSubject<(NodeKey, Any), Error>()
@@ -13,7 +13,7 @@ public class RecoilTestScope {
     public var viewRefreshCount: Int { viewRefresher.refreshCount }
     
     public init() {
-        self.store = RecoilStore()
+        self.store = RecoilStoreProxy(store: RecoilStore())
     }
     
     public var wrappedValue: ScopedRecoilContext {
@@ -37,9 +37,17 @@ public class RecoilTestScope {
         NodeAccessor(store: store).accessor(deps: deps)
     }
     
+    public func stubState<Node: RecoilNode>(node: Node, value: Node.T) {
+        store.stub(for: node, with: value)
+    }
+    
+    public func stubState<Node: RecoilNode>(node: Node, error: Error) {
+        store.stub(for: node, with: error)
+    }
     
     public func reset() {
-        store = RecoilStore()
+        store.reset()
+        store = RecoilStoreProxy(store: RecoilStore())
         stateCache.clear()
     }
     

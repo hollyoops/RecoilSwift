@@ -1,5 +1,6 @@
 import SwiftUI
 import XCTest
+import RecoilSwiftXCTests
 
 @testable import RecoilSwift
 
@@ -48,7 +49,7 @@ extension SelectorReadWriteTests {
         let expectation = XCTestExpectation(description: "get async data source to atom")
         
         let tester = HookTester(scope: _recoil) { () -> [String]? in
-            let value = useRecoilValue(MockSelector.remoteBooks(["Book1", "Book2"]))
+            let value = useRecoilValue(MockAsyncSelector(value: ["Book1", "Book2"]))
             
             if value == ["Book1", "Book2"] {
                 expectation.fulfill()
@@ -64,7 +65,7 @@ extension SelectorReadWriteTests {
     
     func test_should_return_nil_when_fetching_remote_data_given_remote_data_source_error() {
         let tester = HookTester(scope: _recoil) { () -> [String]? in
-            useRecoilValue(RemoteErrorState<[String]>(error: MyError.param))
+            useRecoilValue(MockAtom<[String]>(error: MyError.param))
         }
         
         XCTAssertNil(tester.value)

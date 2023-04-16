@@ -1,5 +1,6 @@
 ignore:
   - "Tests" # ignore folders and all its contents
+  - "Recoil+Tests"
   - "XCTestHelper"
   - "Components"
   - "*/**/RecoilValue.swift"

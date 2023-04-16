@@ -47,7 +47,7 @@ internal final class ScopedStateCache {
         snapshots = [store.getSnapshot()]
     }
     
-    private func peekCache<Node: RecoilNode>(for node: Node) -> NodeStatus<Node.T>? {
+    func peekCache<Node: RecoilNode>(for node: Node) -> NodeStatus<Node.T>? {
         caches[node.key] as? NodeStatus<Node.T>
     }
     

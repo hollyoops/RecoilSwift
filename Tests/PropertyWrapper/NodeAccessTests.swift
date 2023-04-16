@@ -4,42 +4,6 @@ import RecoilSwiftXCTests
 
 @testable import RecoilSwift
 
-struct ErrorDeps {
-    typealias Selector = RecoilSwift.Selector
-    
-    static var stateA: Selector<String> {
-        selector { context in
-            try context.get(stateB)
-        }
-    }
-    
-    static var stateB: Selector<String> {
-        selector { context in
-            try context.get(ErrorState(error: MyError.unknown))
-        }
-    }
-
-    static var selfErrorState: Selector<String> {
-        selector { context in throw MyError.param }
-    }
-}
-
-struct SuccessDeps {
-    typealias Selector = RecoilSwift.Selector
-    
-    static var stateA: Selector<Int> {
-        selector { context in
-            try context.get(stateB) * 10
-        }
-    }
-    
-    static var stateB: Selector<Int> {
-        selector { context in
-            try context.get(MockAtoms.intState)
-        }
-    }
-}
-
 final class NodeAccessorTests: XCTestCase {
     @RecoilTestScope var recoil
     
@@ -55,11 +19,11 @@ final class NodeAccessorTests: XCTestCase {
 // MARK: - sync selector
 extension NodeAccessorTests {
     func test_should_throwCircleError_when_get_selector_value_given_states_is_self_reference() throws {
-        let info = RecoilError.CircularInfo(key: CircleDeps.selfReferenceState.key,
-                                            deps: [CircleDeps.selfReferenceState.key])
+        let info = RecoilError.CircularInfo(key: CircleRef.selfReferenceState.key,
+                                            deps: [CircleRef.selfReferenceState.key])
         
         XCTAssertThrowsSpecificError(
-            try accessor.get(CircleDeps.selfReferenceState),
+            try accessor.get(CircleRef.selfReferenceState),
             RecoilError.circular(info)
         )
 
@@ -68,12 +32,12 @@ extension NodeAccessorTests {
     
     func test_should_throwCircleError_when_get_value_given_stateA_and_stateB_is_circular_reference() throws {
         let info = RecoilError.CircularInfo(
-            key: CircleDeps.stateA.key,
-            deps: [CircleDeps.stateA.key, CircleDeps.stateB.key]
+            key: CircleRef.stateA.key,
+            deps: [CircleRef.stateA.key, CircleRef.stateB.key]
         )
         
         XCTAssertThrowsSpecificError(
-            try accessor.get(CircleDeps.stateA),
+            try accessor.get(CircleRef.stateA),
             RecoilError.circular(info)
         )
 
@@ -81,32 +45,42 @@ extension NodeAccessorTests {
     }
     
     func test_should_set_value_toAtom_when_call_set_method_for_syncNodes() throws {
-        XCTAssertEqual(try accessor.get(MockAtoms.intState), 0)
+        let state = MockAtom(value: 0)
         
-        accessor.set(MockAtoms.intState, 12)
+        XCTAssertEqual(try accessor.get(state), 0)
         
-        XCTAssertEqual(try accessor.get(MockAtoms.intState), 12)
+        accessor.set(state, 12)
+        
+        XCTAssertEqual(try accessor.get(state), 12)
     }
     
     func test_should_returnLatestValue_when_call_get_value_given_dependency_of_dependency_hasChanged() throws {
-        XCTAssertEqual(try accessor.get(SuccessDeps.stateA), 0)
+        XCTAssertEqual(try accessor.get(MultipleTen.state), 0)
         
-        accessor.set(MockAtoms.intState, 12)
+        accessor.set(MultipleTen.upstreamState, 12)
         
-        XCTAssertEqual(try accessor.get(SuccessDeps.stateA), 120)
+        XCTAssertEqual(try accessor.get(MultipleTen.state), 120)
+    }
+    
+    func test_should_return_upstream_error_when_get_value_given_upstream_states_hasError() throws {
+        _recoil.stubState(node: MultipleTen.state, error: MyError.param)
+        XCTAssertThrowsSpecificError(try accessor.get(MultipleTen.state), MyError.param)
+    }
+    
+    func test_should_return_upstream_value_when_get_value_given_upstream_stateError_map_to_value() throws {
+        _recoil.stubState(node: MultipleTen.upstreamState, value: 20)
+        XCTAssertEqual(try accessor.get(MultipleTen.state), 200)
     }
     
     func test_should_get_error_when_get_value_given_self_states_hasError() throws {
         XCTAssertThrowsSpecificError(
-            try accessor.get(ErrorDeps.selfErrorState),
+            try accessor.get(MockAtom<String>(error: MyError.param)),
             MyError.param
         )
-    }
-    
-    func test_should_return_upstream_error_when_get_value_given_upstream_states_hasError() throws {
+        
         XCTAssertThrowsSpecificError(
-            try accessor.get(ErrorDeps.stateA),
-            MyError.unknown
+            try accessor.get(MockSelector<String>(error: MyError.param)),
+            MyError.param
         )
     }
 }
@@ -121,5 +95,22 @@ extension NodeAccessorTests {
     func test_should_returnNil_by_default_when_get_value_given_async_state() {
         let values = accessor.getOrNil(RemoteNames.filteredNames)
         XCTAssertNil(values)
+    }
+    
+    func test_should_return_upstream_asyncError_when_get_value_given_upstream_states_hasError() async throws {
+        _recoil.stubState(node: AsyncMultipleTen.upstreamState, error: MyError.param)
+        
+        do {
+            _ = try await accessor.get(AsyncMultipleTen.state)
+            XCTFail("should throw error")
+        } catch {
+            XCTAssertEqual(error as? MyError, MyError.param)
+        }
+    }
+    
+    func test_should_return_upstream_asyncValue_when_get_value_given_upstream_stateError_map_to_value() async throws {
+        _recoil.stubState(node: AsyncMultipleTen.upstreamState, value: 20)
+        let value = try await accessor.get(AsyncMultipleTen.state)
+        XCTAssertEqual(value, 200)
     }
 }
