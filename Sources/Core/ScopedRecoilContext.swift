@@ -28,14 +28,13 @@ public class ScopedRecoilContext {
         return useLoadable(valueNode).data
     }
     
-    public func useBinding<Value: RecoilNode & Writeable>(_ node: Value) -> Binding<Value.T?> {
+    public func useBinding<Value: RecoilNode & Writeable>(_ node: Value, `default`: Value.T) -> Binding<Value.T> {
         subscribeChange(for: node)
         return Binding(
             get: {
-                self.nodeAccessor.getOrNil(node, deps: [])
+                 self.nodeAccessor.getOrNil(node, deps: []) ?? `default`
             },
             set: { newState in
-                guard let newState else { return }
                 self.nodeAccessor.set(node, newState)
             }
         )
@@ -117,7 +116,8 @@ extension ScopedRecoilContext {
     }
     
     public func useUnsafeBinding<Value: RecoilMutableSyncNode>(_ stateNode: Value) -> Binding<Value.T> {
-        Binding(
+        subscribeChange(for: stateNode)
+        return Binding(
               get: {
                   try! self.nodeAccessor.get(stateNode, deps: [])
               },
@@ -128,7 +128,8 @@ extension ScopedRecoilContext {
     }
     
     public func useThrowingBinding<Value: RecoilMutableSyncNode>(_ stateNode: Value) -> ThrowingBinding<Value.T> {
-        ThrowingBinding(
+        subscribeChange(for: stateNode)
+        return ThrowingBinding(
               get: {
                   try self.nodeAccessor.get(stateNode, deps: [])
               },

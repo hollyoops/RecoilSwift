@@ -285,7 +285,7 @@ final class AtomAccessTests: XCTestCase {
     
     func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() {
         /// Subscribe to the state using `useRecoilXXX` API
-        let value = recoil.useBinding(TestModule.stringAtom)
+        let value = recoil.useBinding(TestModule.stringAtom, default: "")
         XCTAssertEqual(value.wrappedValue, "rawValue")
         
         value.wrappedValue = "newValue"
@@ -351,7 +351,7 @@ Many times our Selector relies on other states. For example, in the code below, 
 struct MultipleTen {
     static var state: Selector<Int> {
         selector { context in
-            try context.get(parentState) * 10
+            try context.get(upstreamState) * 10
         }
     }
     

@@ -48,7 +48,7 @@ final class AtomAccessTests: XCTestCase {
     }
     
     func test_should_returnUpdatedValue_when_useBinding_given_stringAtom() throws {
-        let value = recoil.useBinding(TestModule.stringAtom)
+        let value = recoil.useBinding(TestModule.stringAtom, default: "")
         XCTAssertEqual(value.wrappedValue, "rawValue")
         
         value.wrappedValue = "newValue"
@@ -58,7 +58,7 @@ final class AtomAccessTests: XCTestCase {
     }
     
     func test_should_refreshView_when_useBinding_given_after_stateChange() async throws {
-        let value = recoil.useBinding(TestModule.stringAtom)
+        let value = recoil.useBinding(TestModule.stringAtom, default: "")
         
         XCTAssertEqual(_recoil.viewRefreshCount, 1)
         

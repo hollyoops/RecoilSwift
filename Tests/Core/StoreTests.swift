@@ -22,7 +22,7 @@ class RecoilStoreTests: XCTestCase {
     func test_should_subscribe_when_subscribeIsCalled_given_validNodeKeyAndSubscriber() {
         let mockSubscriber = MockSubscriber()
         let subscription = store.subscribe(for: MockAtom(value: 0).key, subscriber: mockSubscriber)
-        let obj = recoil.useBinding(MockAtom(value: 0))
+        let obj = recoil.useBinding(MockAtom(value: 0), default: 0)
         obj.wrappedValue = 1
         
         XCTAssertEqual(mockSubscriber.changedNodeKey, MockAtom(value: 0).key)
@@ -60,7 +60,7 @@ class RecoilStoreTests: XCTestCase {
     func test_should_subscribe_when_subscribeIsCalled_given_validSubscriber() {
         let mockSubscriber = MockSubscriber()
         let _ = store.subscribe(subscriber: mockSubscriber)
-        _ = recoil.useBinding(MockAtom(value: 0))
+        _ = recoil.useBinding(MockAtom(value: 0), default: 0)
         XCTAssertEqual(mockSubscriber.storeChangedCallCount, 1)
     }
     

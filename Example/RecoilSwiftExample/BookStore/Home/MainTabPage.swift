@@ -5,7 +5,7 @@ public struct MainTabPage: View {
     @RecoilScope var recoil
     
     public var body: some View {
-        let selectedTab = recoil.useBinding(SelectedTabState())
+        let selectedTab = recoil.useBinding(SelectedTabState(), default: .list)
         let shouldShowFilter = recoil.useValue(Home.filterVisisbleState)
         let badgeText = try? recoil.useThrowingValue(Cart.cartItemBadgeState)
        

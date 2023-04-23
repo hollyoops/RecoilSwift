@@ -71,7 +71,7 @@ struct TempCelsiusSelector: SyncSelectorNode, Writeable {
 
 func celsiusView() -> some View {
     // Writable Selector have to wrapped as Recoil state
-    let tempCelsius = recoil.useBinding(TempCelsiusSelector())
+    let tempCelsius = recoil.useUnsafeBinding(TempCelsiusSelector())
     
     Text("Current \(tempCelsius)")
 

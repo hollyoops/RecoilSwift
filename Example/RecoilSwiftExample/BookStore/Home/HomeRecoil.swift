@@ -3,11 +3,10 @@ import RecoilSwift
 typealias HomeTab = Home.Tab
 
 struct SelectedTabState: SyncAtomNode {
+    typealias T = Home.Tab
     func getValue() throws -> Home.Tab {
         .list
     }
-    
-    typealias T = Home.Tab
 }
 
 // MARK: - Atoms

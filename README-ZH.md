@@ -280,7 +280,7 @@ final class AtomAccessTests: XCTestCase {
     
     func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() {
         /// 通过 `useRecoilXXX` API 订阅状态
-        let value = recoil.useBinding(TestModule.stringAtom)
+        let value = recoil.useBinding(TestModule.stringAtom, default: "")
         XCTAssertEqual(value.wrappedValue, "rawValue")
         
         value.wrappedValue = "newValue"
@@ -347,7 +347,7 @@ final class AtomReadWriteTests: XCTestCase {
 struct MultipleTen {
     static var state: Selector<Int> {
         selector { context in
-            try context.get(parentState) * 10
+            try context.get(upstreamState) * 10
         }
     }
     
