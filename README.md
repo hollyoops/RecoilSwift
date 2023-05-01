@@ -5,7 +5,7 @@
 [![Main workflow](https://github.com/hollyoops/RecoilSwift/actions/workflows/main.yml/badge.svg)](https://github.com/hollyoops/RecoilSwift/actions/workflows/main.yml)
 [![codecov](https://codecov.io/gh/hollyoops/RecoilSwift/branch/master/graph/badge.svg?token=AZ9YSL9H0H)](https://codecov.io/gh/hollyoops/RecoilSwift)
 
-:closed_book: [**中文文档**](./README-ZH.md)
+:memo: [**中文文档**](./README-ZH.md)
 
 RecoilSwift is a lightweight, composable state management framework designed for `SwiftUI`, compatible with `UIKit`. It can serve as a replacement for traditional `MVVM` or `Redux-like` architectural solutions (such as `reswift`, `TCA`).
 
@@ -71,6 +71,10 @@ RecoilSwift is available through CocoaPods. To install it, simply add the follow
 ```ruby
 pod 'RecoilSwift'
 ```
+
+## API Documentation
+
+:closed_book: [**API Documentation**](https://recoilswift-hollyoops.netlify.app/)
 
 ## Basic Usage
 
@@ -436,7 +440,7 @@ extension BooksViewController: RecoilUIScope {
 
 </details>
 
-**Please check [here](./Docs/UIKit.md)**
+**Please refer to the `Example` project in UIKit for more information.**
 
 ### Hooks API Usage
 ---

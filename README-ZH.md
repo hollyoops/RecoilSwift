@@ -29,6 +29,10 @@ RecoilSwift是一个针对`SwiftUI`的轻量级、可组合的状态管理框架
 
 使用Recoil后，代码会变得更加简洁，同时不同的组件可以非常方便地共享状态。
 
+## API 文档
+
+:closed_book: [**API 文档**](https://recoilswift-hollyoops.netlify.app/)
+
 ## 基本概念
 
 在Recoil中，有两个基本的概念：
@@ -431,6 +435,8 @@ extension BooksViewController: RecoilUIScope {
 ```
 
 </details>
+
+**更多请查看 `Example` 里面的UIKit的例子**
 
 ### Hooks API 用法
 ---
