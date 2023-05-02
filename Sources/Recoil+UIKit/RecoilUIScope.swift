@@ -2,6 +2,8 @@
 
 import UIKit
 
+internal let globalStore = RecoilStore()
+
 public protocol RecoilUIScope: ViewRefreshable {
     var recoil: ScopedRecoilContext { get }
 }

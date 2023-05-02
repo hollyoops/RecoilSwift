@@ -3,9 +3,15 @@ import RecoilSwift
 
 struct AppEntryPage: View {
     var body: some View {
-        RecoilRoot(shakeToDebug: true) {
+        RecoilRoot(
+            shakeToDebug: true,
+            initializeState: self.initState(_:)) {
             content
         }
+    }
+    
+    func initState(_ accessor: StateSetter) {
+        accessor.set(SelectedTabState(), .list)
     }
     
     @ViewBuilder

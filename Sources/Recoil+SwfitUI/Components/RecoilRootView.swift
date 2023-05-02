@@ -1,16 +1,22 @@
 import SwiftUI
 
-internal let globalStore = RecoilStore()
-
 public struct RecoilRoot<Content: View>: View {
     private let content: Content
     private let enableShakeToDebug: Bool
+    private let recoilStore: RecoilStore
     @State private var isShaken = false
     
-    public init(shakeToDebug: Bool = false, @ViewBuilder content: () -> Content) {
-        self.content = content()
-        self.enableShakeToDebug = shakeToDebug
-    }
+    public init(
+        shakeToDebug: Bool = false,
+        isSingleStore: Bool = true,
+        initializeState: ((StateSetter) -> Void)? = nil,
+        @ViewBuilder content: () -> Content) {
+            self.recoilStore = isSingleStore ? globalStore : RecoilStore()
+            self.content = content()
+            self.enableShakeToDebug = shakeToDebug
+            initializeState?(NodeAccessor(store: self.recoilStore).setter(deps: nil))
+        }
+    
     /// The content and behavior of the view.
     public var body: some View {
 #if canImport(UIKit)
@@ -18,7 +24,7 @@ public struct RecoilRoot<Content: View>: View {
             // Your view content here
             content.environment(
                 \.store,
-                 globalStore
+                 recoilStore
             )
         }
         .onShake {
@@ -36,7 +42,7 @@ public struct RecoilRoot<Content: View>: View {
 #else
         content.environment(
             \.store,
-             globalStore
+             recoilStore
         )
 #endif
     }
