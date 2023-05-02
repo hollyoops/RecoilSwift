@@ -21,7 +21,7 @@ class RecoilStoreTests: XCTestCase {
     
     func test_should_subscribe_when_subscribeIsCalled_given_validNodeKeyAndSubscriber() {
         let mockSubscriber = MockSubscriber()
-        let subscription = store.subscribe(for: MockAtom(value: 0).key, subscriber: mockSubscriber)
+        _ = store.subscribe(for: MockAtom(value: 0).key, subscriber: mockSubscriber)
         let obj = recoil.useBinding(MockAtom(value: 0), default: 0)
         obj.wrappedValue = 1
         

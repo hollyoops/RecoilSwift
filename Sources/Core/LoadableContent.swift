@@ -1,28 +1,22 @@
 /// A loadable object that contains loading informations
 public struct LoadableContent<DataType: Equatable> {
     public let key: NodeKey
+    public let isAsynchronous: Bool
     private let store: Store
     
     init<T: RecoilNode>(node: T, store: Store) {
         self.store = store
         self.key = node.key
+        self.isAsynchronous = node is (any RecoilAsyncNode)
         self.initNode(node)
-    }
-
-    public var isAsynchronous: Bool {
-        guard let loadable = store.getLoadable(for: key) else {
-            return false
-        }
-        
-        return loadable is AsyncLoadBox<DataType>
     }
     
     public var data: DataType? {
-        store.getLoadable(for: key)?.anyData as? DataType
+        accessor.getOrNil(for: key, type: DataType.self, deps: nil)
     }
     
     public var isLoading: Bool {
-        store.getLoadingStatus(for: key)
+        accessor.getLoadingStatus(for: key)
     }
     
     public var hasError: Bool {
@@ -30,7 +24,7 @@ public struct LoadableContent<DataType: Equatable> {
     }
     
     public var errors: [Error] {
-        store.getErrors(for: key)
+        accessor.getErrors(for: key)
     }
     
     public func containError<T: Error & Equatable>(of err: T) -> Bool {
@@ -43,10 +37,14 @@ public struct LoadableContent<DataType: Equatable> {
     }
     
     public func refresh() {
-        NodeAccessor(store: store).refresh(for: key)
+        accessor.refresh(for: key)
     }
     
     private func initNode<T: RecoilNode>(_ recoilValue: T) {
-        NodeAccessor(store: store).loadNodeIfNeeded(recoilValue)
+        accessor.loadNodeIfNeeded(recoilValue)
+    }
+    
+    private var accessor: NodeAccessor {
+        NodeAccessor(store: store)
     }
 }

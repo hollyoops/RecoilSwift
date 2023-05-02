@@ -97,6 +97,19 @@ extension NodeAccessorTests {
         XCTAssertNil(values)
     }
     
+    func test_should_returnTrueAnd_by_default_when_get_loading_from_node_given_async_state_inited_in_store() throws {
+        let node = RemoteNames.filteredNames
+        let _ = accessor.getOrNil(node)
+        XCTAssertTrue(try accessor.getLoadingStatus(node))
+        XCTAssertTrue(NodeAccessor(store: _recoil.store).getLoadingStatus(for:node.key))
+    }
+    
+    func test_should_returnFalse_by_default_when_get_loading_given_async_state_not_init_in_store() {
+        let node = RemoteNames.filteredNames
+        XCTAssertFalse(try accessor.getLoadingStatus(node))
+        XCTAssertFalse(NodeAccessor(store: _recoil.store).getLoadingStatus(for: node.key))
+    }
+    
     func test_should_return_upstream_asyncError_when_get_value_given_upstream_states_hasError() async throws {
         _recoil.stubState(node: AsyncMultipleTen.upstreamState, error: TestError.param)
         

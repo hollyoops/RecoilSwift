@@ -72,7 +72,8 @@ final class RecoilReactiveTests: XCTestCase {
         let expectation = XCTestExpectation(description: "should return correct loading status")
         
         let selectorWithError = selector { accessor in
-            let string = try await accessor.get(MockAtom<String>(error: TestError.param))
+            let string = try accessor.get(MockAtom<String>(error: TestError.param))
+            try await Task.sleep(nanoseconds: 1000_000_0)
             return string.uppercased()
         }
         

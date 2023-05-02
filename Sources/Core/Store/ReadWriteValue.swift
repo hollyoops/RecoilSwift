@@ -4,6 +4,8 @@ public protocol StateGetter {
     
     func get<Node: RecoilAsyncNode>(_ node: Node) async throws -> Node.T
     
+    func getLoadingStatus<Node: RecoilNode>(_ node: Node) throws -> Bool
+    
     func getOrNil<Node: RecoilNode>(_ node: Node) -> Node.T?
     
     func getUnsafe<Node: RecoilSyncNode>(_ node: Node) -> Node.T
@@ -35,6 +37,11 @@ internal struct NodeAccessorWrapper: StateAccessor {
         return try nodeAccessor.get(node, deps: deps)
     }
     
+    public func getLoadingStatus<Node: RecoilNode>(_ node: Node) throws -> Bool {
+        try buildRelation(node)
+        return nodeAccessor.getLoadingStatus(node)
+    }
+    
     public func get<Node: RecoilAsyncNode>(_ node: Node) async throws -> Node.T {
         try buildRelation(node)
         return try await nodeAccessor.get(node, deps: deps)
@@ -54,16 +61,16 @@ internal struct NodeAccessorWrapper: StateAccessor {
     }
     
     private func buildRelation<Node: RecoilNode>(_ node: Node) throws {
-        guard needBuildDependencies, let nodeKey = deps.last else {
-            return
-        }
-        
         guard !deps.contains(node.key) else {
             throw RecoilError.circular(.init(key: node.key, deps: deps))
         }
         
         let store = nodeAccessor.store
         _ = store.safeGetLoadable(for: node)
+        guard needBuildDependencies, let nodeKey = deps.last else {
+            return
+        }
+    
         store.addNodeRelation(downstream: nodeKey, upstream: node.key)
     }
 }
@@ -100,13 +107,26 @@ internal struct NodeAccessor {
     
     internal func getOrNil<Node: RecoilNode>(_ node: Node, deps: [NodeKey]?) -> Node.T? {
         let loadable = store.safeGetLoadable(for: node)
-        
-        if loadable.isInvalid {
-            let dependencies = deps.map { $0 + [node.key] }
-            loadable.refresh(getter(deps: dependencies))
-        }
-        
+        loadIfInvalid(for: node.key, loadable: loadable, deps: deps)
         return loadable.anyData as? Node.T
+    }
+    
+    internal func getOrNil<T>(for key: NodeKey, type: T.Type, deps: [NodeKey]?) -> T? {
+        guard let loadable = store.getLoadable(for: key) else { return nil }
+        loadIfInvalid(for: key, loadable: loadable, deps: deps)
+        return loadable.anyData as? T
+    }
+    
+    internal func getLoadingStatus<Node: RecoilNode>(_ node: Node) -> Bool {
+        getLoadingStatus(for: node.key)
+    }
+    
+    internal func getLoadingStatus(for key: NodeKey) -> Bool {
+        store.getLoadingStatus(for: key)
+    }
+    
+    internal func getErrors(for key: NodeKey) -> [Error] {
+        store.getErrors(for: key)
     }
     
     internal func get<Node: RecoilAsyncNode>(_ node: Node, deps: [NodeKey]?) async throws -> Node.T {
@@ -169,5 +189,11 @@ internal struct NodeAccessor {
     
     internal func refresh(for key: NodeKey) {
         store.getLoadable(for: key)?.refresh(getter(deps: [key]))
+    }
+    
+    private func loadIfInvalid(for key: NodeKey, loadable: BaseLoadable, deps: [NodeKey]?) {
+        guard loadable.isInvalid else { return }
+        let dependencies = deps.map { $0 + [key] }
+        loadable.refresh(getter(deps: dependencies))
     }
 }
