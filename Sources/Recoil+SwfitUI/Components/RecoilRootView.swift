@@ -4,7 +4,9 @@ public struct RecoilRoot<Content: View>: View {
     private let content: Content
     private let enableShakeToDebug: Bool
     private let recoilStore: RecoilStore
+    private let initFn: ((StateSetter) -> Void)?
     @State private var isShaken = false
+    @State private var isInited = false
     
     public init(
         shakeToDebug: Bool = false,
@@ -14,7 +16,7 @@ public struct RecoilRoot<Content: View>: View {
             self.recoilStore = isSingleStore ? globalStore : RecoilStore()
             self.content = content()
             self.enableShakeToDebug = shakeToDebug
-            initializeState?(NodeAccessor(store: self.recoilStore).setter(deps: nil))
+            self.initFn = initializeState
         }
     
     /// The content and behavior of the view.
@@ -22,10 +24,13 @@ public struct RecoilRoot<Content: View>: View {
 #if canImport(UIKit)
         ZStack {
             // Your view content here
-            content.environment(
-                \.store,
-                 recoilStore
-            )
+            content.environment(\.store, recoilStore)
+        }
+        .onAppear {
+            if !isInited {
+                initFn?(NodeAccessor(store: self.recoilStore).setter(deps: nil))
+                isInited = true
+            }
         }
         .onShake {
             if enableShakeToDebug {
@@ -40,10 +45,15 @@ public struct RecoilRoot<Content: View>: View {
             }
         }
 #else
-        content.environment(
-            \.store,
-             recoilStore
-        )
+        content
+            .environment(\.store, recoilStore)
+            .onAppear {
+                if !isInited {
+                    self.recoilStore.reset()
+                    initFn?(NodeAccessor(store: self.recoilStore).setter(deps: nil))
+                    isInited = true
+                }
+            }
 #endif
     }
 }
