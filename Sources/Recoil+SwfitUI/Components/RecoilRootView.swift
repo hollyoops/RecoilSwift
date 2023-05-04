@@ -5,7 +5,7 @@ public struct RecoilRoot<Content: View>: View {
     private let enableShakeToDebug: Bool
     private let recoilStore: RecoilStore
     private let initFn: ((StateSetter) -> Void)?
-    @State private var isShaken = false
+    @State private var showDebugView = false
     @State private var isInited = false
     
     public init(
@@ -22,29 +22,43 @@ public struct RecoilRoot<Content: View>: View {
     /// The content and behavior of the view.
     public var body: some View {
 #if canImport(UIKit)
-        ZStack {
-            // Your view content here
-            content.environment(\.store, recoilStore)
-        }
-        .onAppear {
-            if !isInited {
-                initFn?(NodeAccessor(store: self.recoilStore).setter(deps: nil))
-                isInited = true
+        if #available(iOS 14.0, *) {
+            ZStack {
+                content.environment(\.store, recoilStore)
             }
-        }
-        .onShake {
-            if enableShakeToDebug {
-                isShaken = true
+            .onAppear {
+                if !isInited {
+                    initFn?(NodeAccessor(store: self.recoilStore).setter(deps: nil))
+                    isInited = true
+                }
             }
-        }
-        .sheet(isPresented: $isShaken) {
-            if #available(iOS 14.0, *) {
-                SnapshotView()
-            } else {
-                // Fallback on earlier versions
+            .onShake {
+                if enableShakeToDebug {
+                    showDebugView = true
+                }
             }
+            .fullScreenCover(isPresented: $showDebugView) {
+                VStack(alignment: .leading) {
+                    HStack {
+                        Spacer()
+                        Button("Dismiss") {
+                            showDebugView = false
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+                    }
+                    SnapshotView()
+                }
+            }
+        } else {
+            rootBody
         }
 #else
+        rootBody
+#endif
+    }
+
+    var rootBody: some View {
         content
             .environment(\.store, recoilStore)
             .onAppear {
@@ -54,7 +68,6 @@ public struct RecoilRoot<Content: View>: View {
                     isInited = true
                 }
             }
-#endif
     }
 }
 
