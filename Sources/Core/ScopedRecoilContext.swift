@@ -25,7 +25,8 @@ public class ScopedRecoilContext {
     
     public func useValue<Value: RecoilNode>(_ valueNode: Value) -> Value.T? {
         subscribeChange(for: valueNode)
-        return useLoadable(valueNode).data
+        guard let data = useLoadable(valueNode).data else { return nil }
+        return data
     }
     
     public func useBinding<Value: RecoilNode & Writeable>(_ node: Value, `default`: Value.T) -> Binding<Value.T> {
