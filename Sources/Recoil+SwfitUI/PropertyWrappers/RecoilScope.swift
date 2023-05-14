@@ -10,7 +10,7 @@ internal final class ViewRefresher: ObservableObject, ViewRefreshable {
     }
 }
 
-internal final class ScopedStateCache {
+internal final class ScopedStateCache: ObservableObject {
     private var subscriptions: [NodeKey: Subscription] = [:]
     private var caches: [NodeKey: Any] = [:]
     private(set) var snapshots: [Snapshot] = [] {
@@ -83,7 +83,7 @@ public struct RecoilScope: DynamicProperty {
     @Environment(\.store) private var store
     
     @StateObject private var viewRefersher: ViewRefresher = ViewRefresher()
-    private let cache = ScopedStateCache()
+    @StateObject private var cache = ScopedStateCache()
 
     public init() { }
 
@@ -103,7 +103,7 @@ public struct RecoilScope: DynamicProperty {
 public struct RecoilScopeLeagcy: DynamicProperty {
     @Environment(\.store) private var store
     @ObservedObject private var viewRefersher: ViewRefresher = ViewRefresher()
-    private let cache = ScopedStateCache()
+    @ObservedObject private var cache = ScopedStateCache()
     
     public init() { }
 

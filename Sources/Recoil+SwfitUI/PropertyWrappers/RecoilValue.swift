@@ -6,7 +6,7 @@ public struct RecoilScopedState<Node: RecoilNode>: DynamicProperty {
     @Environment(\.store) private var store
     
     @StateObject private var viewRefersher: ViewRefresher = ViewRefresher()
-    private let cache = ScopedStateCache()
+    @StateObject private var cache = ScopedStateCache()
     private var node: Node
     
     public init(_ node: Node) {
