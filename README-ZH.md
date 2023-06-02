@@ -163,14 +163,15 @@ struct YourView: View {
 
 ```swift
 struct AllCartItem: SyncAtomNode, Hashable {
-  func getValue() -> [CartItem] {
+  typealias T = [CartItem]
+  func defaultValue() -> [CartItem] {
     []
   }
 }
 
-struct NumberOfProductBadge: SyncAtomNode, Hashable {
+struct NumberOfProductBadge: SyncSelectorNode, Hashable {
   typealias T = String?
-  func getValue() -> String? {
+  func getValue(accessor: StateAccessor) -> String? {
       let items = try accessor.get(AllCartItem()) //创建对象
       let count = items.reduce(into: 0) { result, item in
           result += item.count
@@ -239,7 +240,7 @@ struct RemoteData: AsyncSelectorNode, Hashable {
   typealias T = String
   let id: String
 
-  func getValue() async throws -> String {
+  func getValue(accessor: StateAccessor) async throws -> String {
       let posts = try await fetchAllData()
       return posts[id]
   }

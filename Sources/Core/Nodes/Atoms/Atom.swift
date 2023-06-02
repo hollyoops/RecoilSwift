@@ -95,7 +95,7 @@ public struct Atom<T: Equatable>: SyncAtomNode, Writeable {
 //        self.init(key: NodeKey(name: keyName), value)
 //    }
     
-    public func getValue() throws -> T {
+    public func defaultValue() throws -> T {
         try get()
     }
 }
@@ -124,7 +124,7 @@ public struct AsyncAtom<T: Equatable>: AsyncAtomNode, Writeable {
 //        self.init(key: NodeKey(name: keyName), get: get)
 //    }
     
-    public func getValue() async throws -> T {
+    public func defaultValue() async throws -> T {
         try await get()
     }
 }

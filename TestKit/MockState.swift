@@ -38,7 +38,7 @@ public struct MockAtom<Value: Hashable>: SyncAtomNode, MockState {
         self.value = value
     }
     
-    public func getValue() throws -> Value {
+    public func defaultValue() throws -> Value {
         if let error = error {
             throw error
         }
@@ -69,7 +69,7 @@ public struct MockAsyncAtom<Value: Hashable>: AsyncAtomNode, MockState {
         self.delayInNanoSeconds = delayInNanoSeconds
     }
     
-    public func getValue() async throws -> Value {
+    public func defaultValue() async throws -> Value {
         try? await Task.sleep(nanoseconds: delayInNanoSeconds)
         
         if let error = error {

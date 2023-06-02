@@ -50,7 +50,7 @@ A bi-directional selector receives the incoming value as a parameter and can use
 ```swift
 struct TempFahrenheitState: SyncAtomNode {
     typealias T = Int
-    func getValue() throws -> Int {
+    func defaultValue() throws -> Int {
         32
     }
 }

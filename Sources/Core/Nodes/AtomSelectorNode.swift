@@ -1,20 +1,20 @@
 public protocol SyncAtomNode: RecoilSyncNode, Writeable {
-    func getValue() throws -> T
+    func defaultValue() throws -> T
 }
 
 extension SyncAtomNode {
     public func getValue(_ accessor: StateGetter) throws -> T {
-        try getValue()
+        try defaultValue()
     }
 }
 
 public protocol AsyncAtomNode: RecoilAsyncNode {
-    func getValue() async throws -> T
+    func defaultValue() async throws -> T
 }
 
 extension AsyncAtomNode {
     public func getValue(_ accessor: StateGetter) async throws -> T {
-        try await getValue()
+        try await defaultValue()
     }
 }
 
