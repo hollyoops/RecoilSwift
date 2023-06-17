@@ -49,6 +49,6 @@ final public class ViewRenderHelper {
     }
     
     public func reset() {
-        scope.reset()
+        scope.purge()
     }
 }

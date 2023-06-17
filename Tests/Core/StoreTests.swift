@@ -15,7 +15,7 @@ class RecoilStoreTests: XCTestCase {
     
     override func tearDown() {
         store = nil
-        _recoil.reset()
+        _recoil.purge()
         super.tearDown()
     }
     

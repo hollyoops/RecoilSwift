@@ -29,7 +29,7 @@ final class RecoilReactiveTests: XCTestCase {
     }
     
     override func setUp() {
-        _recoil.reset()
+        _recoil.purge()
         accessor.set(TestStates.rawAtom, "async value")
     }
     

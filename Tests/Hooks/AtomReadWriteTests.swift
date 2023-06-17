@@ -15,7 +15,7 @@ final class AtomReadWriteTests: XCTestCase {
     
     @MainActor
     override func setUp() {
-        _recoil.reset()
+        _recoil.purge()
     }
     
     func test_should_return_rawValue_when_read_only_atom_given_stringAtom() {

@@ -62,7 +62,7 @@ final class RecoilFamilyTests: XCTestCase {
     }
     
     override func setUp() {
-        _recoil.reset()
+        _recoil.purge()
     }
 }
 

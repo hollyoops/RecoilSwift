@@ -13,7 +13,7 @@ final class AtomAccessTests: XCTestCase {
  @RecoilTestScope var recoil
     
     override func setUp() {
-        _recoil.reset()
+        _recoil.purge()
     }
     
     func test_should_atom_value_when_useValue_given_stringAtom() async {

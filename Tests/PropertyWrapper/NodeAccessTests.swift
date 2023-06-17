@@ -12,7 +12,7 @@ final class NodeAccessorTests: XCTestCase {
     }
     
     override func setUp() {
-        _recoil.reset()
+        _recoil.purge()
     }
 }
 

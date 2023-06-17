@@ -26,9 +26,9 @@ class RecoilStoreProxy: Store {
         stubValues[node.key] = get
     }
     
-    func reset() {
+    func purge() {
         stubValues = [:]
-        store.reset()
+        store.purge()
     }
 }
 

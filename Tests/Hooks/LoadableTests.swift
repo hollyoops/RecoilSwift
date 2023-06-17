@@ -32,7 +32,7 @@ final class LoadableTests: XCTestCase {
     }
     
     override func setUp() {
-        _recoil.reset()
+        _recoil.purge()
     }
 }
 

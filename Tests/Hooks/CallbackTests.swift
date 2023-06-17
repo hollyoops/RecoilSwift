@@ -62,7 +62,7 @@ final class CallbackTests: XCTestCase {
     }
     
     override func setUp() {
-        _recoil.reset()
+        _recoil.purge()
     }
 }
 

@@ -103,7 +103,7 @@ public struct RecoilRootLeagcy<Content: View>: View {
     
     func initRoot() {
         if !isInited {
-            globalStore.reset()
+            globalStore.purge()
             initFn?(NodeAccessor(store: self.recoilStore).setter(deps: nil))
             isInited = true
         }
@@ -127,7 +127,7 @@ private class RootDisposer: ObservableObject {
     var useGlobalStore: Bool = true
     deinit {
         if useGlobalStore {
-            globalStore.reset()
+            globalStore.purge()
         }
     }
 }

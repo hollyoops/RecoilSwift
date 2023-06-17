@@ -285,7 +285,7 @@ final class AtomAccessTests: XCTestCase {
     /// 1. Initialize scope
     @RecoilTestScope var recoil
     override func setUp() {
-        _recoil.reset()
+        _recoil.purge()
     }
     
     func test_should_returnUpdatedValue_when_useRecoilState_given_stringAtom() {
@@ -332,7 +332,7 @@ final class AtomAccessWithViewRenderTests: XCTestCase {
 final class AtomReadWriteTests: XCTestCase {
     @RecoilTestScope var recoil
     override func setUp() {
-        _recoil.reset()
+        _recoil.purge()
     }
     
     func test_should_return_rawValue_when_read_only_atom_given_stringAtom() {

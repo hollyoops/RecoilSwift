@@ -14,7 +14,7 @@ final class SelectorReadWriteTests: XCTestCase {
     }
     
     override func setUp() {
-        _recoil.reset()
+        _recoil.purge()
     }
 }
 

@@ -45,8 +45,8 @@ public class RecoilTestScope {
         store.stub(for: node, with: error)
     }
     
-    public func reset() {
-        store.reset()
+    public func purge() {
+        store.purge()
         store = RecoilStoreProxy(store: RecoilStore())
         stateCache.clear()
     }

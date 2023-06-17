@@ -172,7 +172,7 @@ internal final class RecoilStore: Store {
         }
     }
     
-    func reset() {
+    func purge() {
         queue.sync {
             self.states = [:]
             self.subscriberMap = [:]
