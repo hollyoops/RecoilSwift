@@ -23,31 +23,15 @@ public extension MockState where Self: RecoilNode {
     }
 }
 
-public struct MockAtom<Value: Hashable>: SyncAtomNode, MockState {
+public struct MockAtom<Value: Hashable>: SyncAtomNode {
     public typealias T = Value
-    public let error: Error?
-    public let value: Value?
-    
-    public init(error: Error) {
-        self.error = error
-        self.value = nil
-    }
-    
+    public let value: Value
     public init(value: Value) {
-        self.error = nil
         self.value = value
     }
     
-    public func defaultValue() throws -> Value {
-        if let error = error {
-            throw error
-        }
-        
-        if let value = value {
-            return value
-        }
-        
-        throw RecoilTestError.invalidState
+    public func defaultValue() -> Value {
+        value
     }
 }
 
@@ -69,8 +53,16 @@ public struct MockAsyncAtom<Value: Hashable>: AsyncAtomNode, MockState {
         self.delayInNanoSeconds = delayInNanoSeconds
     }
     
+    public func waitForTask() async throws {
+        try await simulateDelay(delayInNanoSeconds + 10)
+    }
+     
+    private func simulateDelay(_ delayInNanoSeconds: UInt64) async throws {
+        try await Task.sleep(nanoseconds: delayInNanoSeconds)
+    }
+    
     public func defaultValue() async throws -> Value {
-        try? await Task.sleep(nanoseconds: delayInNanoSeconds)
+        try? await simulateDelay(delayInNanoSeconds)
         
         if let error = error {
             throw error

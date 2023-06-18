@@ -74,4 +74,12 @@ final class AtomAccessTests: XCTestCase {
 
         XCTAssertEqual(value.data, "rawValue")
     }
+    
+    func test_should_return_error_when_useLoadable_given_asyncState_failed() async throws {
+        let errorAtom = MockAsyncAtom<String>(error: RecoilError.unknown)
+        let value = recoil.useLoadable(errorAtom)
+        try await errorAtom.waitForTask()
+        XCTAssertNil(value.data)
+        XCTAssertEqual(value.containError(of: RecoilError.unknown), true)
+    }
 }

@@ -2,7 +2,7 @@ import RecoilSwift
 
 struct TempFahrenheitState: SyncAtomNode {
     typealias T = Int
-    func defaultValue() throws -> Int {
+    func defaultValue() -> Int {
         32
     }
 }

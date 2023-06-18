@@ -49,7 +49,7 @@ extension RecoilStoreProxy {
         }
         
         if node is (any SyncAtomNode) {
-            return Atom(key: node.key, get: { try fn() })
+            return Atom(key: node.key, get: { try! fn() })
         }
         
         if node is (any AsyncAtomNode) {

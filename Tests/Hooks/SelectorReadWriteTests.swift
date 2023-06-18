@@ -67,7 +67,7 @@ extension SelectorReadWriteTests {
     
     func test_should_return_nil_when_fetching_remote_data_given_remote_data_source_error() {
         let tester = HookTester(scope: _recoil) { () -> [String]? in
-            useRecoilValue(MockAtom<[String]>(error: TestError.param))
+            useRecoilValue(MockAsyncAtom<[String]>(error: TestError.param))
         }
         
         XCTAssertNil(tester.value)

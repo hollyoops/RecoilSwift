@@ -4,7 +4,7 @@ typealias HomeTab = Home.Tab
 
 struct SelectedTabState: SyncAtomNode {
     typealias T = Home.Tab
-    func defaultValue() throws -> Home.Tab {
+    func defaultValue() -> Home.Tab {
         .list
     }
 }

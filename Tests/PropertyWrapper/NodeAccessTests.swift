@@ -71,18 +71,6 @@ extension NodeAccessorTests {
         _recoil.stubState(node: MultipleTen.upstreamState, value: 20)
         XCTAssertEqual(try accessor.get(MultipleTen.state), 200)
     }
-    
-    func test_should_get_error_when_get_value_given_self_states_hasError() throws {
-        XCTAssertThrowsSpecificError(
-            try accessor.get(MockAtom<String>(error: TestError.param)),
-            TestError.param
-        )
-        
-        XCTAssertThrowsSpecificError(
-            try accessor.get(MockSelector<String>(error: TestError.param)),
-            TestError.param
-        )
-    }
 }
 
 // MARK: - async selector
@@ -95,6 +83,24 @@ extension NodeAccessorTests {
     func test_should_returnNil_by_default_when_get_value_given_async_state() {
         let values = accessor.getOrNil(RemoteNames.filteredNames)
         XCTAssertNil(values)
+    }
+    
+    func test_should_get_error_when_get_atomValue_given_self_states_hasError() async throws {
+        do {
+            _ = try await accessor.get(MockAsyncAtom<String>(error: TestError.param))
+            XCTFail("should throw error")
+        } catch {
+            XCTAssertEqual(error as? TestError, TestError.param)
+        }
+    }
+    
+    func test_should_get_error_when_get_selectorValue_given_self_states_hasError() async throws {
+        do {
+            _ = try await accessor.get(MockAsyncSelector<String>(error: TestError.param))
+            XCTFail("should throw error")
+        } catch {
+            XCTAssertEqual(error as? TestError, TestError.param)
+        }
     }
     
     func test_should_returnTrueAnd_by_default_when_get_loading_from_node_given_async_state_inited_in_store() throws {

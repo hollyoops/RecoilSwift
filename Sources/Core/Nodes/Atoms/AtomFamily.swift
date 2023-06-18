@@ -9,7 +9,7 @@ public typealias AtomFamily<P: Hashable, T: Equatable> = (P) -> RecoilParamNode<
 
 public typealias AsyncAtomFamily<P: Hashable, T: Equatable> = (P) -> RecoilParamNode<P, AsyncAtom<T>>
 
-public typealias AtomFamilyGet<P, T> = (P) throws -> T
+public typealias AtomFamilyGet<P, T> = (P) -> T
 
 public typealias AtomFamilyCombineGet<P, T, E: Error> = (P) -> AnyPublisher<T, E>
 
@@ -34,7 +34,7 @@ public func atomFamily<P: Hashable, T: Equatable>(
             hasher.combine(param)
         }
         return RecoilParamNode(
-            node: Atom(key: key){ try getBody(param) },
+            node: Atom(key: key){ getBody(param) },
             param: param
         )
     }

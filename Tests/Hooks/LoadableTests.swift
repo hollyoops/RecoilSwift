@@ -57,18 +57,6 @@ extension LoadableTests {
         
         XCTAssertEqual(tester.value.data, 6)
     }
-    
-    func test_sync_loadable_should_be_rejected_when_using_my_multiplied_state_error() {
-        let tester = HookTester(scope: _recoil) {
-            useRecoilValueLoadable(MockAtom<Int>(error: TestError.unknown))
-        }
-        
-        XCTAssertEqual(tester.value.isAsynchronous, false)
-        
-        XCTAssertEqual(tester.value.data, nil)
-        
-        XCTAssertTrue(tester.value.containError(of: TestError.unknown))
-    }
 }
 
 // MARK: - async selector

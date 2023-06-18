@@ -34,7 +34,7 @@ public func atom<T: Equatable>(_ value: T,
 /// - Parameters:
 ///  - fn: A closure that provide init value for the atom
 /// - Returns: A writeable RecoilState object.
-public func atom<T: Equatable>(_ fn: @escaping () throws -> T,
+public func atom<T: Equatable>(_ fn: @escaping () -> T,
                                funcName: String = #function,
                                fileID: String = #fileID,
                                line: Int = #line) -> Atom<T> {
@@ -73,14 +73,14 @@ public struct Atom<T: Equatable>: SyncAtomNode, Writeable {
     public typealias E = Never
     
     public let key: NodeKey
-    public let get: () throws -> T
+    public let get: () -> T
     
     public init(key: NodeKey, value: T) {
         self.key = key
         self.get = { value }
     }
     
-    public init(key: NodeKey, get: @escaping () throws -> T) {
+    public init(key: NodeKey, get: @escaping () -> T) {
         self.key = key
         self.get = get
     }
@@ -95,8 +95,8 @@ public struct Atom<T: Equatable>: SyncAtomNode, Writeable {
 //        self.init(key: NodeKey(name: keyName), value)
 //    }
     
-    public func defaultValue() throws -> T {
-        try get()
+    public func defaultValue() -> T {
+        get()
     }
 }
 
