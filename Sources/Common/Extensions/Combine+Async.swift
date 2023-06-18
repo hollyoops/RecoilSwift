@@ -20,18 +20,24 @@ public extension AnyPublisher {
                 var didSendValue = false
                 let cancellable = self.first()
                     .handleEvents(receiveCancel: {
-                        continuation.resume(throwing: CancellationError())
+                        if !didSendValue {
+                            continuation.resume(throwing: CancellationError())
+                        }
                     })
                     .sink(
                         receiveCompletion: { completion in
                             switch completion {
                             case .finished:
                                 if !didSendValue {
+                                    didSendValue = true
                                     continuation.resume(throwing: AnyPublisherError.finishedWithoutValue)
                                 }
                                 break
                             case let .failure(error):
+                                didSendValue = true
                                 continuation.resume(throwing: error)
+                           
+                                
                             }
                         },
                         receiveValue: { value in
